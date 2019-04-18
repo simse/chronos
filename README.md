@@ -2,8 +2,11 @@
   <img alt="Gatsby" src="https://i.imgur.com/MoAbdWn.png" width="60" />
 </p>
 <h1 align="center">
-  A small Docker container to run and schedule Python 3.7 scripts
+  Chronos
 </h1>
+<p align="center">
+A small Docker container to run and schedule Python 3.7 scripts
+</p>
 
 
 ## About
