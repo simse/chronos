@@ -9,7 +9,7 @@ Vue.prototype.$http = axios
 Vue.config.productionTip = false
 Vue.use(Buefy)
 
-Vue.prototype.api = 'http://localhost:5000/api'
+Vue.prototype.api = '/api'
 
 new Vue({
   router,

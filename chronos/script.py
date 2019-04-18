@@ -1,4 +1,4 @@
-import shutil
+from subprocess import Popen, PIPE
 
 from chronos.config import *
 from chronos.venv import *
@@ -63,11 +63,16 @@ class Script():
         process = Popen(['bash', script_path], stdin=PIPE, stdout=PIPE, stderr=PIPE,
         bufsize=-1)
 
-        output, error = p.communicate()
+        output, error = process.communicate()
 
+        process_output = ''
+        if process.returncode == 0:
+            process_output = output
+        else:
+            process_output = error
 
         # Log the output
-        log = chronos.metadata.Log(script=self.db, text=process, exitcode=exitcode)
+        log = chronos.metadata.Log(script=self.db, text=process_output, exitcode=process.returncode)
         log.save()
 
         return process
