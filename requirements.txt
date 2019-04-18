@@ -1,0 +1,5 @@
+peewee
+flask
+flask-restful
+flask-cors
+gevent
