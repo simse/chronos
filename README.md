@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Gatsby" src="https://i.imgur.com/MoAbdWn.png" width="60" />
+  <img alt="Gatsby" src="https://i.imgur.com/MoAbdWn.png" width="100" />
 </p>
 <h1 align="center">
   Chronos

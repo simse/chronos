@@ -169,7 +169,7 @@ export default {
 
     install_requirements() {
 
-      this.$http.get(this.api + this.local_script.uid + '/install_requirements').then(response => {
+      this.$http.get(this.api + '/script/' + this.local_script.uid + '/install_requirements').then(response => {
         console.log(response)
       })
 
