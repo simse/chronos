@@ -38,7 +38,7 @@ This program will run any script that is given to it. It will also accept any sc
 - Press save. The button should appear at the top of the screen at all times.
 
 ## Screenshots
-You can find screenshots (right here)[https://imgur.com/a/NJVumLw]. Please bear in mind, this is dummy early beta.
+You can find screenshots [right here](https://imgur.com/a/NJVumLw). Please bear in mind, this is dummy early beta.
 
 ## Bug reporting
 If you found a bug, which wouldn't surprise me, please do send me an email at bug-reports@simse.io.
