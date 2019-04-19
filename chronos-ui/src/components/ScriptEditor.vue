@@ -7,8 +7,12 @@
     <div class="s">
       <h3><strong>Quick actions</strong></h3>
 
-      <b-button @click="install_requirements" size="is-standard" type="is-info">
+      <b-button @click="install_requirements" size="is-standard" type="is-info" :class="{'is-loading':isInstallingPip}">
         Install Pip requirements
+      </b-button>
+
+      <b-button @click="execute" size="is-standard" type="is-info" :class="{'is-loading':isExecuting}">
+        Execute
       </b-button>
     </div>
 
@@ -35,7 +39,9 @@
     <div class="s">
       <h3><strong>Pip requirements</strong></h3>
 
-      <p>Oh whoops! I never finished this?</p>
+      <b-field label="requirements.txt">
+          <b-input type="textarea" v-modal="local_script.requirements"></b-input>
+      </b-field>
     </div>
 
 
@@ -108,6 +114,8 @@ export default {
 
     return {
       snackbarOpen: false,
+      isInstallingPip: false,
+      isExecuting: false,
       local_script: this.script
     }
 
@@ -125,7 +133,8 @@ export default {
           (this.local_script.name != this.script.name ||
           this.local_script.interval != this.script.interval ||
           this.local_script.enabled != this.script.enabled ||
-          this.local_script.contents != this.script.contents)
+          this.local_script.contents != this.script.contents ||
+          this.local_script.requirements != this.script.requirements)
         ) {
           this.snackbarOpen = true
 
@@ -154,23 +163,52 @@ export default {
 
     save() {
 
-      console.log(this.local_script.uid)
-
       this.$http.put(this.api + '/script/' + this.local_script.uid, {
         name: this.local_script.name,
         interval: this.local_script.interval,
         enabled: this.local_script.enabled,
         contents: this.local_script.contents
       }).then(response => {
-        console.log(response)
+
       })
 
     },
 
     install_requirements() {
 
+      this.isInstallingPip = true;
+
       this.$http.get(this.api + '/script/' + this.local_script.uid + '/install_requirements').then(response => {
-        console.log(response)
+        this.isInstallingPip = false;
+
+        this.$toast.open({
+            message: 'Pip requirements installed.',
+            type: 'is-success'
+        })
+      }).catch(error => {
+        this.isInstallingPip = false;
+        this.$toast.open({
+            message: 'Couldn\'t install Pip requirements',
+            type: 'is-danger'
+        })
+      })
+
+    },
+
+    execute() {
+
+      this.isExecuting = true;
+
+      this.$http.get(this.api + '/script/' + this.local_script.uid + '/execute').then(response => {
+        this.isExecuting = false;
+
+        this.$modal.open('<pre>' + response.data.response + '</pre>')
+      }).catch(error => {
+        this.isExecuting = false;
+        this.$toast.open({
+            message: 'Couldn\'t execute script.',
+            type: 'is-danger'
+        })
       })
 
     }

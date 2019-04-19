@@ -12,6 +12,7 @@ RUN yarn build
 EXPOSE 5000
 VOLUME /chronos
 ENV CHRONOS_PATH=/chronos
+ENV CHRONOS=yes_sir_docker
 
 WORKDIR /app/chronos
 RUN apk add --update --no-cache g++ gcc libxslt-dev

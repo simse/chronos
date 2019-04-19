@@ -1,7 +1,5 @@
 import venv
 import os
-import sys
-import subprocess
 from chronos.config import *
 
 def get_venv_folder(uid):
@@ -17,18 +15,8 @@ def create_env(uid):
 
 
 def get_activate(uid):
-    venv_folder = get_venv_folder(uid)
-
-    return venv_folder + '/bin/activate'
+    return get_venv_folder(uid) + '/bin/activate'
 
 
 def get_python(uid):
-    venv_folder = get_venv_folder(uid)
-
-    python = ''
-    if sys.platform == 'win32':
-        python = venv_folder + '\\Scripts\\python.exe'
-    else:
-        python = venv_folder + '/bin/python'.format(os.path.sep)
-
-    return python
+    return get_venv_folder(uid) + '/bin/python'

@@ -29,6 +29,9 @@ class Script():
     def write_contents(self, script):
         return open(self.path, 'w').write(script)
 
+    def write_requirements(self, requirements):
+        return open(self.requirements, 'w').write(requirements)
+
     def logs(self):
         logs = []
 
@@ -75,4 +78,4 @@ class Script():
         log = chronos.metadata.Log(script=self.db, text=process_output, exitcode=process.returncode)
         log.save()
 
-        return process
+        return process_output

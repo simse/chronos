@@ -60,7 +60,7 @@ export default {
       if(this.script.logs.length == 0) {
         this.lastRun = 'Never run'
       } else if(this.script.logs.length > 0) {
-        let log_date = Date.parse(this.script.logs[this.script.logs.length-1].date)
+        let log_date = Date.parse(this.script.logs[0].date)
 
         const timeAgo = new TimeAgo('en-US')
         this.lastRun = timeAgo.format(log_date)

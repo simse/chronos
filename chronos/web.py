@@ -54,7 +54,7 @@ class Script(Resource):
                 script.write_contents(args['contents'])
 
             if args['requirements'] is not None:
-                pass #TODO: FIX
+                script.write_requirements(args['requirements'])
 
             model.save()
 
@@ -80,11 +80,21 @@ def scripts():
 
     return jsonify(scripts), 200
 
+
 @app.route('/api/script/<string:uid>/install_requirements')
 def install_requirements(uid):
     return jsonify(
         {
             'response': chronos.script.Script(uid).install_requirements()
+        }
+    ), 200
+
+
+@app.route('/api/script/<string:uid>/execute')
+def execute(uid):
+    return jsonify(
+        {
+            'response': chronos.script.Script(uid).execute().decode('utf-8')
         }
     ), 200
 

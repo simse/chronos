@@ -3,14 +3,12 @@ import time
 
 from gevent.pywsgi import WSGIServer
 
-import chronos.metadata
-from chronos.util import *
-from chronos.execute import *
-from chronos.venv import *
 from chronos.runtime import *
-from chronos.script import Script
 from chronos.web import app
 
+# Make sure we're running Docker
+if os.getenv('CHRONOS') != 'yes_sir_docker':
+    exit('Sorry. This program should only run in a Docker container.')
 
 def main():
     starttime = time.time()

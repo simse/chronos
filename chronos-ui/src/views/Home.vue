@@ -44,6 +44,8 @@ export default {
   },
   mounted() {
 
+    document.title = 'Chronos'
+
     this.loadAllScripts();
 
     this.$nextTick(function () {
