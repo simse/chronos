@@ -2,8 +2,6 @@
   <div class="script-editor">
     <h1>{{ local_script.name }}</h1>
 
-
-
     <div class="s">
       <h3><strong>Quick actions</strong></h3>
 
@@ -94,7 +92,7 @@
 </template>
 
 <script>
-import "prismjs";
+import '@/prism.js';
 import "prismjs/themes/prism.css";
 
 import PrismEditor from 'vue-prism-editor'
@@ -246,5 +244,9 @@ export default {
 
 .card {
   margin-bottom: 20px;
+}
+
+button {
+  margin-right: 10px;
 }
 </style>
