@@ -1,17 +1,28 @@
+# Third-party dependencies
 from flask import Flask, jsonify, send_from_directory
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 
+# First-party dependencies
 import chronos.script
 from chronos.runtime import *
 
+
+# Create Flask app
 app = Flask(__name__)
+
+# Allow CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+
+# Register Flask API
 api = Api(app)
 
+
 class Script(Resource):
+    """Main Script resource to create, update, delete and get script metadata."""
 
     def get(self, uid):
+        """Get script metadate."""
         try:
             script = chronos.script.Script(uid)
 
@@ -21,13 +32,16 @@ class Script(Resource):
 
 
     def post(self, uid):
+        """Create new script. This is a slow function."""
         parser = reqparse.RequestParser()
         parser.add_argument('name')
         args = parser.parse_args()
 
         return create_script(args['name']), 200
 
+
     def put(self, uid):
+        """Update script."""
         parser = reqparse.RequestParser()
         parser.add_argument('name')
         parser.add_argument('interval')
@@ -63,11 +77,15 @@ class Script(Resource):
         except KeyError:
             return None, 404
 
+
     def delete(self, uid):
+        """Delete script."""
         chronos.script.Script(uid).delete()
 
         return 'OK', 200
 
+
+# Get all scripts
 @app.route('/api/scripts')
 def scripts():
     scripts = []
@@ -78,6 +96,7 @@ def scripts():
     return jsonify(scripts), 200
 
 
+# Install Pip requirements for specific script. This is a slow function.
 @app.route('/api/script/<string:uid>/install_requirements')
 def install_requirements(uid):
     return jsonify(
@@ -87,6 +106,7 @@ def install_requirements(uid):
     ), 200
 
 
+# Execute specific script and return result.
 @app.route('/api/script/<string:uid>/execute')
 def execute(uid):
     return jsonify(
@@ -96,6 +116,7 @@ def execute(uid):
     ), 200
 
 
+# This part serves the UI from chronos-ui/dist, i.e. it must be built.
 ui_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'chronos-ui/dist')
 
 @app.route('/', methods=['GET'])
@@ -112,4 +133,5 @@ def serve_file_in_dir(path):
     return send_from_directory(ui_path, path)
 
 
+# Register script API resource.
 api.add_resource(Script, '/api/script/<string:uid>')

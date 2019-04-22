@@ -41,4 +41,4 @@ This program will run any script that is given to it. It will also accept any sc
 You can find screenshots [right here](https://imgur.com/a/NJVumLw). Please bear in mind, this is dummy early beta.
 
 ## Bug reporting
-If you found a bug, which wouldn't surprise me, please do send me an email at bug-reports@simse.io.
+If you found a bug, which wouldn't surprise me, please do send me an email at bug-reports@simse.io or better yet, open an issue on GitHub.

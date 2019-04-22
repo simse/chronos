@@ -1,14 +1,14 @@
+# Python dependencies
 import string
 import random
-import json
 import re
-import os
-from chronos.config import *
 
 # Generates a UID of 8 characters
 def generate_uid():
     return ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
+
+# Slugifies a script name (e.g. "Simon's script" -> "simons-script")
 def for_uid(s):
     s = s.lower()
     for c in [' ', '-', '.', '/']:

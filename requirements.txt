@@ -3,3 +3,4 @@ flask
 flask-restful
 flask-cors
 gevent
+peewee_migrate
