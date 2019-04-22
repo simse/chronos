@@ -5,6 +5,7 @@ from peewee import *
 
 from chronos.config import CHRONOS
 
+print("Connecting to database at: {}".format(CHRONOS + os.path.sep + 'chronos.db'))
 db = SqliteDatabase(CHRONOS + os.path.sep + 'chronos.db')
 
 class Script(Model):

@@ -64,10 +64,7 @@ class Script(Resource):
             return None, 404
 
     def delete(self, uid):
-        try:
-            chronos.script.Script(uid).delete()
-        except Exception:
-            pass
+        chronos.script.Script(uid).delete()
 
         return 'OK', 200
 

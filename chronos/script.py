@@ -1,4 +1,5 @@
 from subprocess import Popen, PIPE
+import shutil
 
 from chronos.config import *
 from chronos.venv import *
@@ -17,7 +18,7 @@ class Script():
 
     def delete(self):
         shutil.rmtree(self.folder)
-        chronos.metadata.Log.delete().where(script_id == self.db.id).execute()
+        chronos.metadata.Log.delete().where(chronos.metadata.Log.script_id == self.db.id).execute()
         self.db.delete_instance()
 
     def get_contents(self):

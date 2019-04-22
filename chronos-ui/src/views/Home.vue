@@ -78,7 +78,6 @@ export default {
     selectScript(uid) {
 
       this.selectedScript = uid
-      console.log(uid)
 
     },
 
@@ -86,8 +85,6 @@ export default {
 
       for (const s of this.scripts) {
         if(s.uid === uid) {
-
-
           return s
         }
       }

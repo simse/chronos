@@ -12,6 +12,10 @@
       <b-button @click="execute" size="is-standard" type="is-info" :class="{'is-loading':isExecuting}">
         Execute
       </b-button>
+
+      <b-button @click="deletePrompt" size="is-standard" type="is-danger">
+        Delete
+      </b-button>
     </div>
 
     <div class="s">
@@ -120,6 +124,11 @@ export default {
   },
   watch: {
     script: function() {
+
+      if(this.script == undefined) {
+        this.local_script = null
+      }
+
       if(this.local_script.uid !== this.script.uid) {
         this.local_script = this.script
       } else {
@@ -209,7 +218,39 @@ export default {
         })
       })
 
-    }
+    },
+
+    deletePrompt() {
+
+      this.$dialog.confirm({
+          title: 'Deleting script \'' + this.local_script.name + '\'',
+          message: 'Are you sure you want to <b>delete</b> your script? This action cannot be undone.',
+          confirmText: 'Delete Script',
+          type: 'is-danger',
+          hasIcon: true,
+          onConfirm: () => this.delete()
+      })
+
+
+    },
+
+    delete() {
+
+      this.$http.delete(this.api + '/script/' + this.local_script.uid).then(response => {
+
+        this.$toast.open({
+            message: 'Deleted script successfully.',
+            type: 'is-success'
+        })
+
+      }).catch(error => {
+        this.$toast.open({
+            message: 'Couldn\'t delete script.',
+            type: 'is-danger'
+        })
+      })
+
+    },
 
   }
 }
