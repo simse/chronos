@@ -42,7 +42,7 @@
       <h3><strong>Pip requirements</strong></h3>
 
       <b-field label="requirements.txt">
-          <b-input type="textarea" v-modal="local_script.requirements"></b-input>
+          <b-input type="textarea" v-model="local_script.requirements"></b-input>
       </b-field>
     </div>
 
@@ -174,7 +174,8 @@ export default {
         name: this.local_script.name,
         interval: this.local_script.interval,
         enabled: this.local_script.enabled,
-        contents: this.local_script.contents
+        contents: this.local_script.contents,
+        requirements: this.local_script.requirements
       }).then(response => {
 
       })

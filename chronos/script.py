@@ -90,9 +90,19 @@ class Script():
 
     def install_requirements(self):
         """Install requirements.txt"""
-        process = subprocess.check_output(['bash', self.install_requirements_path], universal_newlines=True)
+        process = Popen(['bash', self.install_requirements_path], stdin=PIPE, stdout=PIPE, stderr=PIPE,
+        bufsize=-1)
 
-        return process
+        output, error = process.communicate()
+
+        # Check if it errored or was successful
+        process_output = ''
+        if process.returncode == 0:
+            process_output = output
+        else:
+            process_output = error
+
+        return process_output.decode('utf-8')
 
     def execute(self):
         """Execute script"""
