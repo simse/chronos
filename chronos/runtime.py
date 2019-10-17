@@ -1,8 +1,10 @@
 # Python dependencies
 import os
+from datetime import datetime
 import threading
 
 # Third-party dependencies
+import cronex
 
 # First-party dependencies
 from chronos.util import *
@@ -65,7 +67,10 @@ pip install -r "{}"'''.format(get_activate(uid), requirements_path))
 
 def tick(second):
     """This function is called every second, and checks if anything needs to be executed."""
+    print('='*15)
     print('Tick: {}'.format(second))
+    print(datetime.now())
+
 
     # Loop through every script metadata
     for script in chronos.metadata.Script.select():
@@ -75,7 +80,23 @@ def tick(second):
             if second % script.interval == 0:
                 # Get script metadata
                 s = Script(script.uid)
-                
+
                 # Execute script in seperate thread, such that the loop is not affected
                 x = threading.Thread(target=s.execute)
                 x.start()
+
+        if script.cron is not None and script.enabled and second % 60 == 0:
+            # Evaluate cron expression
+            cron = cronex.CronExpression(script.cron)
+            time = tuple(list(datetime.now().timetuple())[:5])
+
+            if cron.check_trigger(time):
+                #print("Executing script: {}".format(script.name))
+                s = Script(script.uid)
+
+                # Execute script in seperate thread, such that the loop is not affected
+                x = threading.Thread(target=s.execute)
+                x.start()
+
+    print('='*15)
+    print()

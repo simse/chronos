@@ -1,9 +1,11 @@
 # Python dependencies
+from pathlib import Path
 import datetime
 import os
 
 # Third-party dependencies
 from peewee import *
+from peewee_migrate import Router
 
 # First-party dependencies
 from chronos.config import CHRONOS
@@ -20,6 +22,7 @@ class Script(Model):
     name = CharField()
     uid = CharField()
     interval = IntegerField(default=0)
+    cron = CharField()
     enabled = BooleanField(default=True)
 
     class Meta:
@@ -46,8 +49,19 @@ class Setting(Model):
         database = db
 
 
+# Check if database is empty, and then bring forward to
+
+
+
+# Execute model migrations
+# Run migrations
+router = Router(db)
+router.run()
+
+
+
 # Opens database connection
-db.connect()
+# db.connect()
 
 # Makes sure tables exist (ie. creates new table if a new table has been defined since last execution)
-db.create_tables([Script, Log, Setting])
+#db.create_tables([Script, Log, Setting])

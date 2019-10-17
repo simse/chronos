@@ -82,6 +82,7 @@ class Script():
             'uid': self.uid,
             'name': self.db.name,
             'interval': self.db.interval,
+            'cron': self.db.cron,
             'enabled': self.db.enabled,
             'contents': self.get_contents(),
             'requirements': self.get_requirements(),
@@ -103,6 +104,7 @@ class Script():
             process_output = error
 
         return process_output.decode('utf-8')
+
 
     def execute(self):
         """Execute script"""

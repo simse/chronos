@@ -29,6 +29,10 @@
           <b-input v-model="local_script.interval" type="integer" size="is-large"></b-input>
       </b-field>
 
+      <b-field label="Cron expression">
+          <b-input v-model="local_script.cron" type="integer" size="is-large"></b-input>
+      </b-field>
+
       <b-field label="Script enabled">
           <b-switch v-model="local_script.enabled"
           type="is-success">
@@ -139,6 +143,7 @@ export default {
           !this.snackbarOpen &&
           (this.local_script.name != this.script.name ||
           this.local_script.interval != this.script.interval ||
+          this.local_script.cron != this.script.cron ||
           this.local_script.enabled != this.script.enabled ||
           this.local_script.contents != this.script.contents ||
           this.local_script.requirements != this.script.requirements)
@@ -173,6 +178,7 @@ export default {
       this.$http.put(this.api + '/script/' + this.local_script.uid, {
         name: this.local_script.name,
         interval: this.local_script.interval,
+        cron: this.local_script.cron,
         enabled: this.local_script.enabled,
         contents: this.local_script.contents,
         requirements: this.local_script.requirements

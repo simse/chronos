@@ -1,5 +1,5 @@
 # Third-party dependencies
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, Response
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 
@@ -45,6 +45,7 @@ class Script(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('name')
         parser.add_argument('interval')
+        parser.add_argument('cron')
         parser.add_argument('enabled', type=bool)
         parser.add_argument('contents')
         parser.add_argument('requirements')
@@ -63,6 +64,9 @@ class Script(Resource):
 
             if args['enabled'] is not None:
                 model.enabled = args['enabled']
+
+            if args['cron'] is not None:
+                model.cron = args['cron']
 
             if args['contents'] is not None:
                 script.write_contents(args['contents'])
