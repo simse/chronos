@@ -3,16 +3,9 @@
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
 
     <h1 class="is-size-1 title">Chronos</h1>
+    <p class="is-size-5 subtitle">Version: {{ version }}</p>
 
-    <!--div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div-->
     <router-view/>
-
-    <div class="version">
-        <p>Version: {{ version }}</p>
-    </div>
   </div>
 </template>
 
@@ -53,9 +46,17 @@ body {
   padding-top: 70px;
 }
 
-.title {
-  padding-bottom: 50px;
+.title,
+.subtitle {
   text-align: center;
+}
+
+.title {
+    padding-bottom: 10px;
+}
+
+.subtitle {
+    padding-bottom: 45px;
 }
 
 .version {

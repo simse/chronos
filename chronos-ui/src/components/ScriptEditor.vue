@@ -139,6 +139,25 @@ export default {
 
         this.local_script.logs = this.script.logs
 
+        this.detect_changes()
+      }
+    },
+
+    local_script: {
+        handler: function (val, oldVal) {
+            this.detect_changes()
+        },
+        deep: true
+    }
+  },
+  mounted() {
+
+  },
+  methods: {
+
+
+    detect_changes() {
+
         if(
           !this.snackbarOpen &&
           (this.local_script.name != this.script.name ||
@@ -165,13 +184,7 @@ export default {
         }
 
 
-      }
-    }
-  },
-  mounted() {
-
-  },
-  methods: {
+    },
 
     save() {
 
