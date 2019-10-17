@@ -1,0 +1,11 @@
+services:
+    - docker
+
+before_install:
+    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+deploy:
+    provider: script
+    script: bash build
+    on:
+        branch: master

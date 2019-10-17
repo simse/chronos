@@ -10,9 +10,26 @@
     </div-->
     <router-view/>
 
-
+    <div class="version">
+        <p>Version: {{ version }}</p>
+    </div>
   </div>
 </template>
+
+<script>
+import version from '!raw-loader!./VERSION'
+
+export default {
+    name: 'App',
+    data() {
+        return {
+            version: version
+        }
+
+    }
+}
+
+</script>
 
 <style lang="scss">
 *,
@@ -41,4 +58,7 @@ body {
   text-align: center;
 }
 
+.version {
+    opacity: 0.7;
+}
 </style>

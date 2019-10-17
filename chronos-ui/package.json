@@ -13,6 +13,7 @@
     "core-js": "^2.6.5",
     "javascript-time-ago": "^2.0.1",
     "prismjs": "^1.16.0",
+    "raw-loader": "^3.1.0",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.4",
     "vue-prism-editor": "^0.1.2",
