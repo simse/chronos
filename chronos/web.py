@@ -47,6 +47,8 @@ class Script(Resource):
         parser.add_argument('interval')
         parser.add_argument('cron')
         parser.add_argument('enabled', type=bool)
+        parser.add_argument('interval_enabled', type=bool)
+        parser.add_argument('cron_enabled', type=bool)
         parser.add_argument('contents')
         parser.add_argument('requirements')
         args = parser.parse_args()
@@ -67,6 +69,12 @@ class Script(Resource):
 
             if args['cron'] is not None:
                 model.cron = args['cron']
+
+            if args['interval_enabled'] is not None:
+                model.interval_enabled = args['interval_enabled']
+
+            if args['cron_enabled'] is not None:
+                model.cron_enabled = args['cron_enabled']
 
             if args['contents'] is not None:
                 script.write_contents(args['contents'])

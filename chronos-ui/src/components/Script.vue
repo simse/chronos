@@ -52,7 +52,7 @@ export default {
     this.$nextTick(function () {
         window.setInterval(() => {
             this.now = Date.now()
-        }, 1000);
+        }, 2000);
     })
   },
   watch: {

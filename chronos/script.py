@@ -2,6 +2,9 @@
 import shutil
 from subprocess import Popen, PIPE
 
+# Third-party dependencies
+from playhouse.shortcuts import model_to_dict
+
 # First-party dependencies
 import chronos.metadata
 from chronos.config import *
@@ -18,6 +21,9 @@ class Script():
 
         # Get database entry
         self.db = chronos.metadata.Script.get(chronos.metadata.Script.uid == uid)
+
+        # Store dictionary version of model
+        self.dict = model_to_dict(self.db)
 
         # Get script folder
         self.folder = CHRONOS + os.path.sep + 'scripts' + os.path.sep + self.uid
@@ -78,15 +84,13 @@ class Script():
 
     def to_dict(self):
         """Return dictionary with script metadata"""
-        return {
+        return {**{
             'uid': self.uid,
-            'name': self.db.name,
-            'interval': self.db.interval,
-            'cron': self.db.cron,
-            'enabled': self.db.enabled,
+
             'contents': self.get_contents(),
             'requirements': self.get_requirements(),
-            'logs': self.logs()
+            'logs': self.logs()},
+            **self.dict
         }
 
     def install_requirements(self):

@@ -23,6 +23,8 @@ class Script(Model):
     uid = CharField()
     interval = IntegerField(default=0)
     cron = CharField()
+    interval_enabled = BooleanField(default=True)
+    cron_enabled = BooleanField(default=True)
     enabled = BooleanField(default=True)
 
     class Meta:
