@@ -3,23 +3,23 @@
     <h1>{{ local_script.name }}</h1>
 
     <div class="s">
-      <h3><strong>Quick actions</strong></h3>
+      <h3><strong>{{ this.$t('quick_actions') }}</strong></h3>
 
       <b-button @click="install_requirements" size="is-standard" type="is-info" :class="{'is-loading':isInstallingPip}">
-        Install Pip requirements
+        {{ this.$t('install_pip_requirements') }}
       </b-button>
 
       <b-button @click="execute" size="is-standard" type="is-info" :class="{'is-loading':isExecuting}">
-        Execute
+        {{ this.$t('execute') }}
       </b-button>
 
       <b-button @click="deletePrompt" size="is-standard" type="is-danger">
-        Delete
+        {{ this.$t('delete') }}
       </b-button>
     </div>
 
     <div class="s">
-      <h3><strong>Script info</strong></h3>
+      <h3><strong>{{ this.$t('script_info') }}</strong></h3>
 
       <b-field label="Name">
           <b-input v-model="local_script.name" size="is-large"></b-input>
@@ -37,30 +37,30 @@
 
 
     <div class="s">
-        <h3><strong>Triggers</strong></h3>
+        <h3><strong>{{ this.$t('triggers') }}</strong></h3>
 
-        <b-field label="Enable interval trigger">
+        <b-field :label="this.$t('enable_interval_trigger')">
             <b-switch v-model="local_script.interval_enabled" type="is-success"></b-switch>
         </b-field>
 
-        <b-field label="Interval (seconds)" v-show="local_script.interval_enabled">
+        <b-field :label="this.$t('interval')" v-show="local_script.interval_enabled">
             <b-input v-model="local_script.interval" type="integer" size="is-large"></b-input>
         </b-field>
 
         <br />
 
-        <b-field label="Enable cron trigger">
+        <b-field :label="this.$t('enable_cron_trigger')">
             <b-switch v-model="local_script.cron_enabled" type="is-success"></b-switch>
         </b-field>
 
-        <b-field label="Cron expression" v-show="local_script.cron_enabled">
+        <b-field :label="this.$t('cron_expression')" v-show="local_script.cron_enabled">
             <b-input v-model="local_script.cron" type="integer" size="is-large"></b-input>
         </b-field>
     </div>
 
 
     <div class="s">
-      <h3><strong>Pip requirements</strong></h3>
+      <h3><strong>{{ this.$t('pip_requirements') }}</strong></h3>
 
       <b-field label="requirements.txt">
           <b-input type="textarea" v-model="local_script.requirements"></b-input>
@@ -69,17 +69,17 @@
 
 
     <div class="s">
-      <h3><strong>Python script</strong></h3>
+      <h3><strong>{{ this.$t('python_script') }}</strong></h3>
 
       <prism-editor v-model="local_script.contents" language="python"></prism-editor>
     </div>
 
 
     <div class="s">
-      <h3><strong>Logs</strong></h3>
+      <h3><strong>{{ this.$t('logs') }}</strong></h3>
 
       <p>
-        <em>Showing {{ local_script.logs.length }} logs</em>
+        <em>{{ this.$t('showing_logs', { logs: local_script.logs.length }) }}</em>
 
         <br />
         <br />
@@ -182,10 +182,10 @@ export default {
           this.snackbarOpen = true
 
           this.$snackbar.open({
-                message: 'You have unsaved changes.',
+                message: this.$t('unsaved_changes'),
                 type: 'is-info',
                 position: 'is-top',
-                actionText: 'Save',
+                actionText: this.$t('save'),
                 indefinite: true,
                 onAction: () => {
                     this.snackbarOpen = false
@@ -227,13 +227,13 @@ export default {
         this.isInstallingPip = false;
 
         this.$toast.open({
-            message: 'Pip requirements installed.',
+            message: this.$t('pip_requirements_installed'),
             type: 'is-success'
         })
       }).catch(error => {
         this.isInstallingPip = false;
         this.$toast.open({
-            message: 'Couldn\'t install Pip requirements',
+            message: this.$t('pip_requirements_failed'),
             type: 'is-danger'
         })
       })
@@ -251,7 +251,7 @@ export default {
       }).catch(error => {
         this.isExecuting = false;
         this.$toast.open({
-            message: 'Couldn\'t execute script.',
+            message: this.$t('execute_failed'),
             type: 'is-danger'
         })
       })
@@ -261,9 +261,9 @@ export default {
     deletePrompt() {
 
       this.$dialog.confirm({
-          title: 'Deleting script \'' + this.local_script.name + '\'',
-          message: 'Are you sure you want to <b>delete</b> your script? This action cannot be undone.',
-          confirmText: 'Delete Script',
+          title: this.$t('delete_script', { name: this.name }),
+          message: this.$t('delete_confirm'),
+          confirmText: this.$t('delete_confirm_button'),
           type: 'is-danger',
           hasIcon: true,
           onConfirm: () => this.delete()
@@ -277,13 +277,13 @@ export default {
       this.$http.delete(this.api + '/script/' + this.local_script.uid).then(response => {
 
         this.$toast.open({
-            message: 'Deleted script successfully.',
+            message: this.$t('script_deleted'),
             type: 'is-success'
         })
 
       }).catch(error => {
         this.$toast.open({
-            message: 'Couldn\'t delete script.',
+            message: this.$t('script_delete_failed'),
             type: 'is-danger'
         })
       })

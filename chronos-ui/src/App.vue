@@ -3,7 +3,7 @@
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
 
     <h1 class="is-size-1 title">Chronos</h1>
-    <p class="is-size-5 subtitle">Version: {{ version }}</p>
+    <p class="is-size-5 subtitle">{{ $t('version') | capitalize }}: {{ version }}</p>
 
     <router-view/>
   </div>
@@ -42,8 +42,8 @@ body {
 }
 
 #app {
-
   padding-top: 70px;
+  padding-left: 15px;
 }
 
 .title,

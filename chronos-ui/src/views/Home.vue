@@ -3,9 +3,9 @@
 
     <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
-    <h2 class="bold">Scripts
+    <h2 class="bold">{{ $t('scripts') | capitalize }}
       <b-button @click="newScriptModal" size="is-small" type="is-info">
-        Add new
+        {{ $t('new_script') | capitalize }}
       </b-button>
     </h2>
 
@@ -14,7 +14,7 @@
 
 
         <div v-for="s in scripts">
-          <div @click="selectScript(s.uid)">
+          <div @click="selectScript(s.uid)" :class="{selected: selectedScript == s.uid}">
             <Script :script="s" />
           </div>
         </div>
@@ -23,7 +23,7 @@
         <ScriptEditor v-if="selectedScript != null" :script="getScript(this.selectedScript)" />
 
         <div class="no-script">
-          <p v-if="selectedScript == null">No script selected.</p>
+          <p v-if="selectedScript == null">{{ $t('no_script_selected') | capitalize }}</p>
         </div>
       </div>
     </div>
@@ -76,9 +76,11 @@ export default {
     },
 
     selectScript(uid) {
-
-      this.selectedScript = uid
-
+        if(this.selectedScript == uid) {
+            this.selectedScript = null;
+        } else {
+            this.selectedScript = uid;
+        }
     },
 
     getScript(uid) {
@@ -93,11 +95,13 @@ export default {
 
     newScriptModal() {
       this.$dialog.prompt({
-          message: `Please choose a name for your script`,
+          message: this.$t('new_script_name'),
           inputAttrs: {
-              placeholder: 'e.g. Bitcoin Price Check',
-              maxlength: 50
+              placeholder: this.$t('eg_name'),
+              maxlength: 50,
           },
+          confirmText: this.$t('done'),
+          cancelText: this.$t('cancel'),
           onConfirm: (value) => this.newScript(value)
       })
     },
@@ -106,17 +110,15 @@ export default {
       this.isLoading = true
 
       this.$http.post(this.api + '/script/null', {name:name}).then(response => {
-        console.log(response)
-
         this.$toast.open({
-            message: '\''+ name +'\' created successfully.',
+            message: this.$t('new_script_succcesful', { name: name }),
             type: 'is-success'
         })
 
         this.isLoading = false
       }).catch(error => {
         this.$toast.open({
-            message: '\''+ name +'\' failed to create.',
+            message: this.$t('new_script_failed', { name: name }),
             type: 'is-danger'
         })
 
@@ -141,5 +143,19 @@ export default {
 
     font-size: 2rem;
     opacity: .5;
+  }
+
+  .selected .script {
+      background: hsl(217, 71%, 53%);
+      color: #fff;
+      transition: .2s all;
+
+      .icon-wrapper {
+          background: white !important;
+
+          .icon {
+              color: hsl(217, 71%, 53%);
+          }
+      }
   }
 </style>

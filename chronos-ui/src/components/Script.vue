@@ -23,7 +23,7 @@
 
     <div class="meta">
       <h2>{{ script.name }}</h2>
-      <p>Last run: {{ lastRun }}</p>
+      <p>{{ $t('last_run') | capitalize }}: {{ lastRun }}</p>
     </div>
   </div>
 </template>
@@ -31,8 +31,11 @@
 <script>
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
+import da from 'javascript-time-ago/locale/da'
+
 
 TimeAgo.addLocale(en)
+TimeAgo.addLocale(da)
 
 export default {
   name: 'Script',
@@ -49,6 +52,8 @@ export default {
     }
   },
   mounted() {
+      this.now = Date.now()
+
     this.$nextTick(function () {
         window.setInterval(() => {
             this.now = Date.now()
@@ -62,7 +67,7 @@ export default {
       } else if(this.script.logs.length > 0) {
         let log_date = Date.parse(this.script.logs[0].date)
 
-        const timeAgo = new TimeAgo('en-US')
+        const timeAgo = new TimeAgo('en')
         this.lastRun = timeAgo.format(log_date)
       } else {
         this.lastRun = 'not sure'
