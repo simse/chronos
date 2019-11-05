@@ -1,6 +1,5 @@
 @import "sanitize";
 @import "vars";
-@import "prism";
 @import "grid";
 @import "link";
 
@@ -76,11 +75,15 @@ pre[class*="language-"] {
 }
 
 .get-started .step .step-content code {
-    font-weight: bold;
+    font-weight: 400;
     background: #fff;
-    color: #111;
+    color: #0078ed;
     padding: 2px 6px;
-    border-radius: 4px
+    border-radius: 4px;
+
+    &:hover {
+        cursor: text;
+    }
 }
 
 /* DOCS STYLES */

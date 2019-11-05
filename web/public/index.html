@@ -29,12 +29,12 @@
                 <div class="step">
                 
                     <span class="step-number">1</span>
-                    <h3 class="step-title">Install using pip</h3>
+                    <h3 class="step-title">Install Docker container</h3>
                 
                     <div class="step-content">
                 
                         <p>
-                    To install, open your command line and pop in the following: <code>pip install pymitv</code>.
+                    To install, open your command line and pop in the following: <code>docker run simsemand/chronos -p 5050:5050 -v /chronos:<chronos_path></chronos_path></code>. Just make sure to update the path to a folder on your computer or server.
                 </p>
                 
                     </div>
@@ -50,12 +50,12 @@
                 <div class="step">
                 
                     <span class="step-number">2</span>
-                    <h3 class="step-title">Start using</h3>
+                    <h3 class="step-title">Open web UI</h3>
                 
                     <div class="step-content">
                 
                         <p>
-                    To start using, look at the example above or look at the documentation.
+                    To start using, go to <code>http://IP_ADDRESS:5050</code>. Change IP_ADDRESS to your IP or the IP of the machine you installed it on.
                 </p>
                 
                     </div>
@@ -63,22 +63,29 @@
                 </div>
                 
                 
+            </div>   
+                
+                    <div class="col-4">
+                        <div class="step">
+                            <span class="step-number">3</span>
+                            <h3 class="step-title">Create your first script</h3>
+                        
+                            <div class="step-content">
+                                <p>
+                                    Press 'new script' and start fiddling with the program.
+                                </p>
+                            </div>
                         </div>
-                
-                        <div class="col-4">
-                
-                            
-                
-                        </div>
-                
                     </div>
                 
                 </div>
 
+            </div>
+
         <div class="container docs">
             <h2>Documentation</h2>
 
-            <p>You can read the documentation on <a href="https://github.com/simse/pymitv">Github.</a></p>
+            <p>There is no official documentation at the moment, as the program is quite simple. If you encounter any issues, you can always email me at <a href="mailto:hello@simse.io">hello@simse.io</a></p>
         </div>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.17.1/components/prism-core.min.js"></script>
