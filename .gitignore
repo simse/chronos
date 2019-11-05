@@ -114,3 +114,4 @@ dmypy.json
 .pyre/
 
 VERSION
+node_modules
