@@ -52,8 +52,9 @@ def create_script(name=None):
     # TODO: Move this script to a folder so it can be copied instead
     with open(path + os.path.sep + 'execute.sh', 'w') as file:
         file.write('''#!/bin/bash
+cd "{}"
 source "{}"
-python "{}"'''.format(get_activate(uid), script_path))
+python "{}"'''.format(path, get_activate(uid), script_path))
 
     # Create pip install
     # TODO: Move this script to a folder so it can be copied instead
