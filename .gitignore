@@ -115,3 +115,4 @@ dmypy.json
 
 VERSION
 node_modules
+.vscode

@@ -1,12 +1,15 @@
-FROM python:3.7.3-alpine
-MAINTAINER Simon Sorensen (hello@simse.io)
+FROM python:3.7-buster
+LABEL author="Simon Sorensen (hello@simse.io)"
 
-RUN apk add --no-cache bash
 COPY . /app/chronos
 
-RUN apk add --update nodejs nodejs-npm yarn
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
+RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+RUN apt-get update
+RUN apt-get install -y nodejs yarn
 WORKDIR /app/chronos/chronos-ui
-RUN yarn install
+RUN yarn
 RUN yarn build
 
 EXPOSE 5000
@@ -15,6 +18,5 @@ ENV CHRONOS_PATH=/chronos
 ENV CHRONOS=yes_sir_docker
 
 WORKDIR /app/chronos
-RUN apk add --update --no-cache g++ gcc libxslt-dev
 RUN pip install -r requirements.txt
 ENTRYPOINT python chronos.py
