@@ -10,7 +10,7 @@
   "install_pip_requirements": "Install pip requirements",
   "execute": "Execute",
   "execute_failed": "Execution failed",
-  "delete": "Deleted",
+  "delete": "Delete",
   "script_info": "Script info",
   "name": "Name",
   "script_enabled": "Script enabled",
