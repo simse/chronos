@@ -1,6 +1,10 @@
 FROM python:3.7-buster
 LABEL author="Simon Sorensen (hello@simse.io)"
 
+# Set timezone to Greenwich Mean Time
+ENV TZ=GMT
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # Copy Chronos to image
 COPY . /app/chronos
 
