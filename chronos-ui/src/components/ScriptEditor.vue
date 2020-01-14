@@ -44,7 +44,7 @@
         </b-field>
 
         <b-field :label="this.$t('interval')" v-show="local_script.interval_enabled">
-            <b-input v-model="local_script.interval" type="integer" size="is-large"></b-input>
+            <b-input v-model.number="local_script.interval" type="number" size="is-large"></b-input>
         </b-field>
 
         <br />
@@ -54,7 +54,7 @@
         </b-field>
 
         <b-field :label="this.$t('cron_expression')" v-show="local_script.cron_enabled">
-            <b-input v-model="local_script.cron" type="integer" size="is-large"></b-input>
+            <b-input v-model="local_script.cron" type="number" size="is-large"></b-input>
         </b-field>
     </div>
 
