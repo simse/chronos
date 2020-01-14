@@ -83,6 +83,15 @@ class Script():
 
         return logs
 
+    def prune_logs(self, limit=500):
+        log_count = chronos.metadata.Log.select().where(chronos.metadata.Log.script_id == self.db.id).count()
+
+        if log_count > limit:
+            to_delete = log_count - limit
+
+            for l in chronos.metadata.Log.select().where(chronos.metadata.Log.script_id == self.db.id).order_by(chronos.metadata.Log.date.asc()).limit(to_delete):
+                l.delete_instance()
+
     def to_dict(self):
         """Return dictionary with script metadata"""
         return {**{

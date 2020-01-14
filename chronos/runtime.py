@@ -75,13 +75,15 @@ def tick(second):
 
     # Loop through every script metadata
     for script in chronos.metadata.Script.select():
+        s = Script(script.uid)
+
+        # Prune logs
+        s.prune_logs()
+
         # Check that the script is enabled to run and that the interval is above 0
         if script.interval != 0 and script.enabled:
             # Check that the interval is a multiple of the current tick
             if second % script.interval == 0:
-                # Get script metadata
-                s = Script(script.uid)
-
                 # Execute script in seperate thread, such that the loop is not affected
                 x = threading.Thread(target=s.execute)
                 x.start()
@@ -92,9 +94,6 @@ def tick(second):
             time = tuple(list(datetime.now().timetuple())[:5])
 
             if cron.check_trigger(time):
-                #print("Executing script: {}".format(script.name))
-                s = Script(script.uid)
-
                 # Execute script in seperate thread, such that the loop is not affected
                 x = threading.Thread(target=s.execute)
                 x.start()
