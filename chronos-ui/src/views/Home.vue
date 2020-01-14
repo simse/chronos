@@ -13,7 +13,7 @@
       <div class="column is-one-third">
 
 
-        <div v-for="s in scripts">
+        <div v-for="s in scripts" :key="s.uid">
           <div @click="selectScript(s.uid)" :class="{selected: selectedScript == s.uid}">
             <Script :script="s" />
           </div>
@@ -43,38 +43,20 @@ export default {
     ScriptEditor
   },
   mounted() {
-
     document.title = 'Chronos'
-
-    this.loadAllScripts();
-
-    this.$nextTick(function () {
-        window.setInterval(() => {
-            this.loadAllScripts();
-        }, 2000);
-    })
-
   },
   data() {
-
     return {
-      url: this.api,
       isLoading: false,
-      selectedScript: null,
-      scripts: []
+      selectedScript: null
     }
-
+  },
+  computed: {
+    scripts() {
+      return this.$store.state.scripts
+    }
   },
   methods: {
-
-    loadAllScripts() {
-
-      this.$http.get(this.url + '/scripts').then(response => {
-        this.scripts = response.data
-      })
-
-    },
-
     selectScript(uid) {
         if(this.selectedScript == uid) {
             this.selectedScript = null;
@@ -109,14 +91,14 @@ export default {
     newScript(name) {
       this.isLoading = true
 
-      this.$http.post(this.api + '/script/null', {name:name}).then(response => {
+      this.$http.post(this.api + '/script/null', {name:name}).then(() => {
         this.$toast.open({
             message: this.$t('new_script_succcesful', { name: name }),
             type: 'is-success'
         })
 
         this.isLoading = false
-      }).catch(error => {
+      }).catch(() => {
         this.$toast.open({
             message: this.$t('new_script_failed', { name: name }),
             type: 'is-danger'

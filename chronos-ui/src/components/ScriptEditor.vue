@@ -165,7 +165,7 @@ export default {
     },
 
     local_script: {
-        handler: function (val, oldVal) {
+        handler() {
             this.detect_changes()
         },
         deep: true
@@ -215,7 +215,7 @@ export default {
         cron_enabled: this.local_script.cron_enabled,
         contents: this.local_script.contents,
         requirements: this.local_script.requirements
-      }).then(response => {
+      }).then(() => {
 
       })
 
@@ -234,7 +234,7 @@ export default {
         })
 
         this.$modal.open('<pre>' + response.data.response + '</pre>')
-      }).catch(error => {
+      }).catch(() => {
         this.isInstallingPip = false;
         this.$toast.open({
             message: this.$t('pip_requirements_failed'),
@@ -266,7 +266,7 @@ export default {
         modalContent += '</pre>'
 
         this.$modal.open(modalContent)
-      }).catch(error => {
+      }).catch(() => {
         this.isExecuting = false;
         this.$toast.open({
             message: this.$t('execute_failed'),
@@ -291,23 +291,19 @@ export default {
     },
 
     delete() {
-
-      this.$http.delete(this.api + '/script/' + this.local_script.uid).then(response => {
-
+      this.$http.delete(this.api + '/script/' + this.local_script.uid).then(() => {
         this.$toast.open({
             message: this.$t('script_deleted'),
             type: 'is-success'
         })
 
-      }).catch(error => {
+      }).catch(() => {
         this.$toast.open({
             message: this.$t('script_delete_failed'),
             type: 'is-danger'
         })
       })
-
     },
-
   }
 }
 </script>
@@ -320,7 +316,6 @@ export default {
   box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
   border-radius: 8px;
   margin-top: 17px;
-
 
   h1 {
     margin-bottom: 20px;

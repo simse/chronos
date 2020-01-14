@@ -35,6 +35,8 @@
   "delete_confirm": "Are you sure you want to <b>delete</b> your script? This action cannot be undone.",
   "delete_confirm_button": "Delete script",
   "script_deleted": "Script deleted",
-  "script_delete_failed": "Couldn't delete script"
-
+  "script_delete_failed": "Couldn't delete script",
+  "connected": "Connected",
+  "disconnected": "Not connected",
+  "connecting": "Connecting..."
 }
