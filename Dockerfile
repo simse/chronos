@@ -1,22 +1,35 @@
 FROM python:3.7-buster
 LABEL author="Simon Sorensen (hello@simse.io)"
 
+# Copy Chronos to image
 COPY . /app/chronos
 
+# Add yarn to apt
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
+# Install Node and Yarn
 RUN apt-get update
 RUN apt-get install -y nodejs yarn
+
+# Build Chronos UI
 WORKDIR /app/chronos/chronos-ui
 RUN yarn
 RUN yarn build
 
+# Set enviroment and expose ports and directories
 EXPOSE 5000
 VOLUME /chronos
 ENV CHRONOS_PATH=/chronos
 ENV CHRONOS=yes_sir_docker
 
+# Install common packages
+RUN pip install cython
+RUN apt install freedts-dev
+RUN pip install pymssql
+
+# Install Python dependencies
 WORKDIR /app/chronos
 RUN pip install -r requirements.txt
+
 ENTRYPOINT python chronos.py
