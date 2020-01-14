@@ -65,7 +65,7 @@ new Vue({
         store.commit('scripts', response.data)
         store.commit('connected', true)
       }).catch(() => {
-        store.commit('connected', true)
+        store.commit('connected', false)
       })
     },
   }

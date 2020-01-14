@@ -3,15 +3,16 @@
     <h1>{{ local_script.name }}</h1>
 
     <div class="s">
-      <h3>
+      <!--h3>
         <strong>{{ this.$t('quick_actions') }}</strong>
-      </h3>
+      </h3-->
 
       <b-button
         @click="install_requirements"
         size="is-standard"
         type="is-info"
         :class="{'is-loading':isInstallingPip}"
+        rounded
       >{{ this.$t('install_pip_requirements') }}</b-button>
 
       <b-button
@@ -19,9 +20,10 @@
         size="is-standard"
         type="is-info"
         :class="{'is-loading':isExecuting}"
+        rounded
       >{{ this.$t('execute') }}</b-button>
 
-      <b-button @click="deletePrompt" size="is-standard" type="is-danger">{{ this.$t('delete') }}</b-button>
+      <b-button @click="deletePrompt" size="is-standard" type="is-danger" rounded>{{ this.$t('delete') }}</b-button>
     </div>
 
     <b-tabs class="block" type="is-boxed" color="blue">
@@ -57,7 +59,7 @@
             <strong>{{ this.$t('python_script') }}</strong>
           </h3>
 
-          <prism-editor v-model="local_script.contents" language="python"></prism-editor>
+          <codemirror :value="local_script.contents" :options="cmOptions" @input="onCodeChange"></codemirror>
         </div>
         
       </b-tab-item>
@@ -139,15 +141,15 @@
 </template>
 
 <script>
-import "@/prism.js";
-import "prismjs/themes/prism.css";
-
-import PrismEditor from "vue-prism-editor";
+import { codemirror } from 'vue-codemirror'
+import 'codemirror/mode/python/python.js'
+import 'codemirror/lib/codemirror.css'
+import 'codemirror/theme/base16-dark.css'
 
 export default {
   name: "ScriptEditor",
   components: {
-    PrismEditor
+    codemirror
   },
   props: {
     script: {
@@ -160,7 +162,13 @@ export default {
       snackbarOpen: false,
       isInstallingPip: false,
       isExecuting: false,
-      local_script: this.script
+      local_script: this.script,
+      cmOptions: {
+        tabSize: 4,
+        theme: 'base16-dark',
+        lineNumbers: true,
+        line: true,
+      }
     };
   },
   watch: {
@@ -187,6 +195,9 @@ export default {
   },
   mounted() {},
   methods: {
+    onCodeChange(newCode) {
+      this.local_script.contents = newCode
+    },
     detect_changes() {
       if (
         !this.snackbarOpen &&
@@ -347,7 +358,7 @@ export default {
   margin-bottom: 20px;
 }
 
-button {
+.button {
   margin-right: 10px;
 }
 
