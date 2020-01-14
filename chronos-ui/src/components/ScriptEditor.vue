@@ -85,7 +85,7 @@
         <br />
       </p>
 
-      <div v-for="l in local_script.logs">
+      <div v-for="l in local_script.logs" :key="l.date">
         <b-collapse class="card" aria-id="contentIdForA11y3" :open="false">
             <div
                 slot="trigger"
@@ -104,7 +104,11 @@
             </div>
             <div class="card-content">
                 <div class="content">
-                    <pre>{{ l.text }}</pre>
+                    <code>stdout</code>
+                    <pre>{{ l.stdout }}</pre>
+
+                    <code>stderr</code>
+                    <pre>{{ l.stderr }}</pre>
                 </div>
             </div>
         </b-collapse>
@@ -171,8 +175,6 @@ export default {
 
   },
   methods: {
-
-
     detect_changes() {
 
         if(
@@ -230,6 +232,8 @@ export default {
             message: this.$t('pip_requirements_installed'),
             type: 'is-success'
         })
+
+        this.$modal.open('<pre>' + response.data.response + '</pre>')
       }).catch(error => {
         this.isInstallingPip = false;
         this.$toast.open({
@@ -247,7 +251,21 @@ export default {
       this.$http.get(this.api + '/script/' + this.local_script.uid + '/execute').then(response => {
         this.isExecuting = false;
 
-        this.$modal.open('<pre>' + response.data.response + '</pre>')
+        let stdout = 'no output.';
+        if(response.data.response.stdout != '') {
+          stdout = response.data.response.stdout
+        }
+
+        let stderr = 'no output.';
+        if(response.data.response.stderr != '') {
+          stdout = response.data.response.stderr
+        }
+
+        let modalContent = '<code>stdout</code><br><pre>' + stdout
+        modalContent += '</pre><br><code>stderr</code><br><pre>' + stderr
+        modalContent += '</pre>'
+
+        this.$modal.open(modalContent)
       }).catch(error => {
         this.isExecuting = false;
         this.$toast.open({

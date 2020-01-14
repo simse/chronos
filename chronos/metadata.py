@@ -35,6 +35,7 @@ class Log(Model):
     """Log model to store output from each script execution."""
     script = ForeignKeyField(Script, backref='logs')
     text = TextField()
+    error = TextField()
     date = DateTimeField(default=datetime.datetime.utcnow)
     exitcode = IntegerField(default=0)
 

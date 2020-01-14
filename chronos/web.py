@@ -123,7 +123,7 @@ def install_requirements(uid):
 def execute(uid):
     return jsonify(
         {
-            'response': chronos.script.Script(uid).execute().decode('utf-8')
+            'response': chronos.script.Script(uid).execute()
         }
     ), 200
 

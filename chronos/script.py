@@ -75,7 +75,8 @@ class Script():
 
         for l in chronos.metadata.Log.select().where(chronos.metadata.Log.script_id == self.db.id).order_by(chronos.metadata.Log.date.desc()).limit(limit):
             logs.append({
-                'text': l.text,
+                'stdout': l.text,
+                'stderr': l.error,
                 'date': l.date,
                 'exitcode': l.exitcode
             })
@@ -120,16 +121,12 @@ class Script():
 
         output, error = process.communicate()
 
-        # Check if it errored or was successful
-        process_output = ''
-        if process.returncode == 0:
-            process_output = output
-        else:
-            process_output = error
-
         # Log the output
-        log = chronos.metadata.Log(script=self.db, text=process_output, exitcode=process.returncode)
+        log = chronos.metadata.Log(script=self.db, text=output, error=error, exitcode=process.returncode)
         log.save()
 
-        # Return text output
-        return process_output
+        # Return stdout and stderr
+        return {
+            'stdout': output.decode('utf-8'),
+            'stderr': error.decode('utf-8')
+        }

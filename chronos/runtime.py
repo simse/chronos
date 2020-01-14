@@ -29,7 +29,7 @@ def create_script(name=None):
     # Find script path given UID
     path = CHRONOS + os.path.sep + 'scripts' + os.path.sep + uid
 
-    # Create folder, if it already exists, continue
+    # Create folder, if it doesn't already exist
     if not os.path.isdir(path):
         os.mkdir(path)
     else:
