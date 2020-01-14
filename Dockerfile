@@ -29,7 +29,7 @@ ENV CHRONOS=yes_sir_docker
 
 # Install common packages
 RUN pip install cython
-RUN apt install freedts-dev
+RUN apt-get install -y freetds-dev
 RUN pip install pymssql
 
 # Install Python dependencies
