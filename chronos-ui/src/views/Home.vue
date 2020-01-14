@@ -20,7 +20,7 @@
         </div>
       </div>
       <div class="column">
-        <ScriptEditor v-if="selectedScript != null" :script="getScript(this.selectedScript)" />
+        <ScriptEditor v-if="selectedScript != null" :script="getScript(this.selectedScript)" @script-deleted="selectedScript = null"/>
 
         <div class="no-script">
           <p v-if="selectedScript == null">{{ $t('no_script_selected') | capitalize }}</p>

@@ -138,14 +138,12 @@ export default {
     }
   },
   data() {
-
     return {
       snackbarOpen: false,
       isInstallingPip: false,
       isExecuting: false,
       local_script: this.script
     }
-
   },
   watch: {
     script: function() {
@@ -195,17 +193,9 @@ export default {
                 }
             })
         }
-
-        //if(this.snackbarOpen &&
-        //    JSON.stringify(this.local_script) != JSON.stringify(this.script)
-        //) {
-        //    //this.$snackbar.close()
-        //    this.snackbarOpen = false
-        //}
     },
 
     save() {
-
       this.$http.put(this.api + '/script/' + this.local_script.uid, {
         name: this.local_script.name,
         interval: this.local_script.interval,
@@ -215,10 +205,7 @@ export default {
         cron_enabled: this.local_script.cron_enabled,
         contents: this.local_script.contents,
         requirements: this.local_script.requirements
-      }).then(() => {
-
-      })
-
+      }).then(() => {})
     },
 
     install_requirements() {
@@ -296,7 +283,8 @@ export default {
             message: this.$t('script_deleted'),
             type: 'is-success'
         })
-
+        
+        this.$emit('script-deleted')
       }).catch(() => {
         this.$toast.open({
             message: this.$t('script_delete_failed'),
