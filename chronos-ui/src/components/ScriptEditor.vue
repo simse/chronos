@@ -86,7 +86,7 @@
           </b-field>
 
           <b-field :label="this.$t('cron_expression')" v-show="local_script.cron_enabled">
-            <b-input v-model="local_script.cron" type="number" size="is-large"></b-input>
+            <b-input v-model="local_script.cron" size="is-large"></b-input>
           </b-field>
         </div>
       </b-tab-item>
