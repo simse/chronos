@@ -30,27 +30,25 @@ class Script(Resource):
         except chronos.metadata.ScriptDoesNotExist:
             return null, 404
 
-
     def post(self, uid):
         """Create new script. This is a slow function."""
         parser = reqparse.RequestParser()
-        parser.add_argument('name')
+        parser.add_argument("name")
         args = parser.parse_args()
 
-        return create_script(args['name']), 200
-
+        return create_script(args["name"]), 200
 
     def put(self, uid):
         """Update script."""
         parser = reqparse.RequestParser()
-        parser.add_argument('name')
-        parser.add_argument('interval')
-        parser.add_argument('cron')
-        parser.add_argument('enabled', type=bool)
-        parser.add_argument('interval_enabled', type=bool)
-        parser.add_argument('cron_enabled', type=bool)
-        parser.add_argument('contents')
-        parser.add_argument('requirements')
+        parser.add_argument("name")
+        parser.add_argument("interval")
+        parser.add_argument("cron")
+        parser.add_argument("enabled", type=bool)
+        parser.add_argument("interval_enabled", type=bool)
+        parser.add_argument("cron_enabled", type=bool)
+        parser.add_argument("contents")
+        parser.add_argument("requirements")
         args = parser.parse_args()
 
         try:
@@ -58,47 +56,46 @@ class Script(Resource):
             model = script.db
 
             # Update each field if it exists
-            if args['name'] is not None:
-                model.name = args['name']
+            if args["name"] is not None:
+                model.name = args["name"]
 
-            if args['interval'] is not None:
-                model.interval = args['interval']
+            if args["interval"] is not None:
+                model.interval = args["interval"]
 
-            if args['enabled'] is not None:
-                model.enabled = args['enabled']
+            if args["enabled"] is not None:
+                model.enabled = args["enabled"]
 
-            if args['cron'] is not None:
-                model.cron = args['cron']
+            if args["cron"] is not None:
+                model.cron = args["cron"]
 
-            if args['interval_enabled'] is not None:
-                model.interval_enabled = args['interval_enabled']
+            if args["interval_enabled"] is not None:
+                model.interval_enabled = args["interval_enabled"]
 
-            if args['cron_enabled'] is not None:
-                model.cron_enabled = args['cron_enabled']
+            if args["cron_enabled"] is not None:
+                model.cron_enabled = args["cron_enabled"]
 
-            if args['contents'] is not None:
-                script.write_contents(args['contents'])
+            if args["contents"] is not None:
+                script.write_contents(args["contents"])
 
-            if args['requirements'] is not None:
-                script.write_requirements(args['requirements'])
+            if args["requirements"] is not None:
+                script.write_requirements(args["requirements"])
 
             model.save()
 
-            return 'OK', 200
+            return "OK", 200
 
         except KeyError:
             return None, 404
-
 
     def delete(self, uid):
         """Delete script."""
         chronos.script.Script(uid).delete()
 
-        return 'OK', 200
+        return "OK", 200
 
 
 # Get all scripts
-@app.route('/api/scripts')
+@app.route("/api/scripts")
 def scripts():
     scripts = []
 
@@ -109,41 +106,36 @@ def scripts():
 
 
 # Install Pip requirements for specific script. This is a slow function.
-@app.route('/api/script/<string:uid>/install_requirements')
+@app.route("/api/script/<string:uid>/install_requirements")
 def install_requirements(uid):
-    return jsonify(
-        {
-            'response': chronos.script.Script(uid).install_requirements()
-        }
-    ), 200
+    return jsonify({"response": chronos.script.Script(uid).install_requirements()}), 200
 
 
 # Execute specific script and return result.
-@app.route('/api/script/<string:uid>/execute')
+@app.route("/api/script/<string:uid>/execute")
 def execute(uid):
-    return jsonify(
-        {
-            'response': chronos.script.Script(uid).execute()
-        }
-    ), 200
+    return jsonify({"response": chronos.script.Script(uid).execute()}), 200
 
 
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.
-ui_path = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'chronos-ui/dist')
+ui_path = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "chronos-ui/dist"
+)
 
-@app.route('/', methods=['GET'])
+
+@app.route("/", methods=["GET"])
 def serve_dir_directory_index():
-    return send_from_directory(ui_path, 'index.html')
+    return send_from_directory(ui_path, "index.html")
 
 
-@app.route('/<path:path>', methods=['GET'])
+@app.route("/<path:path>", methods=["GET"])
 def serve_file_in_dir(path):
 
     if not os.path.isfile(os.path.join(ui_path, path)):
-        path = os.path.join(path, 'index.html')
+        path = os.path.join(path, "index.html")
 
     return send_from_directory(ui_path, path)
 
 
 # Register script API resource.
-api.add_resource(Script, '/api/script/<string:uid>')
+api.add_resource(Script, "/api/script/<string:uid>")

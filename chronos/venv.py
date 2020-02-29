@@ -11,7 +11,7 @@ from chronos.config import *
 
 def get_venv_folder(uid):
     """Returns location of virtualenv folder given script UID"""
-    return CHRONOS + os.path.sep + 'scripts' + os.path.sep + uid + os.path.sep + '.venv'
+    return CHRONOS + os.path.sep + "scripts" + os.path.sep + uid + os.path.sep + ".venv"
 
 
 def create_env(uid):
@@ -26,9 +26,9 @@ def create_env(uid):
 
 def get_activate(uid):
     """Returns location of virtualenv activate script given UID"""
-    return get_venv_folder(uid) + '/bin/activate'
+    return get_venv_folder(uid) + "/bin/activate"
 
 
 def get_python(uid):
     """Returns location of virtualenv python binary given UID"""
-    return get_venv_folder(uid) + '/bin/python'
+    return get_venv_folder(uid) + "/bin/python"

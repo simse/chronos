@@ -11,8 +11,8 @@ from chronos.web import app
 
 
 # Check that the Docker environment variable is set. This is merely meant as a warning.
-if os.getenv('CHRONOS') != 'yes_sir_docker':
-    exit('Sorry. This program should only run in a Docker container.')
+if os.getenv("CHRONOS") != "yes_sir_docker":
+    exit("Sorry. This program should only run in a Docker container.")
 
 
 def main():
@@ -28,10 +28,11 @@ def main():
         time.sleep(1 - ((time.time() - starttime) % 1))
         i += 1
 
+
 main_thread = threading.Thread(target=main)
 main_thread.start()
 
 
 # Start REST API
-http_server = WSGIServer(('', 5000), app)
+http_server = WSGIServer(("", 5000), app)
 http_server.serve_forever()
