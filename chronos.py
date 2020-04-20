@@ -4,19 +4,16 @@ import time
 
 # Third-party dependencies
 from gevent.pywsgi import WSGIServer
+from loguru import logger
 
 # First-party dependencies
 from chronos.runtime import *
 from chronos.web import app
 
 
-# Check that the Docker environment variable is set. This is merely meant as a warning.
-if os.getenv("CHRONOS") != "yes_sir_docker":
-    exit("Sorry. This program should only run in a Docker container.")
-
-
 def main():
     """Start main loop."""
+    logger.info("Starting main loop")
     starttime = time.time()
     i = 1
 
@@ -30,9 +27,19 @@ def main():
 
 
 main_thread = threading.Thread(target=main)
-main_thread.start()
+try:
+    main_thread.start()
+except(KeyboardInterrupt):
+    exit()
 
+
+logger.info("Starting API server")
+class devnull:
+    write = lambda _: None
 
 # Start REST API
-http_server = WSGIServer(("", 5000), app)
-http_server.serve_forever()
+http_server = WSGIServer(("", 5000), app, log=devnull)
+try:
+    http_server.serve_forever()
+except(KeyboardInterrupt):
+    exit()

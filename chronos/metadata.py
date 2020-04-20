@@ -2,10 +2,12 @@
 from pathlib import Path
 import datetime
 import os
+import logging
 
 # Third-party dependencies
 from peewee import *
 from peewee_migrate import Router
+from loguru import logger
 
 # First-party dependencies
 from chronos.config import CHRONOS
@@ -55,17 +57,11 @@ class Setting(Model):
         database = db
 
 
-# Check if database is empty, and then bring forward to
+logger.debug("Running database migrations")
 
 
-# Execute model migrations
-# Run migrations
+logging.getLogger('peewee_migrate').setLevel(logging.CRITICAL) # Surpress output from peewee_migrate
 router = Router(db)
 router.run()
 
-
-# Opens database connection
-# db.connect()
-
-# Makes sure tables exist (ie. creates new table if a new table has been defined since last execution)
-# db.create_tables([Script, Log, Setting])
+logger.debug("Database migration complete")

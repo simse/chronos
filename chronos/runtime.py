@@ -5,6 +5,7 @@ import threading
 
 # Third-party dependencies
 import cronex
+from loguru import logger
 
 # First-party dependencies
 from chronos.util import *
@@ -76,9 +77,8 @@ pip install -r "{}"'''.format(
 
 def tick(second):
     """This function is called every second, and checks if anything needs to be executed."""
-    print("=" * 15)
-    print("Tick: {}".format(second))
-    print(datetime.now())
+    if(second % 60 == 0):
+        logger.info("Main loop is still alive, uptime is now: {} seconds", second)
 
     # Loop through every script metadata
     for script in chronos.metadata.Script.select():
@@ -104,6 +104,3 @@ def tick(second):
                 # Execute script in seperate thread, such that the loop is not affected
                 x = threading.Thread(target=s.execute)
                 x.start()
-
-    print("=" * 15)
-    print()
