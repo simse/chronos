@@ -1,4 +1,4 @@
-"""Peewee migrations -- 003_add_boolean_interval_cron.py.
+"""Peewee migrations -- 005_tasks_table.py.
 
 Some examples (model - class or model name)::
 
@@ -34,7 +34,9 @@ SQL = pw.SQL
 
 
 def migrate(migrator, database, fake=False, **kwargs):
-    migrator.sql('ALTER TABLE "log" ADD error VARCHAR(255)')
+    migrator.sql(
+        'CREATE TABLE IF NOT EXISTS "task" ("id" INTEGER NOT NULL PRIMARY KEY, "task_id" VARCHAR(255) NOT NULL, "task_arguments" TEXT NOT NULL DEFAULT "}", "priority" VARCHAR(255) NOT NULL DEFAULT "ROUTINE", "status" VARCHAR(255) NOT NULL DEFAULT "WAITING", "output" TEXT, "time_scheduled" DATETIME NOT NULL, "time_started" DATETIME, "time_finished" DATETIME)'
+    )
 
 
 def rollback(migrator, database, fake=False, **kwargs):

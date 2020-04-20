@@ -34,10 +34,15 @@ SQL = pw.SQL
 
 
 def migrate(migrator, database, fake=False, **kwargs):
-    migrator.sql('CREATE TABLE IF NOT EXISTS "setting" ("id" INTEGER NOT NULL PRIMARY KEY, "key" VARCHAR(255) NOT NULL, "value" TEXT NOT NULL)')
-    migrator.sql('CREATE TABLE IF NOT EXISTS "script" ("id" INTEGER NOT NULL PRIMARY KEY, "name" VARCHAR(255) NOT NULL, "uid" VARCHAR(255) NOT NULL, "interval" INTEGER NOT NULL, "enabled" INTEGER NOT NULL)')
-    migrator.sql('CREATE TABLE IF NOT EXISTS "log" ("id" INTEGER NOT NULL PRIMARY KEY, "script_id" INTEGER NOT NULL, "text" TEXT NOT NULL, "date" DATETIME NOT NULL, "exitcode" INTEGER NOT NULL, FOREIGN KEY ("script_id") REFERENCES "script" ("id"))')
-
+    migrator.sql(
+        'CREATE TABLE IF NOT EXISTS "setting" ("id" INTEGER NOT NULL PRIMARY KEY, "key" VARCHAR(255) NOT NULL, "value" TEXT NOT NULL)'
+    )
+    migrator.sql(
+        'CREATE TABLE IF NOT EXISTS "script" ("id" INTEGER NOT NULL PRIMARY KEY, "name" VARCHAR(255) NOT NULL, "uid" VARCHAR(255) NOT NULL, "interval" INTEGER NOT NULL, "enabled" INTEGER NOT NULL)'
+    )
+    migrator.sql(
+        'CREATE TABLE IF NOT EXISTS "log" ("id" INTEGER NOT NULL PRIMARY KEY, "script_id" INTEGER NOT NULL, "text" TEXT NOT NULL, "date" DATETIME NOT NULL, "exitcode" INTEGER NOT NULL, FOREIGN KEY ("script_id") REFERENCES "script" ("id"))'
+    )
 
 
 def rollback(migrator, database, fake=False, **kwargs):

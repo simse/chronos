@@ -12,6 +12,7 @@ from chronos.util import *
 from chronos.venv import *
 import chronos.metadata
 from chronos.script import Script
+from chronos.task import dispatch_task
 
 
 def create_script(name=None):
@@ -77,7 +78,9 @@ pip install -r "{}"'''.format(
 
 def tick(second):
     """This function is called every second, and checks if anything needs to be executed."""
-    if(second % 60 == 0):
+    if second == 1:
+        logger.info("Main loop started")
+    if second % 60 == 0:
         logger.info("Main loop is still alive, uptime is now: {} seconds", second)
 
     # Loop through every script metadata
@@ -92,8 +95,11 @@ def tick(second):
             # Check that the interval is a multiple of the current tick
             if second % script.interval == 0:
                 # Execute script in seperate thread, such that the loop is not affected
-                x = threading.Thread(target=s.execute)
-                x.start()
+                # x = threading.Thread(target=s.execute)
+                # x.start()
+                dispatch_task(
+                    "execute_script", {"script_uid": script.uid}, task_priority="NOW"
+                )
 
         if script.cron is not None and script.enabled and second % 60 == 0:
             # Evaluate cron expression

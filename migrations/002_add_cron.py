@@ -37,6 +37,5 @@ def migrate(migrator, database, fake=False, **kwargs):
     migrator.sql('ALTER TABLE "script" ADD cron varchar(255)')
 
 
-
 def rollback(migrator, database, fake=False, **kwargs):
     """Write your rollback migrations here."""

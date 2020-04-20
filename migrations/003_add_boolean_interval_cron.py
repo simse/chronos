@@ -38,6 +38,5 @@ def migrate(migrator, database, fake=False, **kwargs):
     migrator.sql('ALTER TABLE "script" ADD cron_enabled INTEGER NOT NULL DEFAULT 1')
 
 
-
 def rollback(migrator, database, fake=False, **kwargs):
     """Write your rollback migrations here."""

@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE
 
 # Third-party dependencies
 from playhouse.shortcuts import model_to_dict
+from loguru import logger
 
 # First-party dependencies
 import chronos.metadata
@@ -143,6 +144,8 @@ class Script:
         """Execute script"""
         script_path = self.execute_path
 
+        logger.debug("Executing script: {}", self.dict["name"])
+
         # Run the script
         process = Popen(
             ["bash", script_path], stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=-1
@@ -155,6 +158,8 @@ class Script:
             script=self.db, text=output, error=error, exitcode=process.returncode
         )
         log.save()
+
+        logger.debug("Script executed and output logged: {}", self.dict["name"])
 
         # Return stdout and stderr
         return {"stdout": output.decode("utf-8"), "stderr": error.decode("utf-8")}
