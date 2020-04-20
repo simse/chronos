@@ -1,6 +1,7 @@
 # Python dependencies
 import threading
 import time
+import sys
 
 # Third-party dependencies
 from gevent.pywsgi import WSGIServer
@@ -10,6 +11,8 @@ from loguru import logger
 from chronos.runtime import *
 from chronos.web import app
 
+IS_RUNNING = True
+
 
 def main():
     """Start main loop."""
@@ -17,7 +20,7 @@ def main():
     starttime = time.time()
     i = 1
 
-    while True:
+    while IS_RUNNING:
         # Call runtime tick function
         tick(i)
 
@@ -25,12 +28,12 @@ def main():
         time.sleep(1 - ((time.time() - starttime) % 1))
         i += 1
 
+    logger.info("Exiting main loop")
+
 
 main_thread = threading.Thread(target=main)
-try:
-    main_thread.start()
-except(KeyboardInterrupt):
-    exit()
+main_thread.start()
+
 
 
 logger.info("Starting API server")
@@ -42,4 +45,4 @@ http_server = WSGIServer(("", 5000), app, log=devnull)
 try:
     http_server.serve_forever()
 except(KeyboardInterrupt):
-    exit()
+    IS_RUNNING = False
