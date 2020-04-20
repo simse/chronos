@@ -8,12 +8,13 @@ from gevent.pywsgi import WSGIServer
 from loguru import logger
 
 # First-party dependencies
-from chronos.runtime import *
 from chronos.web import app
 from chronos.task import execute_next_task
+from chronos.bus import interval_trigger
 
 IS_RUNNING = True
 
+interval_trigger.listen(100, execute_next_task)
 
 def main():
     """Start main loop."""
@@ -22,13 +23,11 @@ def main():
     i = 1
 
     while IS_RUNNING:
-        # Call runtime tick function
-        tick(i)
-
-        execute_next_task()
+        # execute_next_task()
+        interval_trigger.tick()
 
         # Sleep for exactly one second, taking drift and execution time into account
-        time.sleep(1 - ((time.time() - starttime) % 1))
+        time.sleep(0.1 - ((time.time() - starttime) % 0.1))
         i += 1
 
     logger.info("Exiting main loop")
