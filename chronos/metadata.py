@@ -12,7 +12,6 @@ from loguru import logger
 # First-party dependencies
 from chronos.config import CHRONOS
 
-# print("Connecting to database at: {}".format(CHRONOS + os.path.sep + 'chronos.db'))
 """
 Connect to SQLite database. Uses CHRONOS environment variable to find location.
 """
@@ -32,6 +31,7 @@ class Script(Model):
     interval_enabled = BooleanField(default=True)
     cron_enabled = BooleanField(default=True)
     enabled = BooleanField(default=True)
+    triggers = TextField(default="{}")
 
     class Meta:
         database = db

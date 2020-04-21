@@ -16,65 +16,7 @@ from chronos.task import dispatch_task
 from chronos.bus import interval_trigger
 
 
-def create_script(name=None):
-    """Create a new script by creating a virtualenv, creating .sh scripts and registering metadata."""
-    if name is None:
-        # Generate random UID if no name is given
-        uid = generate_uid()
-    else:
-        # Convert name to UID by "sluggifying" it (e.g. "Simon's script" -> "simons-script")
-        uid = for_uid(name)
 
-    # Check that the scripts folder exists (important for first-time users)
-    if not os.path.isdir(CHRONOS + os.path.sep + "scripts"):
-        os.mkdir(CHRONOS + os.path.sep + "scripts")
-
-    # Find script path given UID
-    path = CHRONOS + os.path.sep + "scripts" + os.path.sep + uid
-
-    # Create folder, if it doesn't already exist
-    if not os.path.isdir(path):
-        os.mkdir(path)
-    else:
-        return uid
-
-    # Create virtual environment
-    create_env(uid)
-
-    # Create database entry
-    script = chronos.metadata.Script(name=name, uid=uid)
-    script.save()
-
-    # Create script and requirements.txt file
-    script_path = path + os.path.sep + uid + ".py"
-    requirements_path = path + os.path.sep + "requirements.txt"
-    open(script_path, "a").close()
-    open(requirements_path, "a").close()
-
-    # Create execute script
-    # TODO: Move this script to a folder so it can be copied instead
-    with open(path + os.path.sep + "execute.sh", "w") as file:
-        file.write(
-            '''#!/bin/bash
-cd "{}"
-source "{}"
-python "{}"'''.format(
-                path, get_activate(uid), script_path
-            )
-        )
-
-    # Create pip install
-    # TODO: Move this script to a folder so it can be copied instead
-    with open(path + os.path.sep + "install.sh", "w") as file:
-        file.write(
-            '''#!/bin/bash
-source "{}"
-pip install -r "{}"'''.format(
-                get_activate(uid), requirements_path
-            )
-        )
-
-    return uid
 
 
 def evalaute_script_interval_triggers(tick, interval):

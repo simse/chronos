@@ -10,7 +10,7 @@ from loguru import logger
 # First-party dependencies
 from chronos.web import app
 from chronos.task import execute_next_task
-from chronos.bus import interval_trigger
+from chronos.bus import interval_trigger, on_startup_trigger
 
 IS_RUNNING = True
 
@@ -21,6 +21,8 @@ def main():
     logger.info("Starting main loop")
     starttime = time.time()
     i = 1
+
+    on_startup_trigger.tick()
 
     while IS_RUNNING:
         # execute_next_task()

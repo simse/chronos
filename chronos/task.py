@@ -32,10 +32,13 @@ def execute_task(task):
     task.save()
 
     task_module.run(task.task_arguments)
+    
     task.time_finished = datetime.datetime.now()
     task.status = "FINISHED"
     task.save()
     logger.debug("Finished task with ID: {}", task.id)
+
+    return
 
 
 def execute_next_task():

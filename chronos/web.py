@@ -1,3 +1,7 @@
+# Python imports
+import time
+import os
+
 # Third-party dependencies
 from flask import Flask, jsonify, send_from_directory, Response
 from flask_restful import Api, Resource, reqparse
@@ -5,7 +9,7 @@ from flask_cors import CORS
 
 # First-party dependencies
 import chronos.script
-from chronos.runtime import *
+from chronos.task import dispatch_task
 
 
 # Create Flask app
@@ -36,7 +40,9 @@ class Script(Resource):
         parser.add_argument("name")
         args = parser.parse_args()
 
-        return create_script(args["name"]), 200
+
+        dispatch_task("create_script", {"name":args["name"]}, "NOW")
+        return {}, 200
 
     def put(self, uid):
         """Update script."""
@@ -115,6 +121,19 @@ def install_requirements(uid):
 @app.route("/api/script/<string:uid>/execute")
 def execute(uid):
     return jsonify({"response": chronos.script.Script(uid).execute()}), 200
+
+
+
+def event_stream():
+    for x in range(10):
+        yield "data: {}\n\n".format(x)
+        time.sleep(1)
+
+
+@app.route('/stream')
+def stream():
+    return Response(event_stream(),
+                          mimetype="text/event-stream")
 
 
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.

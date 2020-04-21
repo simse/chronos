@@ -1,7 +1,3 @@
-def parse_triggers():
-    pass
-
-
 class IntervalTrigger:
     def __init__(self, interval):
         self._tick = 0
@@ -22,10 +18,13 @@ class IntervalTrigger:
         self.listeners.append([interval, callback, clock])
 
 
-
-class CronTrigger:
-    pass
-
-
 class OnStartupTrigger:
-    pass
+    def __init__(self):
+        self.listeners = []
+
+    def listen(self, callback):
+        self.listeners.append(callback)
+
+    def tick(self):
+        for listener in self.listeners:
+            listener()
