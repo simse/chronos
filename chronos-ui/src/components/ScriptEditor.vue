@@ -334,14 +334,13 @@ export default {
 .script-editor {
   background: #fff;
   padding: 25px 32px;
-  box-shadow: 0 4px 6px rgba(50, 50, 93, 0.11), 0 1px 3px rgba(0, 0, 0, 0.08);
-  border-radius: 8px;
-  margin-top: 17px;
+  min-height: calc(100vh - 66px);
 
   h1 {
     margin-bottom: 20px;
     margin-top: 0px;
-    font-size: 2rem;
+    font-size: 2.4rem;
+    font-weight: 700;
   }
 }
 

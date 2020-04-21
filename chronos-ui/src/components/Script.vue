@@ -1,13 +1,13 @@
 <template>
   <div class="script">
-    <div class="icon-wrapper success" v-if="script.enabled">
+    <div class="icon-wrapper success" v-if="false">
       <b-icon
           icon="check"
           size="is-medium">
       </b-icon>
     </div>
 
-    <div class="icon-wrapper warning" v-if="!script.enabled">
+    <div class="icon-wrapper warning" v-if="false">
       <b-icon
           icon="alert"
           size="is-medium">
@@ -82,12 +82,10 @@ export default {
 .script {
   display: flex;
   align-items: center;
-  padding: 20px;
+  padding: 12px 8px;
   background: #fff;
-  border-radius: 5px;
-  margin: 17px 0;
-  box-shadow: 0 4px 6px rgba(50,50,93,.11), 0 1px 3px rgba(0,0,0,.08);
-  transition: .1s box-shadow;
+  border-bottom: 1px solid lightgrey;
+  //border-right: 1px solid lightgrey;
 
   &.selected {
     background: hsl(217, 71%, 53%);
@@ -100,7 +98,7 @@ export default {
   }
 
   &:hover {
-    box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+    background: lightgray;
     cursor: pointer;
   }
 

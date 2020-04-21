@@ -3,14 +3,14 @@
 
     <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
-    <h2 class="bold">{{ $t('scripts') | capitalize }}
+    <!--h2 class="bold">{{ $t('scripts') | capitalize }}
       <b-button @click="newScriptModal" size="is-small" type="is-info">
         {{ $t('new_script') | capitalize }}
       </b-button>
-    </h2>
+    </h2-->
 
-    <div class="columns">
-      <div class="column is-one-third">
+    <div class="columns is-gapless">
+      <div class="column is-one-quarter border-right">
 
 
         <div v-for="s in scripts" :key="s.uid">
@@ -22,8 +22,8 @@
       <div class="column">
         <ScriptEditor v-if="selectedScript != null" :script="getScript(this.selectedScript)" @script-deleted="selectedScript = null"/>
 
-        <div class="no-script">
-          <p v-if="selectedScript == null">{{ $t('no_script_selected') | capitalize }}</p>
+        <div class="no-script" v-if="selectedScript == null">
+          <p>{{ $t('no_script_selected') | capitalize }}</p>
         </div>
       </div>
     </div>
@@ -121,7 +121,8 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 150px 0;
+    //padding: 150px 0;
+    height: calc(100vh - 66px);
 
     font-size: 2rem;
     opacity: .5;
@@ -139,5 +140,10 @@ export default {
               color: hsl(217, 71%, 53%);
           }
       }
+  }
+
+  .border-right {
+    border-right: 1px solid lightgray;
+    
   }
 </style>
