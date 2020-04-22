@@ -3,35 +3,29 @@ from pathlib import Path
 import datetime
 import os
 import logging
+import json
 
 # Third-party dependencies
 from peewee import *
-from peewee_migrate import Router
+from playhouse.postgres_ext import *
+import peeweedbevolve
 from loguru import logger
 
 # First-party dependencies
 from chronos.config import CHRONOS
 
-"""
-Connect to SQLite database. Uses CHRONOS environment variable to find location.
-"""
-database_url = CHRONOS + os.path.sep + "chronos.db"
-logger.debug("Connecting to database at: {}", database_url)
-db = SqliteDatabase(database_url)
-logger.debug("Database connection succesful")
 
+logger.debug("Connecting to local Chronos database")
+db = PostgresqlDatabase('chronos', user='chronos', host='192.168.0.4', password='hotfla123As', port=5434)
+logger.debug("Database connection succesful")
 
 class Script(Model):
     """Script model to store metadata about scripts."""
 
     name = CharField()
     uid = CharField()
-    interval = IntegerField(default=0)
-    cron = CharField()
-    interval_enabled = BooleanField(default=True)
-    cron_enabled = BooleanField(default=True)
     enabled = BooleanField(default=True)
-    triggers = TextField(default="{}")
+    triggers = JSONField(default={})
 
     class Meta:
         database = db
@@ -74,10 +68,14 @@ class Task(Model):
         database = db
 
 
+class Migration(Model):
+    name = CharField()
+    status = CharField()
+
+    class Meta:
+        database = db
+
+
 logger.debug("Running database migrations")
-logging.getLogger("peewee_migrate").setLevel(
-    logging.CRITICAL
-)  # Surpress output from peewee_migrate
-router = Router(db)
-router.run()
+db.evolve(interactive=False)
 logger.debug("Database migration complete")

@@ -1,16 +1,18 @@
 # Python dependencies
 import threading
+import logging
 import time
 import sys
+import os
 
 # Third-party dependencies
-from gevent.pywsgi import WSGIServer
 from loguru import logger
 
 # First-party dependencies
 from chronos.web import app
 from chronos.task import execute_next_task
 from chronos.bus import interval_trigger, on_startup_trigger
+from chronos.event import event
 
 IS_RUNNING = True
 
@@ -22,7 +24,7 @@ def main():
     starttime = time.time()
     i = 1
 
-    on_startup_trigger.tick()
+    on_startup_trigger.tick
 
     while IS_RUNNING:
         # execute_next_task()
@@ -41,15 +43,15 @@ main_thread.start()
 
 logger.info("Starting API server")
 
-
-class devnull:
-    write = lambda _: None
+log = logging.getLogger('werkzeug')
+log.disabled = True
+log.setLevel(logging.ERROR)
+os.environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 
 # Start REST API
-http_server = WSGIServer(("", 5000), app, log=devnull)
 try:
     logger.info("API server started")
-    http_server.serve_forever()
+    app.run()
 except (KeyboardInterrupt):
     IS_RUNNING = False

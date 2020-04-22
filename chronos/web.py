@@ -6,14 +6,17 @@ import os
 from flask import Flask, jsonify, send_from_directory, Response
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
+from loguru import logger
 
 # First-party dependencies
 import chronos.script
 from chronos.task import dispatch_task
+from chronos.event import event
 
 
 # Create Flask app
 app = Flask(__name__)
+
 
 # Allow CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
@@ -48,11 +51,8 @@ class Script(Resource):
         """Update script."""
         parser = reqparse.RequestParser()
         parser.add_argument("name")
-        parser.add_argument("interval")
-        parser.add_argument("cron")
-        parser.add_argument("enabled", type=bool)
-        parser.add_argument("interval_enabled", type=bool)
-        parser.add_argument("cron_enabled", type=bool)
+        parser.add_argument("triggers")
+        parser.add_argument("enabled")
         parser.add_argument("contents")
         parser.add_argument("requirements")
         args = parser.parse_args()
@@ -65,20 +65,11 @@ class Script(Resource):
             if args["name"] is not None:
                 model.name = args["name"]
 
-            if args["interval"] is not None:
-                model.interval = args["interval"]
+            if args["triggers"] is not None:
+                model.triggers = args["triggers"]
 
             if args["enabled"] is not None:
                 model.enabled = args["enabled"]
-
-            if args["cron"] is not None:
-                model.cron = args["cron"]
-
-            if args["interval_enabled"] is not None:
-                model.interval_enabled = args["interval_enabled"]
-
-            if args["cron_enabled"] is not None:
-                model.cron_enabled = args["cron_enabled"]
 
             if args["contents"] is not None:
                 script.write_contents(args["contents"])
@@ -125,16 +116,17 @@ def execute(uid):
 
 
 def event_stream():
-    for x in range(10):
-        yield "data: {}\n\n".format(x)
-        time.sleep(1)
+    try:
+        for e in event.listen('test'):
+            yield 'data: %s\n\n' % "test"
+    except(KeyboardInterrupt):
+        logger.info("Stopping Sever Side Event stream")
 
 
 @app.route('/stream')
 def stream():
     return Response(event_stream(),
                           mimetype="text/event-stream")
-
 
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.
 ui_path = os.path.join(

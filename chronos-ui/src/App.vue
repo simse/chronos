@@ -2,6 +2,7 @@
   <div id="app">
     <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700;900&display=swap" rel="stylesheet">
 
     <!--h1 class="is-size-1 title">Chronos</h1>
     <p class="is-size-5 subtitle">{{ $t('version') | capitalize }}: {{ version }}</p-->
@@ -69,7 +70,7 @@ html {
 body {
   background: #f6f9fc;
   min-height: 100vh;
-  font-family: 'Inter' !important;
+  font-family: 'Nunito' !important;
 }
 
 .title,

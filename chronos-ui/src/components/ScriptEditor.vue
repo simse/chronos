@@ -23,128 +23,142 @@
         rounded
       >{{ this.$t('execute') }}</b-button>
 
-      <b-button @click="deletePrompt" size="is-standard" type="is-danger" rounded>{{ this.$t('delete') }}</b-button>
+      <b-button
+        @click="deletePrompt"
+        size="is-standard"
+        type="is-danger"
+        rounded
+      >{{ this.$t('delete') }}</b-button>
     </div>
 
-    <b-tabs class="block" type="is-boxed" color="blue">
-      <b-tab-item>
-        <template slot="header">
-            <b-icon icon="information-outline"></b-icon>
-            <span> {{ this.$t('script_info') }}</span>
-        </template>
+    <b-collapse class="card" animation="slide" aria-id="contentIdForA11y3">
+      <div slot="trigger" class="card-header" role="button" aria-controls="contentIdForA11y3">
+        <p class="card-header-title">
+          <b-icon :icon="'information'"></b-icon>&nbsp;&nbsp;
+          Script info
+        </p>
+        <a class="card-header-icon">
+          <b-icon :icon="'menu-down'"></b-icon>
+        </a>
+      </div>
+      <div class="card-content">
+        <div class="content">
+          <div class="s">
+            <b-field label="Name">
+              <b-input v-model="local_script.name" size="is-large"></b-input>
+            </b-field>
 
-        <div class="s">
+            <b-field label="Script enabled">
+              <b-switch v-model="local_script.enabled" type="is-success"></b-switch>
+            </b-field>
+          </div>
 
-          <b-field label="Name">
-            <b-input v-model="local_script.name" size="is-large"></b-input>
-          </b-field>
+          <div class="s">
+            <h3>
+              <strong>{{ this.$t('pip_requirements') }}</strong>
+            </h3>
 
-          <b-field label="Script enabled">
-            <b-switch v-model="local_script.enabled" type="is-success"></b-switch>
-          </b-field>
-        </div>
+            <b-field label="requirements.txt">
+              <b-input type="textarea" v-model="local_script.requirements"></b-input>
+            </b-field>
+          </div>
 
-        <div class="s">
-          <h3>
-            <strong>{{ this.$t('pip_requirements') }}</strong>
-          </h3>
+          <div class="s">
+            <h3>
+              <strong>{{ this.$t('python_script') }}</strong>
+            </h3>
 
-          <b-field label="requirements.txt">
-            <b-input type="textarea" v-model="local_script.requirements"></b-input>
-          </b-field>
-        </div>
-
-        <div class="s">
-          <h3>
-            <strong>{{ this.$t('python_script') }}</strong>
-          </h3>
-
-          <codemirror :value="local_script.contents" :options="cmOptions" @input="onCodeChange"></codemirror>
-        </div>
-        
-      </b-tab-item>
-
-      <b-tab-item>
-        <template slot="header">
-            <b-icon icon="calendar-check"></b-icon>
-            <span> {{ this.$t('triggers') }}</span>
-        </template>
-
-        <div class="s">
-          <b-field :label="this.$t('enable_interval_trigger')">
-            <b-switch v-model="local_script.interval_enabled" type="is-success"></b-switch>
-          </b-field>
-
-          <b-field :label="this.$t('interval')" v-show="local_script.interval_enabled">
-            <b-input v-model.number="local_script.interval" type="number" size="is-large"></b-input>
-          </b-field>
-
-          <br />
-
-          <b-field :label="this.$t('enable_cron_trigger')">
-            <b-switch v-model="local_script.cron_enabled" type="is-success"></b-switch>
-          </b-field>
-
-          <b-field :label="this.$t('cron_expression')" v-show="local_script.cron_enabled">
-            <b-input v-model="local_script.cron" size="is-large"></b-input>
-          </b-field>
-        </div>
-      </b-tab-item>
-
-      <b-tab-item>
-        <template slot="header">
-            <b-icon icon="format-list-bulleted"></b-icon>
-            <span> {{this.$t('logs')}} <b-tag rounded> {{ local_script.logs.length }} </b-tag> </span>
-        </template>
-
-        <div class="s">
-          <p>
-            <em>{{ this.$t('showing_logs', { logs: local_script.logs.length }) }}</em>
-
-            <br />
-            <br />
-          </p>
-
-          <div v-for="l in local_script.logs" :key="l.date">
-            <b-collapse class="card" aria-id="contentIdForA11y3" :open="false">
-              <div
-                slot="trigger"
-                slot-scope="props"
-                class="card-header"
-                role="button"
-                aria-controls="contentIdForA11y3"
-              >
-                <p class="card-header-title">
-                  <b-tag v-if="l.exitcode == 0" type="is-success">OK</b-tag>
-                  <b-tag v-if="l.exitcode == 1" type="is-danger">ERROR</b-tag>
-                  &nbsp;&nbsp;{{ l.date }}
-                </p>
-                <a class="card-header-icon">
-                  <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
-                </a>
-              </div>
-              <div class="card-content">
-                <div class="content">
-                  <code>stdout</code>
-                  <pre>{{ l.stdout }}</pre>
-
-                  <code>stderr</code>
-                  <pre>{{ l.stderr }}</pre>
-                </div>
-              </div>
-            </b-collapse>
+            <codemirror :value="local_script.contents" :options="cmOptions" @input="onCodeChange"></codemirror>
           </div>
         </div>
-      </b-tab-item>
-    </b-tabs>
+      </div>
+    </b-collapse>
+
+    <b-collapse class="card" animation="slide" aria-id="contentIdForA11y3">
+        <div slot="trigger" class="card-header" role="button" aria-controls="contentIdForA11y3">
+            <p class="card-header-title">
+                <b-icon :icon="'information'"></b-icon>&nbsp;&nbsp;
+                Triggers
+            </p>
+            <a class="card-header-icon">
+            <b-icon :icon="'menu-down'"></b-icon>
+            </a>
+        </div>
+        <div class="card-content">
+            <div class="content">
+                <div class="columns">
+                    <div class="column">
+                        <div class="add-trigger">
+                            <b-icon size="is-medium" :icon="'plus-circle'"></b-icon>
+                            <p>Add trigger</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </b-collapse>
+
+    <b-collapse class="card" animation="slide" aria-id="contentIdForA11y3">
+      <div slot="trigger" class="card-header" role="button" aria-controls="contentIdForA11y3">
+        <p class="card-header-title">
+          <b-icon :icon="'information'"></b-icon>&nbsp;&nbsp;
+          Logs
+        </p>
+        <a class="card-header-icon">
+          <b-icon :icon="'menu-down'"></b-icon>
+        </a>
+      </div>
+      <div class="card-content">
+        <div class="content">
+          <div class="s">
+            <p>
+              <em>{{ this.$t('showing_logs', { logs: local_script.logs.length }) }}</em>
+
+              <br />
+              <br />
+            </p>
+
+            <div v-for="l in local_script.logs" :key="l.date">
+              <b-collapse class="card" aria-id="contentIdForA11y3" :open="false">
+                <div
+                  slot="trigger"
+                  slot-scope="props"
+                  class="card-header"
+                  role="button"
+                  aria-controls="contentIdForA11y3"
+                >
+                  <p class="card-header-title">
+                    <b-tag v-if="l.exitcode == 0" type="is-success">OK</b-tag>
+                    <b-tag v-if="l.exitcode == 1" type="is-danger">ERROR</b-tag>
+                    &nbsp;&nbsp;{{ l.date }}
+                  </p>
+                  <a class="card-header-icon">
+                    <b-icon :icon="props.open ? 'menu-down' : 'menu-up'"></b-icon>
+                  </a>
+                </div>
+                <div class="card-content">
+                  <div class="content">
+                    <code>stdout</code>
+                    <pre>{{ l.stdout }}</pre>
+
+                    <code>stderr</code>
+                    <pre>{{ l.stderr }}</pre>
+                  </div>
+                </div>
+              </b-collapse>
+            </div>
+          </div>
+        </div>
+      </div>
+    </b-collapse>
   </div>
 </template>
 
 <script>
-import { codemirror } from 'vue-codemirror'
-import 'codemirror/mode/python/python.js'
-import 'codemirror/lib/codemirror.css'
-import 'codemirror/theme/base16-dark.css'
+import { codemirror } from "vue-codemirror";
+import "codemirror/mode/python/python.js";
+import "codemirror/lib/codemirror.css";
+import "codemirror/theme/base16-dark.css";
 
 export default {
   name: "ScriptEditor",
@@ -165,9 +179,9 @@ export default {
       local_script: this.script,
       cmOptions: {
         tabSize: 4,
-        theme: 'base16-dark',
+        theme: "base16-dark",
         lineNumbers: true,
-        line: true,
+        line: true
       }
     };
   },
@@ -196,7 +210,7 @@ export default {
   mounted() {},
   methods: {
     onCodeChange(newCode) {
-      this.local_script.contents = newCode
+      this.local_script.contents = newCode;
     },
     detect_changes() {
       if (
@@ -224,10 +238,7 @@ export default {
         .put(this.api + "/script/" + this.local_script.uid, {
           name: this.local_script.name,
           interval: this.local_script.interval,
-          cron: this.local_script.cron,
-          enabled: this.local_script.enabled,
-          interval_enabled: this.local_script.interval_enabled,
-          cron_enabled: this.local_script.cron_enabled,
+          triggers: this.local_script.triggers,
           contents: this.local_script.contents,
           requirements: this.local_script.requirements
         })
@@ -324,6 +335,14 @@ export default {
             type: "is-danger"
           });
         });
+    },
+
+    addTriggerModal() {
+
+    },
+
+    addTrigger() {
+
     }
   }
 };
@@ -363,5 +382,26 @@ export default {
 
 .tabs li.is-active a {
   color: hsl(217, 71%, 53%) !important;
+}
+
+.add-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 200px;
+    width: 200px;
+    border: 1px solid lightgray;
+    border-radius: 4px;
+    transition: .1s background;
+
+    p {
+        margin-top: 15px;
+    }
+
+    &:hover {
+        cursor: pointer;
+        background: darken(#fff, 5%);
+    }
 }
 </style>

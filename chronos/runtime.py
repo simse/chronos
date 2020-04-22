@@ -26,13 +26,13 @@ def evalaute_script_interval_triggers(tick, interval):
         s = Script(script.uid)
 
         # Check that the script is enabled to run and that the interval is above 0
-        if script.interval != 0 and script.enabled:
+        """if script.interval != 0 and script.enabled:
             # Check that the interval is a multiple of the current tick
             if second % script.interval == 0:
                 # Execute script in seperate thread, such that the loop is not affected
                 dispatch_task(
                     "execute_script", {"script_uid": script.uid}, task_priority="NOW"
-                )
+                )"""
 
 
 def evalaute_script_cron_triggers(tick, interval):
@@ -54,4 +54,4 @@ def evalaute_script_cron_triggers(tick, interval):
 
 
 interval_trigger.listen(1000, evalaute_script_interval_triggers, clock=True)
-interval_trigger.listen(1000, evalaute_script_cron_triggers, clock=True)
+# interval_trigger.listen(1000, evalaute_script_cron_triggers, clock=True)

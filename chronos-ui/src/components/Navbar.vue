@@ -32,7 +32,7 @@ export default {
 
 .logo h1 {
     font-size: 1.4rem;
-    font-weight: 700;
+    font-weight: 900;
 }
 
 .items {

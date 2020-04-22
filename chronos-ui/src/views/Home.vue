@@ -3,20 +3,18 @@
 
     <b-loading :is-full-page="true" :active.sync="isLoading" :can-cancel="false"></b-loading>
 
-    <!--h2 class="bold">{{ $t('scripts') | capitalize }}
-      <b-button @click="newScriptModal" size="is-small" type="is-info">
-        {{ $t('new_script') | capitalize }}
-      </b-button>
-    </h2-->
-
     <div class="columns is-gapless">
       <div class="column is-one-quarter border-right">
-
 
         <div v-for="s in scripts" :key="s.uid">
           <div @click="selectScript(s.uid)" :class="{selected: selectedScript == s.uid}">
             <Script :script="s" />
           </div>
+        </div>
+
+        <div class="new-script" @click="newScriptModal">
+          <b-icon :icon="'plus-circle'"></b-icon>
+          New script
         </div>
       </div>
       <div class="column">
@@ -32,7 +30,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import Script from '@/components/Script.vue'
 import ScriptEditor from '@/components/ScriptEditor.vue'
 
@@ -145,5 +142,25 @@ export default {
   .border-right {
     border-right: 1px solid lightgray;
     
+  }
+
+  .new-script {
+    position: fixed;
+    bottom: 0;
+    padding: 22px;
+    text-align: center;
+    width: calc(25% - 1px);
+    background: #fff;
+    font-size: 1.2rem;
+    border-top: 1px solid lightgray;
+
+    &:hover {
+        cursor: pointer;
+      }
+
+    .icon {
+      vertical-align: middle;
+      padding-bottom: 2px;
+    }
   }
 </style>
