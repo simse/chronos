@@ -1,5 +1,5 @@
 <template>
-  <div class="script">
+  <div :class="{script: true, loading: script.loading}">
     <div class="icon-wrapper success" v-if="false">
       <b-icon
           icon="check"
@@ -23,8 +23,15 @@
 
     <div class="meta">
       <h2>{{ script.name }}</h2>
-      <p v-if="!script.creating">{{ $t('last_run') | capitalize }}: {{ lastRun }}</p>
-      <p v-if="script.creating">Creating...</p>
+      <p v-if="!script.loading">{{ $t('last_run') | capitalize }}: {{ lastRun }}</p>
+      <p v-if="script.loading">Creating...</p>
+    </div>
+
+    <div class="loading" v-if="script.loading">
+      <b-icon
+          icon="cached"
+          size="is-medium">
+      </b-icon>
     </div>
   </div>
 </template>
@@ -91,6 +98,10 @@ export default {
     color: #fff;
   }
 
+  &.loading {
+    opacity: 0.7;
+  }
+
   &:hover {
     background: lightgray;
     cursor: pointer;
@@ -124,6 +135,11 @@ export default {
 
   h2 {
     font-size: 1.4rem;
+  }
+
+  .loading {
+    margin-left: auto;
+    margin-right: 20px;
   }
 }
 </style>

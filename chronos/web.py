@@ -13,6 +13,7 @@ from loguru import logger
 import chronos.script
 from chronos.task import dispatch_task
 from chronos.event import event
+from chronos.util import for_uid
 
 
 # Create Flask app
@@ -46,7 +47,7 @@ class Script(Resource):
         args = parser.parse_args()
 
         dispatch_task("create_script", {"name": args["name"]}, "NOW")
-        return {}, 200
+        return {'uid': for_uid(args["name"])}, 200
 
     def put(self, uid):
         """Update script."""

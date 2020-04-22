@@ -89,7 +89,15 @@ export default {
     newScript(name) {
       //this.isLoading = true
 
-      this.$http.post(this.api + '/script/null', {name:name}).then(() => {
+      this.$http.post(this.api + '/script/null', {name:name}).then((response) => {
+
+        EventBus.$emit('addLoadingScript', {
+          name: name,
+          uid: response.data.uid
+        })
+
+        this.selectedScript = response.data.uid
+
         const evtSource = new EventSource(this.api + '/events/script_created');
 
         evtSource.onmessage = function(event) {

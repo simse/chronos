@@ -53,24 +53,39 @@ new Vue({
   mounted() {
     this.loadAllScripts();
 
-    /*this.$nextTick(function () {
-      window.setInterval(() => {
-        this.loadAllScripts();
-      }, 2000);
-    })*/
     EventBus.$on('reloadScripts', () => {
       this.loadAllScripts();
     })
 
+    EventBus.$on('addLoadingScript', (payload) => {
+      this.addLoadingScript(payload.name, payload.uid)
+    })
+
+    
   },
   methods: {
     loadAllScripts() {
       this.$http.get(this.api + '/scripts').then(response => {
         store.commit('scripts', response.data)
         store.commit('connected', true)
+
+        
       }).catch(() => {
         store.commit('connected', false)
       })
+
+      
+    },
+    addLoadingScript(name, uid) {
+      let scripts = this.$store.state.scripts;
+      scripts.push({
+        name: name,
+        uid: uid,
+        loading: true,
+        logs: []
+      })
+
+      store.commit('scripts', scripts)
     },
   }
 }).$mount('#app')

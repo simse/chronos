@@ -1,6 +1,7 @@
 <template>
   <div class="script-editor">
     <h1>{{ local_script.name }}</h1>
+    <p v-if="local_script.loading">Loading...</p>
 
     <div class="s">
       <!--h3>
@@ -155,6 +156,7 @@
 </template>
 
 <script>
+import {EventBus} from '@/bus.js'
 import { codemirror } from "vue-codemirror";
 import "codemirror/mode/python/python.js";
 import "codemirror/lib/codemirror.css";
@@ -217,7 +219,10 @@ export default {
         !this.snackbarOpen &&
         JSON.stringify(this.local_script) != JSON.stringify(this.script)
       ) {
-        this.snackbarOpen = true;
+          if(this.local_script.loading) {
+              this.local_script = this.script;
+          } else {
+              this.snackbarOpen = true;
 
         this.$snackbar.open({
           message: this.$t("unsaved_changes"),
@@ -230,6 +235,9 @@ export default {
             this.save();
           }
         });
+          }
+
+        
       }
     },
 
@@ -328,6 +336,7 @@ export default {
           });
 
           this.$emit("script-deleted");
+          EventBus.$emit('reloadScripts')
         })
         .catch(() => {
           this.$toast.open({
