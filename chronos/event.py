@@ -42,7 +42,7 @@ class Event:
         self._add_event(id)
         self.callbacks[id].append(callback)
 
-    def listen(self, id):
+    def listen(self, id, timeout=60):
         self._add_event(id)
 
         listener_id = id + datetime.datetime.now().strftime("%H%M%S%f")
@@ -52,27 +52,21 @@ class Event:
 
         seen_events = []
 
+
+        event_ids = [id]
         if id == "any":
-            while True:
-                event_ids = list(self.events.keys())
-                for event_id in event_ids:
-                    for event in self.events[event_id]:
-                        event_uid = event["timestamp"] + event["id"]
+            event_ids = list(self.events.keys())
 
-                        if event_uid not in seen_events:
-                            seen_events.append(event_uid)
+        listen_time = 0
 
-                            try:
-                                event["listeners"].remove(listener_id)
-                            except ValueError:
-                                pass
+        while True:
+            
+            if listen_time > timeout:
+                logger.debug("Listener: {} timed out after {} seconds", listener_id, timeout)
+                return
 
-                            yield event
-
-                    time.sleep(0.05)
-        else:
-            while True:
-                for event in self.events[id]:
+            for event_id in event_ids:
+                for event in self.events[event_id]:
                     event_uid = event["timestamp"] + event["id"]
 
                     if event_uid not in seen_events:
@@ -85,6 +79,7 @@ class Event:
 
                         yield event
 
+                listen_time += 0.05
                 time.sleep(0.05)
 
     def garbage_collect(self):

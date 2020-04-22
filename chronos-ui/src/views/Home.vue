@@ -6,15 +6,17 @@
     <div class="columns is-gapless">
       <div class="column is-one-quarter border-right">
 
-        <div v-for="s in scripts" :key="s.uid">
-          <div @click="selectScript(s.uid)" :class="{selected: selectedScript == s.uid}">
-            <Script :script="s" />
+        <div class="scripts">
+          <div v-for="s in scripts" :key="s.uid">
+            <div @click="selectScript(s.uid)" :class="{selected: selectedScript == s.uid}">
+              <Script :script="s" />
+            </div>
           </div>
-        </div>
 
-        <div class="new-script" @click="newScriptModal">
-          <b-icon :icon="'plus-circle'"></b-icon>
-          New script
+          <div class="new-script" @click="newScriptModal">
+            <b-icon :icon="'plus-circle'"></b-icon>
+            New script
+          </div>
         </div>
       </div>
       <div class="column">
@@ -180,5 +182,12 @@ export default {
       vertical-align: middle;
       padding-bottom: 2px;
     }
+  }
+
+  .scripts {
+    //padding-bottom: 100px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    height: calc(100vh - 66px - 73px);
   }
 </style>
