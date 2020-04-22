@@ -23,7 +23,8 @@
 
     <div class="meta">
       <h2>{{ script.name }}</h2>
-      <p>{{ $t('last_run') | capitalize }}: {{ lastRun }}</p>
+      <p v-if="!script.creating">{{ $t('last_run') | capitalize }}: {{ lastRun }}</p>
+      <p v-if="script.creating">Creating...</p>
     </div>
   </div>
 </template>
@@ -31,11 +32,9 @@
 <script>
 import TimeAgo from 'javascript-time-ago'
 import en from 'javascript-time-ago/locale/en'
-import da from 'javascript-time-ago/locale/da'
 
 
 TimeAgo.addLocale(en)
-TimeAgo.addLocale(da)
 
 export default {
   name: 'Script',
@@ -90,11 +89,6 @@ export default {
   &.selected {
     background: hsl(217, 71%, 53%);
     color: #fff;
-
-    .icon-wrapper {
-      background: transparent;
-      //color: #111;
-    }
   }
 
   &:hover {

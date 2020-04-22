@@ -16,9 +16,6 @@ from chronos.task import dispatch_task
 from chronos.bus import interval_trigger
 
 
-
-
-
 def evalaute_script_interval_triggers(tick, interval):
     second = tick * interval / 1000
 

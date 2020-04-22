@@ -18,6 +18,7 @@ IS_RUNNING = True
 
 interval_trigger.listen(100, execute_next_task)
 
+
 def main():
     """Start main loop."""
     logger.info("Starting main loop")
@@ -41,12 +42,22 @@ main_thread = threading.Thread(target=main)
 main_thread.start()
 
 
+def test():
+    event.trigger("test")
+
+
+# interval_trigger.listen(1000, test)
+interval_trigger.listen(100, event.garbage_collect)
+
+
 logger.info("Starting API server")
 
-log = logging.getLogger('werkzeug')
+# Surpress Werkzeug output
+
+log = logging.getLogger("werkzeug")
 log.disabled = True
 log.setLevel(logging.ERROR)
-os.environ['WERKZEUG_RUN_MAIN'] = 'true'
+os.environ["WERKZEUG_RUN_MAIN"] = "true"
 
 
 # Start REST API

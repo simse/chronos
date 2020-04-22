@@ -32,6 +32,7 @@
 <script>
 import Script from '@/components/Script.vue'
 import ScriptEditor from '@/components/ScriptEditor.vue'
+import { EventBus } from '@/bus.js';
 
 export default {
   name: 'home',
@@ -86,22 +87,27 @@ export default {
     },
 
     newScript(name) {
-      this.isLoading = true
+      //this.isLoading = true
 
       this.$http.post(this.api + '/script/null', {name:name}).then(() => {
-        this.$toast.open({
-            message: this.$t('new_script_succcesful', { name: name }),
-            type: 'is-success'
-        })
+        const evtSource = new EventSource(this.api + '/events/script_created');
 
-        this.isLoading = false
+        evtSource.onmessage = function(event) {
+          let payload = JSON.parse(event.data).payload
+
+          if(payload.name === name) {
+            EventBus.$emit('reloadScripts')
+            evtSource.close()
+          }
+        }
+        
       }).catch(() => {
         this.$toast.open({
             message: this.$t('new_script_failed', { name: name }),
             type: 'is-danger'
         })
 
-        this.isLoading = false
+        //this.isLoading = false
       })
     }
   }
@@ -129,6 +135,10 @@ export default {
       background: hsl(217, 71%, 53%);
       color: #fff;
       transition: .2s all;
+
+      &:hover {
+        background: darken(hsl(217, 71%, 53%), 5%) !important;
+      }
 
       .icon-wrapper {
           background: white !important;

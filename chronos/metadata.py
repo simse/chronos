@@ -16,8 +16,11 @@ from chronos.config import CHRONOS
 
 
 logger.debug("Connecting to local Chronos database")
-db = PostgresqlDatabase('chronos', user='chronos', host='192.168.0.4', password='hotfla123As', port=5434)
+db = PostgresqlDatabase(
+    "chronos", user="chronos", host="192.168.0.4", password="hotfla123As", port=5434
+)
 logger.debug("Database connection succesful")
+
 
 class Script(Model):
     """Script model to store metadata about scripts."""

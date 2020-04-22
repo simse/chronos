@@ -3,7 +3,7 @@ import json
 from chronos.script import Script
 
 
-def run(arguments):
+def run(arguments, event):
     arguments = json.loads(arguments)
     script_uid = arguments["script_uid"]
 

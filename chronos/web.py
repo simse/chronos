@@ -1,5 +1,6 @@
 # Python imports
 import time
+import json
 import os
 
 # Third-party dependencies
@@ -20,6 +21,7 @@ app = Flask(__name__)
 
 # Allow CORS
 CORS(app, resources={r"/api/*": {"origins": "*"}})
+CORS(app)
 
 # Register Flask API
 api = Api(app)
@@ -43,8 +45,7 @@ class Script(Resource):
         parser.add_argument("name")
         args = parser.parse_args()
 
-
-        dispatch_task("create_script", {"name":args["name"]}, "NOW")
+        dispatch_task("create_script", {"name": args["name"]}, "NOW")
         return {}, 200
 
     def put(self, uid):
@@ -114,19 +115,19 @@ def execute(uid):
     return jsonify({"response": chronos.script.Script(uid).execute()}), 200
 
 
-
-def event_stream():
+def events(type):
     try:
-        for e in event.listen('test'):
-            yield 'data: %s\n\n' % "test"
-    except(KeyboardInterrupt):
+        for e in event.listen(type):
+            logger.debug("Yielded event: {}", e['uid'])
+            yield "data: %s\n\n" % json.dumps(e)
+    finally:
         logger.info("Stopping Sever Side Event stream")
 
 
-@app.route('/stream')
-def stream():
-    return Response(event_stream(),
-                          mimetype="text/event-stream")
+@app.route("/api/events/<string:type>")
+def stream(type):
+    return Response(events(type), mimetype="text/event-stream")
+
 
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.
 ui_path = os.path.join(

@@ -3,6 +3,7 @@ import Vuex from 'vuex'
 
 import App from './App.vue'
 import router from './router'
+import { EventBus } from './bus.js'
 
 import Buefy from 'buefy'
 import 'buefy/dist/buefy.css'
@@ -52,10 +53,13 @@ new Vue({
   mounted() {
     this.loadAllScripts();
 
-    this.$nextTick(function () {
+    /*this.$nextTick(function () {
       window.setInterval(() => {
         this.loadAllScripts();
       }, 2000);
+    })*/
+    EventBus.$on('reloadScripts', () => {
+      this.loadAllScripts();
     })
 
   },

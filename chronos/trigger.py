@@ -1,7 +1,7 @@
 class IntervalTrigger:
     def __init__(self, interval):
         self._tick = 0
-        self.interval = interval # Set interval in milliseconds
+        self.interval = interval  # Set interval in milliseconds
         self.listeners = []
 
     def tick(self):

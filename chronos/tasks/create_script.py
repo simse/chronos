@@ -7,9 +7,10 @@ from chronos.util import generate_uid, for_uid
 from chronos.venv import *
 import chronos.metadata
 
-def run(arguments):
+
+def run(arguments, event):
     arguments = json.loads(arguments)
-    name = arguments['name']
+    name = arguments["name"]
 
     """Create a new script by creating a virtualenv, creating .sh scripts and registering metadata."""
     if name is "":
@@ -67,5 +68,7 @@ pip install -r "{}"'''.format(
                 get_activate(uid), requirements_path
             )
         )
+
+    event.trigger("script_created", Script(uid).dict)
 
     return uid

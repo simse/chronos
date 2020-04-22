@@ -6,6 +6,7 @@ import threading
 from loguru import logger
 
 from chronos.metadata import Task
+from chronos.event import event
 
 
 def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
@@ -31,8 +32,8 @@ def execute_task(task):
     task.status = "STARTED"
     task.save()
 
-    task_module.run(task.task_arguments)
-    
+    task_module.run(task.task_arguments, event)
+
     task.time_finished = datetime.datetime.now()
     task.status = "FINISHED"
     task.save()

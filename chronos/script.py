@@ -10,6 +10,7 @@ from loguru import logger
 import chronos.metadata
 from chronos.config import *
 from chronos.venv import *
+from chronos.event import event
 
 
 class Script:
@@ -55,6 +56,8 @@ class Script:
 
         # Delete metadata
         self.db.delete_instance()
+
+        event.trigger("script_deleted", self.dict)
 
     def get_contents(self):
         """Read contents of script"""
@@ -160,6 +163,8 @@ class Script:
         log.save()
 
         logger.debug("Script executed and output logged: {}", self.dict["name"])
+
+        event.trigger("script_executed", self.dict)
 
         # Return stdout and stderr
         return {"stdout": output.decode("utf-8"), "stderr": error.decode("utf-8")}
