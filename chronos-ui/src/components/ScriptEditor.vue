@@ -1,5 +1,47 @@
 <template>
   <div class="script-editor">
+      <b-modal :active.sync="triggerModal" scroll="keep">
+            <form action="">
+                <div class="modal-card" style="max-width: 700px;margin: 0 auto;">
+                    <header class="modal-card-head">
+                        <p class="modal-card-title">Add trigger</p>
+                    </header>
+                    <section class="modal-card-body">
+                        <b-field label="Trigger type">
+                            <b-select v-model="triggerType" placeholder="Select a trigger type" rounded>
+                                <option value="interval">Interval trigger</option>
+                                <option value="cron">CRON trigger</option>
+                            </b-select>
+                        </b-field>
+
+                        <b-field label="Interval (s)" v-if="triggerType == 'interval'">
+                            <b-input
+                                type="number"
+                                v-model="triggerOptions.interval"
+                                placeholder="How often the script should execute, in seconds"
+                                required
+                                rounded>
+                            </b-input>
+                        </b-field>
+
+                        <b-field label="CRON expression" v-if="triggerType == 'cron'">
+                            <b-input
+                                type="text"
+                                v-model="triggerOptions.expression"
+                                placeholder="The CRON expression"
+                                required
+                                rounded>
+                            </b-input>
+                        </b-field>
+                    </section>
+                    <footer class="modal-card-foot">
+                        <button class="button" type="button" @click="triggerModal = false">Close</button>
+                        <button class="button is-primary" @click.prevent="addTrigger">Add trigger</button>
+                    </footer>
+                </div>
+            </form>
+        </b-modal>
+
     <h1>{{ local_script.name }}</h1>
     <p v-if="local_script.loading">Loading...</p>
 
@@ -87,9 +129,16 @@
         </div>
         <div class="card-content">
             <div class="content">
+                <em>Press any trigger to delete</em>
+                <br /><br />
+
                 <div class="columns">
+                    <div class="column" v-for="trigger in local_script.triggers" v-bind:key="trigger.type">
+                        <Trigger :trigger="trigger" @removeTrigger="removeTrigger(trigger)" />
+                    </div>
+
                     <div class="column">
-                        <div class="add-trigger">
+                        <div class="add-trigger" @click="addTriggerModal">
                             <b-icon size="is-medium" :icon="'plus-circle'"></b-icon>
                             <p>Add trigger</p>
                         </div>
@@ -119,7 +168,7 @@
               <br />
             </p>
 
-            <div v-for="l in local_script.logs" :key="l.date">
+            <div v-for="(l, index) in local_script.logs" :key="l.date + index">
               <b-collapse class="card" aria-id="contentIdForA11y3" :open="false">
                 <div
                   slot="trigger"
@@ -157,6 +206,7 @@
 
 <script>
 import {EventBus} from '@/bus.js'
+import Trigger from '@/components/Trigger.vue'
 import { codemirror } from "vue-codemirror";
 import "codemirror/mode/python/python.js";
 import "codemirror/lib/codemirror.css";
@@ -165,7 +215,8 @@ import "codemirror/theme/base16-dark.css";
 export default {
   name: "ScriptEditor",
   components: {
-    codemirror
+    codemirror,
+    Trigger
   },
   props: {
     script: {
@@ -175,16 +226,19 @@ export default {
   },
   data() {
     return {
-      snackbarOpen: false,
-      isInstallingPip: false,
-      isExecuting: false,
-      local_script: this.script,
-      cmOptions: {
-        tabSize: 4,
-        theme: "base16-dark",
-        lineNumbers: true,
-        line: true
-      }
+        triggerModal: false,
+        triggerType: null,
+        triggerOptions: {},
+        snackbarOpen: false,
+        isInstallingPip: false,
+        isExecuting: false,
+        local_script: this.script,
+        cmOptions: {
+            tabSize: 4,
+            theme: "base16-dark",
+            lineNumbers: true,
+            line: true
+        }
     };
   },
   watch: {
@@ -222,23 +276,27 @@ export default {
           if(this.local_script.loading) {
               this.local_script = this.script;
           } else {
-              this.snackbarOpen = true;
-
-        this.$snackbar.open({
-          message: this.$t("unsaved_changes"),
-          type: "is-info",
-          position: "is-top",
-          actionText: this.$t("save"),
-          indefinite: true,
-          onAction: () => {
-            this.snackbarOpen = false;
-            this.save();
-          }
-        });
+              this.promptSave()
           }
 
         
       }
+    },
+
+    promptSave() {
+        this.snackbarOpen = true;
+
+            this.$snackbar.open({
+                message: this.$t("unsaved_changes"),
+                type: "is-info",
+                position: "is-top",
+                actionText: this.$t("save"),
+                indefinite: true,
+                onAction: () => {
+                    this.snackbarOpen = false;
+                    this.save();
+                }
+            });
     },
 
     save() {
@@ -347,11 +405,29 @@ export default {
     },
 
     addTriggerModal() {
-
+        this.triggerModal = true
     },
 
     addTrigger() {
+        this.local_script.triggers.push({
+            type: this.triggerType,
+            options: this.triggerOptions
+        })
 
+        this.triggerType = null
+        this.triggerOptions = {}
+        this.promptSave()
+        this.triggerModal = false
+    },
+
+    removeTrigger(trigger) {
+      this.local_script.triggers.forEach((element, index) => {
+        if(JSON.stringify(element) == JSON.stringify(trigger)) {
+          this.local_script.triggers.pop(index)
+
+          this.promptSave()
+        }
+      });
     }
   }
 };

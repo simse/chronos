@@ -28,6 +28,8 @@ export default {
     border-bottom: 1px solid lightgrey;
     padding: 16px 24px;
     align-items: center;
+    position: fixed;
+    width: 100%;
 }
 
 .logo h1 {

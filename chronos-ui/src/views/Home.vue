@@ -125,6 +125,10 @@ export default {
 </script>
 
 <style lang="scss">
+  .home {
+    padding-top: 66px;
+  }
+
   h2.bold {
     font-weight: bold;
     font-size: 1.4rem;
@@ -186,6 +190,10 @@ export default {
 
   .scripts {
     //padding-bottom: 100px;
+    position: fixed;
+    width: 25%;
+    top: 66px;
+    border-right: 1px solid lightgray;
     overflow-y: scroll;
     overflow-x: hidden;
     height: calc(100vh - 66px - 73px);

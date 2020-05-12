@@ -6,9 +6,8 @@ import logging
 import json
 
 # Third-party dependencies
-from peewee import *
-from playhouse.postgres_ext import *
-import peeweedbevolve
+from sqlalchemy import create_engine, MetaData, session, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy.ext.declarative import declarative_base
 from loguru import logger
 
 # First-party dependencies
@@ -16,22 +15,21 @@ from chronos.config import CHRONOS
 
 
 logger.debug("Connecting to local Chronos database")
-db = PostgresqlDatabase(
-    "chronos", user="chronos", host="192.168.0.4", password="hotfla123As", port=5434
-)
+db = create_engine("sqlite:///" + CHRONOS + "/chronos.db", echo=False)
+metadata = MetaData()
+Base = declarative_base()
 logger.debug("Database connection succesful")
 
 
-class Script(Model):
+class Script(Base):
     """Script model to store metadata about scripts."""
+    __tablename__ = 'scripts'
 
-    name = CharField()
-    uid = CharField()
-    enabled = BooleanField(default=True)
-    triggers = JSONField(default={})
-
-    class Meta:
-        database = db
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    uid = Column(String)
+    enabled = Column(Boolean)
+    triggers = Column(String)
 
 
 class Log(Model):

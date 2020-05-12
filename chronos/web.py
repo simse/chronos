@@ -4,7 +4,7 @@ import json
 import os
 
 # Third-party dependencies
-from flask import Flask, jsonify, send_from_directory, Response
+from flask import Flask, jsonify, send_from_directory, Response, request
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from loguru import logger
@@ -51,33 +51,37 @@ class Script(Resource):
 
     def put(self, uid):
         """Update script."""
-        parser = reqparse.RequestParser()
-        parser.add_argument("name")
-        parser.add_argument("triggers")
-        parser.add_argument("enabled")
-        parser.add_argument("contents")
-        parser.add_argument("requirements")
-        args = parser.parse_args()
+        args = request.get_json(force=True)
 
         try:
             script = chronos.script.Script(uid)
             model = script.db
 
             # Update each field if it exists
-            if args["name"] is not None:
+            try:
                 model.name = args["name"]
+            except KeyError:
+                pass
 
-            if args["triggers"] is not None:
+            try:
                 model.triggers = args["triggers"]
+            except KeyError:
+                pass
 
-            if args["enabled"] is not None:
+            try:
                 model.enabled = args["enabled"]
+            except KeyError:
+                pass
 
-            if args["contents"] is not None:
+            try:
                 script.write_contents(args["contents"])
+            except KeyError:
+                pass
 
-            if args["requirements"] is not None:
+            try:
                 script.write_requirements(args["requirements"])
+            except KeyError:
+                pass
 
             model.save()
 

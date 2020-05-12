@@ -13,6 +13,7 @@ from chronos.web import app
 from chronos.task import execute_next_task
 from chronos.bus import interval_trigger, on_startup_trigger
 from chronos.event import event
+from chronos.runtime import evalaute_script_interval_triggers, evalaute_script_cron_triggers
 
 IS_RUNNING = True
 
@@ -48,17 +49,19 @@ def test():
 
 # interval_trigger.listen(1000, test)
 interval_trigger.listen(100, event.garbage_collect)
+interval_trigger.listen(1000, evalaute_script_interval_triggers, clock=True)
+interval_trigger.listen(60000, evalaute_script_cron_triggers, clock=True)
 
 
 logger.info("Starting API server")
 
 # Surpress Werkzeug output
-
+"""
 log = logging.getLogger("werkzeug")
 log.disabled = True
 log.setLevel(logging.ERROR)
 os.environ["WERKZEUG_RUN_MAIN"] = "true"
-
+"""
 
 # Start REST API
 try:
