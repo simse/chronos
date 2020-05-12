@@ -76,7 +76,7 @@ export default {
     },
 
     newScriptModal() {
-      this.$dialog.prompt({
+      this.$buefy.dialog.prompt({
           message: this.$t('new_script_name'),
           inputAttrs: {
               placeholder: this.$t('eg_name'),

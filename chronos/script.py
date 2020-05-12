@@ -3,15 +3,14 @@ import shutil
 from subprocess import Popen, PIPE
 
 # Third-party dependencies
-from playhouse.shortcuts import model_to_dict
 from loguru import logger
 
 # First-party dependencies
-import chronos.metadata
+from chronos.metadata import Session, Log
+from chronos.metadata import Script as ScriptModel
 from chronos.config import *
 from chronos.venv import *
 from chronos.event import event
-
 
 class Script:
     """Script class used to interact with scripts."""
@@ -19,14 +18,20 @@ class Script:
     def __init__(self, uid):
         """Initialise script class given UID."""
 
+        session = Session()
+
         # UID
         self.uid = uid
 
         # Get database entry
-        self.db = chronos.metadata.Script.get(chronos.metadata.Script.uid == uid)
+        self.db = session.query(ScriptModel).get(uid)
 
         # Store dictionary version of model
-        self.dict = model_to_dict(self.db)
+        self.dict = {
+            "name": self.db.name,
+            "enabled": self.db.enabled,
+            "triggers": self.db.triggers
+        }
 
         # Get script folder
         self.folder = CHRONOS + os.path.sep + "scripts" + os.path.sep + self.uid
@@ -43,19 +48,22 @@ class Script:
         # Get path of install.sh script
         self.install_requirements_path = self.folder + os.path.sep + "install.sh"
 
+        session.close()
+
     def delete(self):
         """Delete script."""
+        session = Session()
 
         # Remove script folder
         shutil.rmtree(self.folder)
 
         # Remove all logs from script
-        chronos.metadata.Log.delete().where(
-            chronos.metadata.Log.script_id == self.db.id
-        ).execute()
+        session.query(Log).filter(Log.script == self.uid).delete()
 
         # Delete metadata
-        self.db.delete_instance()
+        session.delete(self.db)
+        session.commit()
+        session.close()
 
         event.trigger("script_deleted", self.dict)
 
@@ -79,25 +87,26 @@ class Script:
         """Find all log entries for script"""
         logs = []
 
-        for l in (
-            chronos.metadata.Log.select()
-            .where(chronos.metadata.Log.script_id == self.db.id)
-            .order_by(chronos.metadata.Log.date.desc())
-            .limit(limit)
-        ):
+        session = Session()
+
+        for log in session.query(Log).filter(Log.script == self.uid).all():
             logs.append(
                 {
-                    "stdout": l.text,
-                    "stderr": l.error,
-                    "date": l.date,
-                    "exitcode": l.exitcode,
+                    "stdout": log.text.decode('utf-8'),
+                    "stderr": log.error.decode('utf-8'),
+                    "date": log.date,
+                    "exitcode": log.exitcode,
                 }
             )
+
+        session.close()
 
         return logs
 
     def prune_logs(self, limit=500):
-        log_count = (
+        return
+
+        """log_count = (
             chronos.metadata.Log.select()
             .where(chronos.metadata.Log.script_id == self.db.id)
             .count()
@@ -108,7 +117,7 @@ class Script:
 
             chronos.metadata.Log.delete().where(
                 chronos.metadata.Log.script_id == self.db.id
-            ).order_by(chronos.metadata.Log.date.asc()).limit(to_delete).execute()
+            ).order_by(chronos.metadata.Log.date.asc()).limit(to_delete).execute()"""
 
     def to_dict(self):
         """Return dictionary with script metadata"""
@@ -144,6 +153,7 @@ class Script:
         return process_output.decode("utf-8")
 
     def execute(self):
+        session = Session()
         """Execute script"""
         script_path = self.execute_path
 
@@ -157,10 +167,12 @@ class Script:
         output, error = process.communicate()
 
         # Log the output
-        log = chronos.metadata.Log(
-            script=self.db, text=output, error=error, exitcode=process.returncode
+        log = Log(
+            script=self.db.uid, text=output, error=error, exitcode=process.returncode
         )
-        log.save()
+        session.add(log)
+        session.commit()
+        session.close()
 
         logger.debug("Script executed and output logged: {}", self.dict["name"])
 

@@ -11,6 +11,8 @@ from loguru import logger
 
 # First-party dependencies
 import chronos.script
+from chronos.metadata import Session
+from chronos.metadata import Script as ScriptModel
 from chronos.task import dispatch_task
 from chronos.event import event
 from chronos.util import for_uid
@@ -53,9 +55,11 @@ class Script(Resource):
         """Update script."""
         args = request.get_json(force=True)
 
+        session = Session()
+
         try:
             script = chronos.script.Script(uid)
-            model = script.db
+            model = session.query(ScriptModel).get(uid)
 
             # Update each field if it exists
             try:
@@ -83,7 +87,7 @@ class Script(Resource):
             except KeyError:
                 pass
 
-            model.save()
+            session.commit()
 
             return "OK", 200
 
@@ -102,8 +106,12 @@ class Script(Resource):
 def scripts():
     scripts = []
 
-    for s in chronos.metadata.Script.select():
+    session = Session()
+
+    for s in session.query(ScriptModel).all():
         scripts.append(chronos.script.Script(s.uid).to_dict())
+
+    session.close()
 
     return jsonify(scripts), 200
 

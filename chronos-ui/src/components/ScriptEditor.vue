@@ -278,15 +278,13 @@ export default {
           } else {
               this.promptSave()
           }
-
-        
       }
     },
 
     promptSave() {
         this.snackbarOpen = true;
 
-            this.$snackbar.open({
+            this.$buefy.snackbar.open({
                 message: this.$t("unsaved_changes"),
                 type: "is-info",
                 position: "is-top",
@@ -333,7 +331,7 @@ export default {
         })
         .catch(() => {
           this.isInstallingPip = false;
-          this.$toast.open({
+          this.$buefy.toast.open({
             message: this.$t("pip_requirements_failed"),
             type: "is-danger"
           });
@@ -374,7 +372,7 @@ export default {
     },
 
     deletePrompt() {
-      this.$dialog.confirm({
+      this.$buefy.dialog.confirm({
         title: this.$t("delete_script", { name: this.name }),
         message: this.$t("delete_confirm"),
         confirmText: this.$t("delete_confirm_button"),

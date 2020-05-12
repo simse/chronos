@@ -10,16 +10,19 @@ from loguru import logger
 # First-party dependencies
 from chronos.util import *
 from chronos.venv import *
-import chronos.metadata
+from chronos.metadata import Session
+from chronos.metadata import Script as ScriptModel
 from chronos.script import Script
 from chronos.task import dispatch_task
 from chronos.bus import interval_trigger
+
+session = Session()
 
 
 def evalaute_script_interval_triggers(tick, interval):
     second = tick * interval / 1000
 
-    for script in chronos.metadata.Script.select():
+    for script in session.query(ScriptModel).all():
         s = Script(script.uid)
 
         if script.enabled:
@@ -45,7 +48,7 @@ def evalaute_script_interval_triggers(tick, interval):
 def evalaute_script_cron_triggers(tick, interval):
     second = tick * interval / 1000
 
-    for script in chronos.metadata.Script.select():
+    for script in session.query(ScriptModel).all():
         s = Script(script.uid)
 
         if script.enabled:

@@ -5,12 +5,15 @@ from chronos.script import Script
 from chronos.config import CHRONOS
 from chronos.util import generate_uid, for_uid
 from chronos.venv import *
-import chronos.metadata
+from chronos.metadata import Session
+from chronos.metadata import Script as ScriptModel
 
 
 def run(arguments, event):
     arguments = json.loads(arguments)
     name = arguments["name"]
+
+    session = Session()
 
     """Create a new script by creating a virtualenv, creating .sh scripts and registering metadata."""
     if name is "":
@@ -37,8 +40,9 @@ def run(arguments, event):
     create_env(uid)
 
     # Create database entry
-    script = chronos.metadata.Script(name=name, uid=uid)
-    script.save()
+    script = ScriptModel(name=name, uid=uid, enabled=True, triggers=[])
+    session.add(script)
+    session.commit()
 
     # Create script and requirements.txt file
     script_path = path + os.path.sep + uid + ".py"
