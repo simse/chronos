@@ -1,5 +1,5 @@
 {
-  "name": "Chronos",
+  "name": "chronos-ui",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,30 +9,30 @@
     "i18n:report": "vue-cli-service i18n:report --src './src/**/*.?(js|vue)' --locales './src/locales/**/*.json'"
   },
   "dependencies": {
-    "axios": "^0.18.0",
-    "buefy": "^0.7.4",
-    "core-js": "^2.6.5",
-    "javascript-time-ago": "^2.0.1",
-    "raw-loader": "^3.1.0",
+    "axios": "^0.19.2",
+    "buefy": "^0.8.18",
+    "core-js": "^3.6.5",
+    "javascript-time-ago": "^2.0.7",
+    "raw-loader": "^4.0.1",
     "vue": "^2.6.10",
     "vue-axios": "^2.1.4",
     "vue-codemirror": "^4.0.6",
-    "vue-i18n": "^8.0.0",
+    "vue-i18n": "^8.17.5",
     "vue-i18n-directives": "^3.0.1",
-    "vue-router": "^3.0.3",
-    "vuex": "^3.1.2"
+    "vue-router": "^3.1.6",
+    "vuex": "^3.4.0"
   },
   "devDependencies": {
-    "@kazupon/vue-i18n-loader": "^0.3.0",
-    "@vue/cli-plugin-babel": "^3.6.0",
-    "@vue/cli-plugin-eslint": "^3.6.0",
-    "@vue/cli-service": "^3.6.0",
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
-    "node-sass": "^4.9.0",
-    "sass-loader": "^7.1.0",
-    "vue-cli-plugin-i18n": "^0.6.0",
+    "@kazupon/vue-i18n-loader": "^0.5.0",
+    "@vue/cli-plugin-babel": "^4.3.1",
+    "@vue/cli-plugin-eslint": "^4.3.1",
+    "@vue/cli-service": "^4.3.1",
+    "babel-eslint": "^10.1.0",
+    "eslint": "^7.0.0",
+    "eslint-plugin-vue": "^6.2.2",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^8.0.2",
+    "vue-cli-plugin-i18n": "^1.0.1",
     "vue-template-compiler": "^2.5.21"
   },
   "eslintConfig": {

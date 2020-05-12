@@ -8,6 +8,7 @@ import json
 # Third-party dependencies
 from sqlalchemy import create_engine, MetaData, session, Integer, String, DateTime, ForeignKey, Boolean
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 from loguru import logger
 
 # First-party dependencies
@@ -30,53 +31,43 @@ class Script(Base):
     uid = Column(String)
     enabled = Column(Boolean)
     triggers = Column(String)
+    logs = relationship("Log")
 
 
 class Log(Model):
     """Log model to store output from each script execution."""
+    __tablename__ = 'logs'
 
-    script = ForeignKeyField(Script, backref="logs")
-    text = TextField()
-    error = TextField()
-    date = DateTimeField(default=datetime.datetime.utcnow)
-    exitcode = IntegerField(default=0)
-
-    class Meta:
-        database = db
+    id = Column(Integer, primary_key=True)
+    script = Column(Integer, ForeignKey("scripts.id"))
+    text = Column(String)
+    error = Column(String)
+    date = Column(DateTime)
+    exitcode = Column(Integer)
 
 
 class Setting(Model):
     """Key/value storage for settings, and other persistent information."""
+    __tablename__ = 'settings'
 
-    key = CharField()
-    value = TextField()
-
-    class Meta:
-        database = db
+    key = Column(String, primary_key=True)
+    value = Column(String)
 
 
 class Task(Model):
-    task_id = CharField()
-    task_arguments = TextField(default="{}")
-    priority = CharField(default="ROUTINE")
-    status = CharField(default="WAITING")
-    output = TextField(null=True)
-    time_scheduled = DateTimeField(default=datetime.datetime.utcnow)
-    time_started = DateTimeField(null=True)
-    time_finished = DateTimeField(null=True)
+    __tablename__ = 'tasks'
 
-    class Meta:
-        database = db
+    task_id = Column(String, primary_key=True)
+    task_arguments = Column(String)
+    priority = Column(String)
+    status = Column(String)
+    output = Column(String)
+    time_scheduled = Column(DateTime)
+    time_started = Column(DateTime)
+    time_finished = Column(DateTime)
 
-
-class Migration(Model):
-    name = CharField()
-    status = CharField()
-
-    class Meta:
-        database = db
 
 
 logger.debug("Running database migrations")
-db.evolve(interactive=False)
+# db.evolve(interactive=False)
 logger.debug("Database migration complete")
