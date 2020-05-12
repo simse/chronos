@@ -232,7 +232,7 @@ export default {
         snackbarOpen: false,
         isInstallingPip: false,
         isExecuting: false,
-        local_script: this.script,
+        local_script: Object.create(this.script),
         cmOptions: {
             tabSize: 4,
             theme: "base16-dark",
@@ -242,18 +242,21 @@ export default {
     };
   },
   watch: {
-    script: function() {
-      if (this.script == undefined) {
-        this.local_script = null;
-      }
+    script: {
+        handler() {
+            if (this.script == undefined) {
+                this.local_script = null;
+            }
 
-      if (this.local_script.uid !== this.script.uid) {
-        this.local_script = this.script;
-      } else {
-        this.local_script.logs = this.script.logs;
+            if (this.local_script.uid !== this.script.uid) {
+                this.local_script = this.script;
+            } else {
+                this.local_script.logs = this.script.logs;
 
-        this.detect_changes();
-      }
+                this.detect_changes();
+            }
+        },
+        deep: true
     },
 
     local_script: {
@@ -284,17 +287,17 @@ export default {
     promptSave() {
         this.snackbarOpen = true;
 
-            this.$buefy.snackbar.open({
-                message: this.$t("unsaved_changes"),
-                type: "is-info",
-                position: "is-top",
-                actionText: this.$t("save"),
-                indefinite: true,
-                onAction: () => {
-                    this.snackbarOpen = false;
-                    this.save();
-                }
-            });
+        this.$buefy.snackbar.open({
+            message: this.$t("unsaved_changes"),
+            type: "is-info",
+            position: "is-top",
+            actionText: this.$t("save"),
+            indefinite: true,
+            onAction: () => {
+                this.snackbarOpen = false;
+                this.save();
+            }
+        });
     },
 
     save() {
@@ -360,7 +363,7 @@ export default {
           modalContent += "</pre><br><code>stderr</code><br><pre>" + stderr;
           modalContent += "</pre>";
 
-          this.$modal.open(modalContent);
+          this.$buefy.modal.open(modalContent);
         })
         .catch(() => {
           this.isExecuting = false;

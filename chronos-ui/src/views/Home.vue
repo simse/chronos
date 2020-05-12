@@ -112,7 +112,7 @@ export default {
         }
         
       }).catch(() => {
-        this.$toast.open({
+        this.$buefy.toast.open({
             message: this.$t('new_script_failed', { name: name }),
             type: 'is-danger'
         })
