@@ -27,6 +27,7 @@ jobs:
                 root: .
                 paths:
                     - ./image.tar
+                    - .circleci/prebuild.sh
     publish:
         executor: docker-publisher
         steps:
