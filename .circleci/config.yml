@@ -13,8 +13,8 @@ jobs:
         steps:
           - checkout
           - setup_remote_docker
-          - run: bash .circleci/prebuild.sh
           - run: |
+                bash .circleci/prebuild.sh
                 git log -n 1 --format=format:"%h%n" HEAD > VERSION
                 cp VERSION chronos-ui/src/VERSION
                 docker build -t $IMAGE_NAME:$TAG .
@@ -31,13 +31,13 @@ jobs:
             - attach_workspace:
                 at: /tmp/workspace
             - setup_remote_docker
-            - run: bash .circleci/prebuild.sh
             - run:
                 name: Load archived Docker image
                 command: docker load -i /tmp/workspace/image.tar
             - run:
                 name: Publish Docker Image to Docker Hub
                 command: |
+                    bash .circleci/prebuild.sh
                     echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
                     docker push $IMAGE_NAME:$TAG
 
