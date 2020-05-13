@@ -27,12 +27,12 @@ jobs:
                 root: .
                 paths:
                     - ./image.tar
-                    - ./.circleci/prebuild.sh
     publish:
         executor: docker-publisher
         steps:
             - attach_workspace:
                 at: /tmp/workspace
+            - checkout
             - setup_remote_docker
             - run:
                 name: Load archived Docker image
