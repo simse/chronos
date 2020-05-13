@@ -17,6 +17,7 @@ jobs:
                 bash .circleci/prebuild.sh
                 git log -n 1 --format=format:"%h%n" HEAD > VERSION
                 cp VERSION chronos-ui/src/VERSION
+                echo $TAG
                 docker build -t $IMAGE_NAME:$TAG .
           - run:
                 name: Archive Docker image
