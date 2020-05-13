@@ -13,10 +13,11 @@ jobs:
         steps:
           - checkout
           - setup_remote_docker
+          - run: sh .circleci/prebuild.sh
           - run: |
                 git log -n 1 --format=format:"%h%n" HEAD > VERSION
                 cp VERSION chronos-ui/src/VERSION
-                docker build -t $IMAGE_NAME:edge .
+                docker build -t $IMAGE_NAME:$TAG .
           - run:
                 name: Archive Docker image
                 command: docker save -o image.tar $IMAGE_NAME
@@ -24,12 +25,13 @@ jobs:
                 root: .
                 paths:
                     - ./image.tar
-    publish-edge:
+    publish:
         executor: docker-publisher
         steps:
             - attach_workspace:
                 at: /tmp/workspace
             - setup_remote_docker
+            - run: sh .circleci/prebuild.sh
             - run:
                 name: Load archived Docker image
                 command: docker load -i /tmp/workspace/image.tar
@@ -37,17 +39,17 @@ jobs:
                 name: Publish Docker Image to Docker Hub
                 command: |
                     echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                    docker push $IMAGE_NAME:edge
+                    docker push $IMAGE_NAME:$TAG
 
 workflows:
     version: 2
-    build-edge:
+    build:
         jobs:
         - build:
             filters:
                 branches:
                     only: edge
-        - publish-edge:
+        - publish:
             requires:
                 - build
             filters:
