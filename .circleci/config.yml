@@ -39,6 +39,7 @@ jobs:
                 command: |
                     bash .circleci/prebuild.sh
                     echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                    echo $TAG
                     docker push $IMAGE_NAME:$TAG
 
 workflows:
