@@ -17,6 +17,7 @@ jobs:
                 bash .circleci/prebuild.sh
                 git log -n 1 --format=format:"%h%n" HEAD > VERSION
                 cp VERSION chronos-ui/src/VERSION
+                source $BASH_ENV
                 echo $TAG
                 docker build -t $IMAGE_NAME:$TAG .
           - run:
@@ -40,6 +41,7 @@ jobs:
                 command: |
                     bash .circleci/prebuild.sh
                     echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                    source $BASH_ENV
                     echo $TAG
                     docker push $IMAGE_NAME:$TAG
 

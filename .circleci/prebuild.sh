@@ -1,11 +1,11 @@
 if [ $CIRCLE_BRANCH = "edge" ]
 then
-    export TAG=edge
+    echo 'export TAG=edge' >> $BASH_ENV
 fi
 
 if [ $CIRCLE_BRANCH = "master" ]
 then
-    export TAG=latest
+    echo 'export TAG=master' >> $BASH_ENV
 fi
 
 echo $TAG
