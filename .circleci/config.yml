@@ -1,0 +1,39 @@
+version: 2.1
+
+jobs:
+    build_master:
+        branches:
+            only:
+                - master
+        steps:
+            - checkout
+            - setup_remote_docker:
+                docker_layer_caching: true
+            - run: |
+                TAG=latest
+                git log -n 1 --format=format:"%h%n" HEAD > VERSION
+                cp VERSION chronos-ui/src/VERSION
+                docker build -t simsemand/chronos:$TAG .
+                echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                docker push simsemand/chronos:$TAG
+    build_edge:
+        branches:
+            only:
+                - edge
+        steps:
+            - checkout
+            - setup_remote_docker:
+                docker_layer_caching: true
+            - run: |
+                TAG=edge
+                git log -n 1 --format=format:"%h%n" HEAD > VERSION
+                cp VERSION chronos-ui/src/VERSION
+                docker build -t simsemand/chronos:$TAG .
+                echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin
+                docker push simsemand/chronos:$TAG
+
+workflows:
+    main:
+        jobs:
+        - build_master
+        - build_edge
