@@ -44,6 +44,15 @@ jobs:
                     source $BASH_ENV
                     echo $TAG
                     docker push $IMAGE_NAME:$TAG
+    test:
+        docker:
+            - image: circleci/python:3.7
+        steps:
+            - pip install -r requirements.txt
+            - pip install pytest
+            - pytest --ignore=chronos-ui
+
+
 
 workflows:
     version: 2
@@ -53,9 +62,11 @@ workflows:
             filters:
                 branches:
                     only: edge
+        - test
         - publish:
             requires:
                 - build
+                - test
             filters:
                 branches:
                     only: edge
