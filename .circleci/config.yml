@@ -44,10 +44,10 @@ workflows:
         - build:
             filters:
                 branches:
-                only: edge
+                    only: edge
         - publish-edge:
             requires:
                 - build
             filters:
                 branches:
-                only: edge
+                    only: edge
