@@ -34,8 +34,8 @@ jobs:
             - run:
                 name: Publish Docker Image to Docker Hub
                 command: |
-                echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
-                docker push $IMAGE_NAME:edge
+                    echo "$DOCKERHUB_PASS" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+                    docker push $IMAGE_NAME:edge
 
 workflows:
     version: 2
