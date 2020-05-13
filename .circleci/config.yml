@@ -48,9 +48,12 @@ jobs:
         docker:
             - image: circleci/python:3.7
         steps:
-            - pip install -r requirements.txt
-            - pip install pytest
-            - pytest --ignore=chronos-ui
+            - run:
+                name: Run pytest
+                command: |
+                    pip install -r requirements.txt
+                    pip install pytest
+                    pytest --ignore=chronos-ui
 
 
 
