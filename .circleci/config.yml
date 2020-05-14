@@ -63,16 +63,10 @@ workflows:
     version: 2
     build:
         jobs:
-        - build:
-            filters:
-                branches:
-                    only: edge
+        - build
         - test
         - publish:
             requires:
                 - build
                 - test
-            filters:
-                branches:
-                    only: edge
 
