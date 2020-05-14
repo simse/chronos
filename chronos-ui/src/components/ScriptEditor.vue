@@ -133,7 +133,7 @@
                 <br /><br />
 
                 <div class="columns">
-                    <div class="column" v-for="trigger in local_script.triggers" v-bind:key="trigger.type">
+                    <div class="column" v-for="trigger in local_script.triggers" v-bind:key="trigger.type + Math.random(1,100)">
                         <Trigger :trigger="trigger" @removeTrigger="removeTrigger(trigger)" />
                     </div>
 
@@ -232,7 +232,7 @@ export default {
         snackbarOpen: false,
         isInstallingPip: false,
         isExecuting: false,
-        local_script: Object.create(this.script),
+        local_script: this.script,
         cmOptions: {
             tabSize: 4,
             theme: "base16-dark",
@@ -272,10 +272,7 @@ export default {
       this.local_script.contents = newCode;
     },
     detect_changes() {
-      if (
-        !this.snackbarOpen &&
-        JSON.stringify(this.local_script) != JSON.stringify(this.script)
-      ) {
+      if (!this.snackbarOpen) {
           if(this.local_script.loading) {
               this.local_script = this.script;
           } else {
