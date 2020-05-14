@@ -90,10 +90,20 @@ class Script:
         session = Session()
 
         for log in session.query(Log).filter(Log.script == self.uid).all():
+            try:
+                stdout = log.text.decode('utf-8')
+            except AttributeError:
+                stdout = log.text
+            
+            try:
+                stderr = log.error.decode('utf-8')
+            except AttributeError:
+                stderr = log.error
+
             logs.append(
                 {
-                    "stdout": log.text.decode('utf-8'),
-                    "stderr": log.error.decode('utf-8'),
+                    "stdout": stdout,
+                    "stderr": stderr,
                     "date": log.date,
                     "exitcode": log.exitcode,
                 }

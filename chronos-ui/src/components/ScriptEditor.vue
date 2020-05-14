@@ -424,7 +424,7 @@ export default {
     removeTrigger(trigger) {
       this.local_script.triggers.forEach((element, index) => {
         if(JSON.stringify(element) == JSON.stringify(trigger)) {
-          this.local_script.triggers.pop(index)
+          this.local_script.triggers.splice(index)
 
           this.promptSave()
         }
