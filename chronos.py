@@ -10,10 +10,18 @@ from loguru import logger
 
 # First-party dependencies
 from chronos.web import app
+from chronos.config import CHRONOS
 from chronos.task import execute_next_task
 from chronos.bus import interval_trigger, on_startup_trigger
 from chronos.event import event
 from chronos.runtime import evalaute_script_interval_triggers, evalaute_script_cron_triggers
+
+
+# Configure logger
+logger.remove()
+logger.add(sys.stderr, level="INFO")
+logger.add(CHRONOS + "chronos.log", rotation="00:00", level="DEBUG")
+
 
 IS_RUNNING = True
 
