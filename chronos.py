@@ -66,6 +66,6 @@ os.environ["WERKZEUG_RUN_MAIN"] = "true"
 # Start REST API
 try:
     logger.info("API server started")
-    app.run()
+    app.run(host="0.0.0.0", port=5000)
 except (KeyboardInterrupt):
     IS_RUNNING = False
