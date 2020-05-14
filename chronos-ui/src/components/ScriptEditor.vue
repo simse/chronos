@@ -322,12 +322,12 @@ export default {
         .then(response => {
           this.isInstallingPip = false;
 
-          this.$toast.open({
+          this.$buefy.toast.open({
             message: this.$t("pip_requirements_installed"),
             type: "is-success"
           });
 
-          this.$modal.open("<pre>" + response.data.response + "</pre>");
+          this.$buefy.modal.open("<pre>" + response.data.response + "</pre>");
         })
         .catch(() => {
           this.isInstallingPip = false;
