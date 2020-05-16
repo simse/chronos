@@ -149,40 +149,6 @@ class Script:
         }, task_priority="NOW")
 
     def execute(self):
-        session = Session()
-        """Execute script"""
-        script_path = self.execute_path
-
-        logger.debug("Executing script: {}", self.dict["name"])
-
-        # Run the script
-        process = Popen(
-            ["bash", script_path], stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=-1
-        )
-
-        while True:
-            output = process.stdout.readline()
-
-            if output == '' and process.poll() is not None:
-                break
-            if output:
-                print (output.strip())
-
-            rc = process.poll()
-
-        output, error = process.communicate()
-
-        # Log the output
-        log = Log(
-            script=self.db.uid, text=output, error=error, exitcode=process.returncode
-        )
-        session.add(log)
-        session.commit()
-        session.close()
-
-        logger.debug("Script executed and output logged: {}", self.dict["name"])
-
-        event.trigger("script_executed", self.dict)
-
-        # Return stdout and stderr
-        return {"stdout": output.decode("utf-8"), "stderr": error.decode("utf-8")}
+        dispatch_task("execute_script", {
+            "script_uid": self.uid
+        }, task_priority="NOW")

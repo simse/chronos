@@ -125,7 +125,8 @@ def install_requirements(uid):
 # Execute specific script and return result.
 @app.route("/api/script/<string:uid>/execute")
 def execute(uid):
-    return jsonify({"response": chronos.script.Script(uid).execute()}), 200
+    chronos.script.Script(uid).execute()
+    return jsonify({"response": "OK"}), 200
 
 
 def events(type):
