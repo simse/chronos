@@ -19,7 +19,7 @@ from chronos.runtime import evalaute_script_interval_triggers, evalaute_script_c
 
 # Configure logger
 logger.remove()
-logger.add(sys.stderr, level="INFO")
+logger.add(sys.stderr, level="DEBUG")
 logger.add(CHRONOS + "chronos.log", rotation="00:00", level="DEBUG")
 
 

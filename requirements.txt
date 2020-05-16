@@ -16,8 +16,6 @@ MarkupSafe==1.1.1
 mock==4.0.2
 more-itertools==8.2.0
 packaging==20.3
-peewee==3.11.2
-peewee-migrate==1.1.6
 pluggy==0.13.1
 py==1.8.1
 pyparsing==2.4.7

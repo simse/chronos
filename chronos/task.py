@@ -23,6 +23,7 @@ def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
     session.add(task)
     session.commit()
     logger.debug("Dispatched task: {}", task_id)
+    event.trigger("task_dispatched", {"task_id": task_id})
 
     session.close()
 
@@ -35,13 +36,21 @@ def execute_task(id):
     logger.debug("Processing task with ID: {}", id)
     task_uid = task.task_id
     task_module = importlib.import_module("chronos.tasks.{}".format(task_uid))
+    task_id_dict = {"task_id": id}
 
     logger.debug("Starting task with ID: {}", id)
     task.time_started = datetime.datetime.now()
     task.status = "STARTED"
     session.commit()
 
-    task_module.run(task.task_arguments, event)
+    event.trigger("task_started", task_id_dict)
+    arguments = {
+        **json.loads(task.task_arguments),
+        **task_id_dict}
+
+    task.output = task_module.run(json.dumps(arguments), event)
+
+    event.trigger("task_finished", task_id_dict)
 
     task.time_finished = datetime.datetime.now()
     task.status = "FINISHED"

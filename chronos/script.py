@@ -11,6 +11,7 @@ from chronos.metadata import Script as ScriptModel
 from chronos.config import *
 from chronos.venv import *
 from chronos.event import event
+from chronos.task import dispatch_task
 
 class Script:
     """Script class used to interact with scripts."""
@@ -143,24 +144,9 @@ class Script:
 
     def install_requirements(self):
         """Install requirements.txt"""
-        process = Popen(
-            ["bash", self.install_requirements_path],
-            stdin=PIPE,
-            stdout=PIPE,
-            stderr=PIPE,
-            bufsize=-1,
-        )
-
-        output, error = process.communicate()
-
-        # Check if it errored or was successful
-        process_output = ""
-        if process.returncode == 0:
-            process_output = output
-        else:
-            process_output = error
-
-        return process_output.decode("utf-8")
+        dispatch_task("install_pip_requirements", {
+            "script_uid": self.uid
+        }, task_priority="NOW")
 
     def execute(self):
         session = Session()
@@ -173,6 +159,16 @@ class Script:
         process = Popen(
             ["bash", script_path], stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=-1
         )
+
+        while True:
+            output = process.stdout.readline()
+
+            if output == '' and process.poll() is not None:
+                break
+            if output:
+                print (output.strip())
+
+            rc = process.poll()
 
         output, error = process.communicate()
 
