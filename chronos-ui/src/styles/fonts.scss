@@ -1,55 +1,89 @@
 @font-face {
   font-family: "Inter";
   font-weight: 100;
-  src: url(/assets/fonts/Inter-Thin.woff2);
+  src: url(assets/fonts/Inter-Thin.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 200;
-  src: url(/assets/fonts/Inter-Extralight.woff2);
+  src: url(assets/fonts/Inter-ExtraLight.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 300;
-  src: url(/assets/fonts/Inter-Light.woff2);
+  src: url(assets/fonts/Inter-Light.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 400;
-  src: url(/assets/fonts/Inter-Regular.woff2);
+  src: url(assets/fonts/Inter-Regular.woff2);
 }
 
 
 @font-face {
   font-family: "Inter";
   font-weight: 500;
-  src: url(/assets/fonts/Inter-Medium.woff2);
+  src: url(assets/fonts/Inter-Medium.woff2);
 }
 
 
 @font-face {
   font-family: "Inter";
   font-weight: 600;
-  src: url(/assets/fonts/Inter-SemiBold.woff2);
+  src: url(assets/fonts/Inter-SemiBold.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 700;
-  src: url(/assets/fonts/Inter-Bold.woff2);
+  src: url(assets/fonts/Inter-Bold.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 800;
-  src: url(/assets/fonts/Inter-ExtraBold.woff2);
+  src: url(assets/fonts/Inter-ExtraBold.woff2);
 }
 
 @font-face {
   font-family: "Inter";
   font-weight: 800;
-  src: url(/assets/fonts/Inter-Black.woff2);
+  src: url(assets/fonts/Inter-Black.woff2);
+}
+
+@font-face {
+  font-family: 'Material Icons';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Material Icons'),
+    local('MaterialIcons-Rounded'),
+    url(assets/fonts/Material-Icons-Rounded.woff2) format('woff2');
+}
+
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
 }

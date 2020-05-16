@@ -1,12 +1,24 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
+      <Navigation />
     </div>
-    <router-view />
+    <div class="content">
+      <router-view />
+    </div>
   </div>
 </template>
+
+<script>
+import Navigation from "@/components/Navigation.vue";
+
+export default {
+  name: "App",
+  components: {
+    Navigation
+  }
+};
+</script>
 
 <style lang="scss">
 @import "styles/fonts.scss";
@@ -25,22 +37,20 @@ body {
   font-family: "Inter";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #fff;
   background: var(--grey);
   min-height: 100vh;
+
+  display: grid;
+  grid-template-columns: 90px auto;
 }
 
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
+h1 {
+  padding-top: 70px;
+  padding-left: 40px;
+  padding-bottom: 40px;
+  font-weight: 400;
+  font-size: 3rem;
+  margin: 0;
 }
 </style>
