@@ -89,7 +89,7 @@ class Script:
 
         session = Session()
 
-        for log in session.query(Log).filter(Log.script == self.uid).all():
+        for log in session.query(Log).filter(Log.script == self.uid).order_by(Log.date.desc()).all():
             try:
                 stdout = log.text.decode('utf-8')
             except AttributeError:
