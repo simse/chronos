@@ -9,6 +9,8 @@
 </template>
 
 <style lang="scss">
+@import "styles/fonts.scss";
+
 :root {
   --grey: #1f1f1f;
   --blue: #007aff;
@@ -20,7 +22,7 @@ body {
 }
 
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: "Inter";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
