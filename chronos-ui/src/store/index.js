@@ -17,17 +17,18 @@ export default new Vuex.Store({
       state.scripts.push({
         uid: payload.uid,
         name: payload.name,
-        loading: true
+        loading: true,
+        created: new Date()
       });
     },
     finishLoadingScript(state, payload) {
       state.scripts.some(value => {
         if (value.uid === payload.uid) {
           value.loading = false;
-          value.triggers = payload.script.triggers;
-          value.enabled = payload.script.enabled;
-          value.name = payload.script.name;
-          value.logs = payload.script.logs;
+
+          Object.keys(payload.script).forEach(key => {
+            value[key] = payload.script[key];
+          });
 
           return true;
         }

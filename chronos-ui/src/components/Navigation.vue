@@ -9,10 +9,10 @@
         v-for="route in routes"
         :key="route.name"
         :to="route.path"
-        v-slot="{ href, route, navigate, isExactActive }"
+        v-slot="{ href, route, navigate }"
       >
         <a :href="href" @click="navigate">
-          <div :class="{ item: true, active: isExactActive }">
+          <div :class="{ item: true, active: isActive(route.path) }">
             <i class="material-icons">{{ icon(route.path) }}</i>
           </div>
         </a>
@@ -26,7 +26,13 @@ export default {
   name: "Navigation",
   computed: {
     routes() {
-      return this.$router.options.routes;
+      const routes = this.$router.options.routes;
+
+      return routes.filter(value => {
+        if (value.path !== "/scripts/:script_uid") {
+          return value;
+        }
+      });
     }
   },
   methods: {
@@ -39,6 +45,17 @@ export default {
       };
 
       return icons[routePath];
+    },
+    isActive(path) {
+      const currentPath = this.$router.currentRoute.path;
+
+      if (path === currentPath) {
+        return true;
+      }
+
+      if (currentPath.includes(path) && path !== "/") {
+        return true;
+      }
     }
   }
 };

@@ -13,7 +13,14 @@ const routes = [
   {
     path: "/scripts",
     name: "Scripts",
-    component: () => import("../views/Scripts.vue")
+    component: () => import("../views/Scripts.vue"),
+    props: true
+  },
+  {
+    path: "/scripts/:script_uid",
+    name: "Script",
+    component: () => import("../views/Scripts.vue"),
+    props: true
   },
   {
     path: "/logs",

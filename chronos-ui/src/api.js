@@ -12,7 +12,7 @@ const api = {
       }
     });
   },
-  createScript(name) {
+  createScript(name, callback = () => {}) {
     axios
       .post(this.getApiUrl() + "script/null", {
         name: name
@@ -29,17 +29,15 @@ const api = {
           );
 
           eventStream.onmessage = function(event) {
-            console.log(event);
             let payload = JSON.parse(event.data).payload;
-
-            console.log(payload.uid);
-            console.log(response.data.uid);
 
             if (payload.uid === response.data.uid) {
               store.commit("finishLoadingScript", {
                 uid: response.data.uid,
                 script: payload
               });
+
+              callback();
 
               eventStream.close();
             }

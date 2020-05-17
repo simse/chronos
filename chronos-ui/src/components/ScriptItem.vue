@@ -2,9 +2,11 @@
   <div
     :class="{
       script: true,
+      active: isActive,
       dark: this.index % 2 !== 0,
       light: this.index % 2 === 0
     }"
+    @click="selectScript"
   >
     <div class="text">
       <h2>{{ script.name }}</h2>
@@ -57,6 +59,45 @@ export default {
       type: Number,
       required: true
     }
+  },
+  computed: {
+    isActive() {
+      const routeParts = this.$route.path.split("/");
+
+      // decodeURIComponent is neccessary to support non-lating characters
+      return (
+        decodeURIComponent(routeParts[routeParts.length - 1]) == this.script.uid
+      );
+    }
+  },
+  methods: {
+    toUnicode(str) {
+      return str
+        .split("")
+        .map(function(value) {
+          var temp = value
+            .charCodeAt(0)
+            .toString(16)
+            .toUpperCase();
+          if (temp.length > 2) {
+            return "\\u" + temp;
+          }
+          return value;
+        })
+        .join("");
+    },
+    selectScript() {
+      this.$router
+        .push({
+          name: "Script",
+          params: {
+            script_uid: this.script.uid
+          }
+        })
+        .catch(() => {
+          void 0;
+        });
+    }
   }
 };
 </script>
@@ -78,6 +119,19 @@ export default {
 
   &.light {
     background: #111;
+  }
+
+  &.active {
+    background: var(--blue);
+
+    .icon {
+      background: #fff !important;
+      opacity: 0.8;
+
+      i {
+        color: #000;
+      }
+    }
   }
 }
 
