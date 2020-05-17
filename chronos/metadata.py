@@ -10,6 +10,7 @@ import sqlite3
 from sqlalchemy import create_engine, MetaData, Column, Integer, String, DateTime, ForeignKey, Boolean, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
+import alembic.config
 from loguru import logger
 
 # First-party dependencies
@@ -49,14 +50,11 @@ finally:
         conn.close()
 
 
-
-#exit(0)
-
-
 logger.debug("Connecting to local Chronos database")
 db = create_engine("sqlite:///" + CHRONOS + "/chronos.db", echo=False)
+meta = MetaData()
 Session = scoped_session(sessionmaker(bind=db))
-Base = declarative_base()
+Base = declarative_base(metadata=meta)
 logger.debug("Database connection succesful")
 
 
@@ -68,6 +66,7 @@ class Script(Base):
     uid = Column(String, primary_key=True)
     enabled = Column(Boolean)
     triggers = Column(JSON)
+    created = Column(DateTime, default=datetime.datetime.utcnow)
     logs = relationship("Log")
 
 
@@ -106,11 +105,14 @@ class Task(Base):
 
 
 
-Base.metadata.create_all(db)
-
-logger.debug("Running database migrations")
-# db.evolve(interactive=False)
-logger.debug("Database migration complete")
+def migrate():
+    logger.info("Running database migrations...")
+    alembicArgs = [
+        "upgrade",
+        "head",
+    ]
+    alembic.config.main(argv=alembicArgs)
+    logger.info("Database migrations succesful")
 
 
 if scripts is not None:

@@ -63,6 +63,7 @@ class Event:
             
             if listen_time > timeout:
                 logger.debug("Listener: {} timed out after {} seconds", listener_id, timeout)
+                self.listeners[id].remove(listener_id)
                 return
 
             for event_id in event_ids:

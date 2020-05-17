@@ -33,8 +33,9 @@ def run(arguments, event):
 
         if output:
             process_output += output
-            event.trigger("task_output", {
+            event.trigger("log_output", {
                 "task_id": task_id,
+                "script_uid": script_uid,
                 "output": output
             })
 

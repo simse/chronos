@@ -31,7 +31,9 @@ class Script:
         self.dict = {
             "name": self.db.name,
             "enabled": self.db.enabled,
-            "triggers": self.db.triggers
+            "triggers": self.db.triggers,
+            "logs": self.logs(),
+            "created": str(self.db.created)
         }
 
         # Get script folder

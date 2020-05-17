@@ -1,5 +1,0 @@
-#!/bin/bash
-git log -n 1 --format=format:"%h%n" HEAD > VERSION
-cp VERSION chronos-ui/src/VERSION
-docker build . -t simsemand/chronos
-docker push simsemand/chronos

@@ -54,7 +54,7 @@ export default {
 
 .logo {
   img {
-    padding: 22px 0;
+    padding: 32px 0 22px 0;
     max-width: 50px;
   }
 }
@@ -90,7 +90,7 @@ export default {
       background: var(--blue);
       display: inline-block;
       position: relative;
-      bottom: 12.5px;
+      bottom: 14px;
       left: 8px;
     }
 

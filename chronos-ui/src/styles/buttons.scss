@@ -1,0 +1,40 @@
+.button {
+  background: var(--blue);
+  padding: 8px 17px 8px 12px;
+  border-radius: 100px;
+  font-size: 0.95rem;
+  transition: 0.2s cubic-bezier(0.075, 0.82, 0.165, 1) background;
+  color: #fff;
+  border: 0;
+  font-family: "Inter";
+  outline: 0;
+
+  &.just-icon {
+    padding: 10px;
+
+    i {
+      margin: 0;
+    }
+  }
+
+  &.disabled {
+    opacity: 0.5;
+    filter: grayscale(0.6);
+
+    &:hover {
+      cursor: default;
+      background: var(--blue);
+    }
+  }
+
+  i {
+    vertical-align: middle;
+    margin-top: -1px;
+    margin-left: -1px;
+  }
+
+  &:hover {
+    background: var(--blue-dark);
+    cursor: pointer;
+  }
+}

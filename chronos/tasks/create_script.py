@@ -73,6 +73,6 @@ pip install -r "{}"'''.format(
             )
         )
 
-    event.trigger("script_created", Script(uid).dict)
+    event.trigger("script_created", Script(uid).to_dict())
 
     return uid
