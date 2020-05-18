@@ -64,7 +64,7 @@ export default {
     isActive() {
       const routeParts = this.$route.path.split("/");
 
-      // decodeURIComponent is neccessary to support non-lating characters
+      // decodeURIComponent is neccessary to support non-latin characters
       return (
         decodeURIComponent(routeParts[routeParts.length - 1]) == this.script.uid
       );
@@ -123,6 +123,18 @@ export default {
 
   &.active {
     background: var(--blue);
+
+    h2 {
+      font-weight: 600;
+    }
+
+    &:hover {
+      background: darken(#006ee6, 3%) !important;
+    }
+
+    &:active {
+      background: darken(#006ee6, 5%) !important;
+    }
 
     .icon {
       background: #fff !important;

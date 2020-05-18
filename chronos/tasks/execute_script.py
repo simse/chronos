@@ -50,4 +50,6 @@ def run(arguments, event):
     session.commit()
     session.close()
 
+    event.trigger("script_executed", script.to_dict())
+
     return process_output

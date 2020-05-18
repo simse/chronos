@@ -90,6 +90,20 @@ export default {
   overflow-y: scroll;
   padding-bottom: 20px;
   box-sizing: border-box;
+
+  // Chromium (Edge, Chrome) scrollbar styling
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 8px;
+    background-color: #666; /* or add it to the track */
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #111;
+  }
+
+  // Firefox scrollbar styling
+  scrollbar-width: thin;
 }
 
 .header {

@@ -54,7 +54,7 @@ body {
   grid-template-columns: 90px auto;
 }
 
-h1 {
+h1.page-title {
   padding-top: 70px;
   padding-left: 40px;
   padding-bottom: 40px;

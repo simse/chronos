@@ -44,6 +44,9 @@ const api = {
           };
         }
       });
+  },
+  scriptAction(uid, action, callback = () => {}) {
+    callback();
   }
 };
 

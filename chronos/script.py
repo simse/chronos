@@ -70,6 +70,21 @@ class Script:
 
         event.trigger("script_deleted", self.dict)
 
+    def action(self, action):
+        if action == "delete":
+            self.delete()
+
+        if action == "execute":
+            self.execute()
+
+        if action == "install_requirements":
+            self.install_requirements()
+
+        if action == "disable":
+            self.disable()
+
+        return "OK"
+
     def get_contents(self):
         """Read contents of script"""
         return open(self.path, "r").read()
@@ -154,3 +169,10 @@ class Script:
         dispatch_task("execute_script", {
             "script_uid": self.uid
         }, task_priority="NOW")
+
+    def disable(self):
+        session = Session()
+        script_from_database = session.query(ScriptModel).get(self.uid)
+        script_from_database.enabled = False
+        session.commit()
+        session.close()

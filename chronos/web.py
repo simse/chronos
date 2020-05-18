@@ -116,6 +116,13 @@ def scripts():
     return jsonify(scripts), 200
 
 
+@app.route("/api/script/<string:uid>/action/<string:action>")
+def action(uid, action):
+    script = chronos.script.Script(uid)
+
+    return jsonify({'response': script.action(action)})
+
+
 # Install Pip requirements for specific script. This is a slow function.
 @app.route("/api/script/<string:uid>/install_requirements")
 def install_requirements(uid):
