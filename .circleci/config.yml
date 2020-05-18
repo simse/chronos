@@ -55,7 +55,11 @@ jobs:
                 command: |
                     pip install -r requirements.txt
                     pip install pytest
-                    pytest --ignore=chronos-ui
+                    pytest --ignore=chronos-ui --junitxml=test-results/junit.xml
+            - store_test_results:
+                path: test-results
+            - store_artifacts:
+                path: test-results
 
 
 
