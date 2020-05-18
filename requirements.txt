@@ -4,7 +4,7 @@ appdirs==1.4.4
 attrs==19.3.0
 black==19.10b0
 cached-property==1.5.1
--e git+https://github.com/simse/chronos.git@ceb88c5b7f8398b5873252668a0c2b41236c372c#egg=chronos
+-e .
 click==7.1.2
 cronex==0.1.3.1
 Flask==1.1.2
