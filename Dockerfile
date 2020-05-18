@@ -10,12 +10,12 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
 # Install common packages
+RUN apt-get update
 RUN pip install cython
 RUN apt-get install -y freetds-dev
 RUN pip install pymssql
 
 # Install Node and Yarn
-RUN apt-get update
 RUN apt-get install -y nodejs yarn
 
 # Copy Chronos to image
