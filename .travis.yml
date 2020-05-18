@@ -14,4 +14,4 @@ deploy:
     provider: script
     script: bash build.sh
     on:
-        branch: master
+        branch: edge
