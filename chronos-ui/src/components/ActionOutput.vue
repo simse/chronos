@@ -1,5 +1,11 @@
 <template>
-  <modal :name="modalId" height="auto" width="75%" :scrollable="true">
+  <modal
+    :name="modalId"
+    height="auto"
+    width="75%"
+    :scrollable="true"
+    @closed="reset"
+  >
     <h2 class="modal-title">{{ title }}</h2>
 
     <pre>
@@ -11,8 +17,6 @@
 </template>
 
 <script>
-import events from "@/events";
-
 export default {
   name: "ActionOutput",
   props: {
@@ -33,31 +37,25 @@ export default {
       required: true
     }
   },
-  data() {
-    return {
-      lines: [],
-      done: false,
-      taskId: null
-    };
-  },
   computed: {
     output() {
-      return this.lines.join("");
-    }
-  },
-  mounted() {
-    events.$on("_task_output", event => {
-      if (event.script_uid === this.uid && event.task === this.action) {
-        this.lines.push(event.output + "\n");
-        this.taskId = event.task_id;
-      }
-    });
+      let script = this.$store.getters.getScriptByUid(this.uid);
 
-    events.$on("_task_finished", event => {
-      if (event.task_id === this.taskId) {
-        this.done = true;
+      if (typeof script === "undefined") {
+        return "";
       }
-    });
+
+      return script.actions[this.action].output;
+    },
+    done() {
+      let script = this.$store.getters.getScriptByUid(this.uid);
+
+      if (typeof script === "undefined") {
+        return false;
+      }
+
+      return script.actions[this.action].done;
+    }
   },
   methods: {
     open() {
@@ -67,7 +65,12 @@ export default {
       this.$modal.hide(this.modalId);
     },
     reset() {
-      this.lines = [];
+      if (this.done) {
+        this.$store.commit("resetActionOutput", {
+          scriptUid: this.uid,
+          action: this.action
+        });
+      }
     }
   }
 };
@@ -76,11 +79,11 @@ export default {
 <style lang="scss" scoped>
 pre {
   font-size: 1.2rem;
-  white-space: pre-wrap;       /* css-3 */
-  white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
-  white-space: -pre-wrap;      /* Opera 4-6 */
-  white-space: -o-pre-wrap;    /* Opera 7 */
-  word-wrap: break-word; 
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
   padding: 20px;
   margin-bottom: 0;
 }

@@ -48,28 +48,39 @@ export default {
       default: false
     }
   },
-  data() {
-    return {
-      loading: false
-    };
+  computed: {
+    loading() {
+      let script = this.$store.getters.getScriptByUid(this.script_uid);
+      if (script === undefined) {
+        return false;
+      }
+
+      return script.actions[this.action].loading;
+    }
+  },
+  watch: {
+    script_uid() {
+      this.$forceUpdate();
+    }
   },
   methods: {
     activate() {
-      this.loading = true;
+      if (this.loading) {
+        this.showActionOutput();
+        return;
+      }
 
-      api.scriptAction(this.script_uid, this.action, () => {
-        this.finish();
-      });
+      api.scriptAction(this.script_uid, this.action);
 
-      console.log(this.showOutput);
+      //console.log(this.showOutput);
 
       if (this.showOutput) {
-        this.$modal.show(this.script_uid + "_" + this.action);
-        console.log("opening modal");
+        this.showActionOutput();
       }
     },
-    finish() {
-      this.loading = false;
+    finish() {},
+    showActionOutput() {
+      this.$modal.show(this.script_uid + "_" + this.action);
     }
   }
 };

@@ -42,15 +42,69 @@ const api = {
       });
   },
   scriptAction(uid, action, callback = () => {}) {
+    store.commit("resetActionOutput", {
+      scriptUid: uid,
+      action: action
+    });
+
+    store.commit("setActionLoadingState", {
+      scriptUid: uid,
+      action: action,
+      loading: true
+    });
+
+    let taskOutputCallback = event => {
+      if (event.script_uid === uid && event.task === action) {
+        store.commit("appendActionOutput", {
+          scriptUid: uid,
+          action: action,
+          output: event.output + "\n"
+        });
+
+        store.commit("setActionTaskId", {
+          scriptUid: uid,
+          action: action,
+          taskId: event.task_id
+        });
+      }
+    };
+
+    let actionCompleteCallback = event => {
+      if (event.action == action && event.uid == uid) {
+        store.commit("setActionLoadingState", {
+          scriptUid: uid,
+          action: action,
+          loading: false
+        });
+
+        callback();
+      }
+    };
+
+    let taskCompleteCallback = event => {
+      if (
+        event.task_id ===
+        store.getters.getScriptByUid(uid).actions[action].currentTaskId
+      ) {
+        store.commit("setActionDoneState", {
+          scriptUid: uid,
+          action: action,
+          done: true
+        });
+
+        events.$off("_task_output", taskOutputCallback);
+        events.$off("_task_output", taskOutputCallback);
+        events.$off("_task_finished", taskCompleteCallback);
+      }
+    };
+
     axios
       .get(this.getApiUrl() + "script/" + uid + "/action/" + action)
       .then(response => {
         if (response.status === 200) {
-          events.$on("_action_complete", event => {
-            if (event.action == action && event.uid == uid) {
-              callback();
-            }
-          });
+          events.$on("_action_complete", actionCompleteCallback);
+          events.$on("_task_output", taskOutputCallback);
+          events.$on("_task_finished", taskCompleteCallback);
         }
       });
   },
