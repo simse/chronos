@@ -2,6 +2,7 @@
 import time
 import json
 import os
+import datetime
 
 # Third-party dependencies
 from flask import Flask, jsonify, send_from_directory, Response, request
@@ -136,11 +137,16 @@ def execute(uid):
     return jsonify({"response": "OK"}), 200
 
 
+def myconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
+
+
 def events(type):
     try:
         for e in event.listen(type):
             logger.debug("Yielded event: {}", e['uid'])
-            yield "data: %s\n\n" % json.dumps(e)
+            yield "data: %s\n\n" % json.dumps(e, default=myconverter)
     finally:
         logger.info("Stopping Sever Side Event stream")
 

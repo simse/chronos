@@ -15,14 +15,30 @@
             icon="play_arrow"
             text="Execute"
             action="execute"
-            script_uid="test"
+            :showOutput="true"
+            :script_uid="script_uid"
+          />
+
+          <ActionOutput
+            :uid="this.script_uid"
+            action="execute"
+            :modalId="this.script_uid + '_execute'"
+            title="Execute script output"
           />
 
           <QuickAction
             icon="get_app"
             text="Install Pip requirements"
-            action="execute"
-            script_uid="test"
+            action="install_requirements"
+            :showOutput="true"
+            :script_uid="script_uid"
+          />
+
+          <ActionOutput
+            :uid="this.script_uid"
+            action="install_requirements"
+            :modalId="this.script_uid + '_install_requirements'"
+            title="Install pip requirements output"
           />
         </div>
       </div>
@@ -32,11 +48,13 @@
 
 <script>
 import QuickAction from "@/components/QuickAction";
+import ActionOutput from "@/components/ActionOutput";
 
 export default {
   name: "ScriptViewer",
   components: {
-    QuickAction
+    QuickAction,
+    ActionOutput
   },
   props: {
     script_uid: {
@@ -44,11 +62,20 @@ export default {
       required: false
     }
   },
+  data() {
+    return {
+      loading: false
+    };
+  },
   computed: {
     scripts() {
       return this.$store.state.scripts;
     },
     script() {
+      if (this.$store.state.scripts.length == 0) {
+        return {};
+      }
+
       return this.scripts.find(value => {
         return value.uid === this.script_uid ? true : false;
       });

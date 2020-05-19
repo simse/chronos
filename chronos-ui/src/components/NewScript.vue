@@ -90,12 +90,6 @@ export default {
   padding: 30px 50px;
 }
 
-h2.modal-title {
-  font-weight: 400;
-  text-align: center;
-  margin-bottom: 45px;
-}
-
 form {
   label {
     font-weight: 500;

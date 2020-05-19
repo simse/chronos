@@ -14,21 +14,31 @@ def run(arguments, event):
 
     process = Popen(
         ["bash", script.execute_path],
-        stdin=PIPE,
         stdout=PIPE,
-        stderr=PIPE,
-        bufsize=-1,
+        shell=False
     )
 
     process_output = ""
     exitcode = 0
 
     while True:
+        output = process.stdout.readline()
+        if process.poll() is not None:
+            break
+
+        if output:
+            event.trigger("task_output", {
+                "task_id": task_id,
+                "script_uid": script_uid,
+                "output": output.decode("utf-8").strip(),
+                "task": "execute"
+            })
+
+    """
+    while True:
         output = process.stdout.readline().decode('utf-8')
 
-        if process.poll() is not None:
-            exitcode = process.poll()
-
+        if not output:
             break
 
         if output:
@@ -39,7 +49,9 @@ def run(arguments, event):
                 "output": output
             })
 
+            print(output)"""
 
+    exitcode = process.poll()
 
 
     session = Session()
@@ -51,5 +63,9 @@ def run(arguments, event):
     session.close()
 
     event.trigger("script_executed", script.to_dict())
+    event.trigger("action_complete", {
+        "action": "execute",
+        "uid": script.uid
+    })
 
     return process_output

@@ -55,20 +55,9 @@ class Script:
 
     def delete(self):
         """Delete script."""
-        session = Session()
-
-        # Remove script folder
-        shutil.rmtree(self.folder)
-
-        # Remove all logs from script
-        session.query(Log).filter(Log.script == self.uid).delete()
-
-        # Delete metadata
-        session.delete(self.db)
-        session.commit()
-        session.close()
-
-        event.trigger("script_deleted", self.dict)
+        dispatch_task("delete_script", {
+            "uid": self.uid
+        }, task_priority="NOW")
 
     def action(self, action):
         if action == "delete":

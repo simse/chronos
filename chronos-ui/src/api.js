@@ -42,7 +42,17 @@ const api = {
       });
   },
   scriptAction(uid, action, callback = () => {}) {
-    callback();
+    axios
+      .get(this.getApiUrl() + "script/" + uid + "/action/" + action)
+      .then(response => {
+        if (response.status === 200) {
+          events.$on("_action_complete", event => {
+            if (event.action == action && event.uid == uid) {
+              callback();
+            }
+          });
+        }
+      });
   },
   listenToChronos() {
     this.events = new EventSource(this.getApiUrl() + "events/any");

@@ -18,6 +18,7 @@
 
 <script>
 import Spinner from "vue-simple-spinner";
+import api from "@/api";
 
 export default {
   name: "QuickAction",
@@ -40,6 +41,11 @@ export default {
     script_uid: {
       type: String,
       required: true
+    },
+    showOutput: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   data() {
@@ -49,11 +55,21 @@ export default {
   },
   methods: {
     activate() {
-      if (this.loading) {
-        this.loading = false;
-      } else {
-        this.loading = true;
+      this.loading = true;
+
+      api.scriptAction(this.script_uid, this.action, () => {
+        this.finish();
+      });
+
+      console.log(this.showOutput);
+
+      if (this.showOutput) {
+        this.$modal.show(this.script_uid + "_" + this.action);
+        console.log("opening modal");
       }
+    },
+    finish() {
+      this.loading = false;
     }
   }
 };

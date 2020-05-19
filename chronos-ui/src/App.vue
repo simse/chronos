@@ -73,4 +73,10 @@ h1.page-title {
   background: #101010 !important;
   box-shadow: 0 20px 60px -2px rgba(0, 0, 0, 0.3) !important;
 }
+
+h2.modal-title {
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 45px;
+}
 </style>
