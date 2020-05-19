@@ -30,6 +30,7 @@ class Event:
             {
                 "timestamp": datetime.datetime.now().strftime("%d-%b-%Y (%H:%M:%S.%f)"),
                 "id": id,
+                "event": id,
                 "payload": payload,
                 "listeners": self.listeners[id] + self.listeners["any"],
                 "uid": id + datetime.datetime.now().strftime("%H%M%S%f"),
@@ -48,18 +49,16 @@ class Event:
         listener_id = id + datetime.datetime.now().strftime("%H%M%S%f")
         self.listeners[id].append(listener_id)
 
-        print(self.listeners[id])
+        # print(self.listeners[id])
 
         seen_events = []
-
-
-        event_ids = [id]
-        if id == "any":
-            event_ids = list(self.events.keys())
 
         listen_time = 0
 
         while True:
+            event_ids = [id]
+            if id in ["any", "all"]:
+                event_ids = list(self.events.keys())
             
             if listen_time > timeout:
                 logger.debug("Listener: {} timed out after {} seconds", listener_id, timeout)

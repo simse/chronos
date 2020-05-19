@@ -1,7 +1,9 @@
 import store from "./store";
+import events from "./events";
 import axios from "axios";
 
 const api = {
+  events: null,
   getApiUrl() {
     return "http://localhost:5000/api/";
   },
@@ -24,12 +26,8 @@ const api = {
             uid: response.data.uid
           });
 
-          const eventStream = new EventSource(
-            this.getApiUrl() + "events/script_created"
-          );
-
-          eventStream.onmessage = function(event) {
-            let payload = JSON.parse(event.data).payload;
+          events.$on("_script_created", event => {
+            let payload = event;
 
             if (payload.uid === response.data.uid) {
               store.commit("finishLoadingScript", {
@@ -38,15 +36,16 @@ const api = {
               });
 
               callback();
-
-              eventStream.close();
             }
-          };
+          });
         }
       });
   },
   scriptAction(uid, action, callback = () => {}) {
     callback();
+  },
+  listenToChronos() {
+    this.events = new EventSource(this.getApiUrl() + "events/any");
   }
 };
 

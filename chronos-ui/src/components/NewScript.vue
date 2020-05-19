@@ -115,6 +115,7 @@ form {
     box-sizing: border-box;
     background: #181818;
     color: #fff;
+    font-family: "Inter";
 
     &.has-error {
       border: 1px solid var(--red);
