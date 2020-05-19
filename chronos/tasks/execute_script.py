@@ -62,6 +62,12 @@ def run(arguments, event):
     session.commit()
     session.close()
 
+    event.trigger("task_output", {
+        "task_id": task_id,
+        "output": "",
+        "script_uid": script.uid,
+        "task": "execute"
+    })
     event.trigger("script_executed", script.to_dict())
     event.trigger("action_complete", {
         "action": "execute",

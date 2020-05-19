@@ -35,6 +35,12 @@ export default new Vuex.Store({
             output: "",
             currentTaskId: 0
           },
+          enable: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          },
           delete: {
             loading: false,
             done: false,
@@ -77,6 +83,12 @@ export default new Vuex.Store({
               output: "",
               currentTaskId: 0
             },
+            enable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
             delete: {
               loading: false,
               done: false,
@@ -91,6 +103,18 @@ export default new Vuex.Store({
 
           return true;
         }
+      });
+    },
+    updateScript(state, payload) {
+      let script =
+        state.scripts[
+          state.scripts.findIndex(value => {
+            return value.uid === payload.uid ? true : false;
+          })
+        ];
+
+      Object.keys(payload).forEach(key => {
+        script[key] = payload[key];
       });
     },
     setActionLoadingState(state, payload) {

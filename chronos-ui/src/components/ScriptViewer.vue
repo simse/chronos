@@ -40,6 +40,21 @@
             :modalId="this.script_uid + '_install_requirements'"
             title="Install pip requirements output"
           />
+
+          <QuickAction
+            :icon="disableOrEnable.icon"
+            :text="disableOrEnable.text"
+            :action="disableOrEnable.action"
+            :script_uid="script_uid"
+          />
+
+          <QuickAction
+            icon="delete"
+            text="Delete"
+            action="delete"
+            :confirm="true"
+            :script_uid="script_uid"
+          />
         </div>
       </div>
     </div>
@@ -79,6 +94,23 @@ export default {
       return this.scripts.find(value => {
         return value.uid === this.script_uid ? true : false;
       });
+    },
+    disableOrEnable() {
+      if (this.script !== {}) {
+        if (!this.script.enabled) {
+          return {
+            text: "Enable",
+            icon: "check",
+            action: "enable"
+          };
+        }
+      }
+
+      return {
+        text: "Disable",
+        icon: "clear",
+        action: "disable"
+      };
     }
   }
 };
@@ -124,9 +156,11 @@ h1 {
 
 .quick-actions {
   display: flex;
+  flex-wrap: wrap;
 
   .quick-action {
     margin-right: 15px;
+    margin-bottom: 15px;
   }
 }
 </style>

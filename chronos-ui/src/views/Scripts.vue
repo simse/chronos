@@ -17,9 +17,11 @@
       <div class="list">
         <div v-for="(script, index) in scripts" :key="script.uid">
           <ScriptItem :script="script" :index="index" />
-
-          <!--ScriptItem :script="script" :index="index + 1" /-->
         </div>
+
+        <p v-if="scripts.length == 0" class="no-scripts">
+          You don't have any scripts yet.
+        </p>
       </div>
     </div>
 
@@ -123,5 +125,11 @@ export default {
     margin-top: 12px;
     display: block;
   }
+}
+
+.no-scripts {
+  opacity: 0.7;
+  padding: 50px;
+  text-align: center;
 }
 </style>

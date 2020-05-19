@@ -46,6 +46,11 @@ export default {
       type: Boolean,
       required: false,
       default: false
+    },
+    confirm: {
+      type: Boolean,
+      required: false,
+      default: false
     }
   },
   computed: {
@@ -70,9 +75,26 @@ export default {
         return;
       }
 
-      api.scriptAction(this.script_uid, this.action);
-
-      //console.log(this.showOutput);
+      if (this.confirm) {
+        this.$modal.show("dialog", {
+          title: "Are you sure?",
+          text: "If you delete this script, you will not get it back.",
+          buttons: [
+            {
+              title: "Delate script",
+              handler: () => {
+                this.doAction();
+              }
+            },
+            {
+              title: "Cancel",
+              default: true
+            }
+          ]
+        });
+      } else {
+        this.doAction();
+      }
 
       if (this.showOutput) {
         this.showActionOutput();
@@ -81,6 +103,9 @@ export default {
     finish() {},
     showActionOutput() {
       this.$modal.show(this.script_uid + "_" + this.action);
+    },
+    doAction() {
+      api.scriptAction(this.script_uid, this.action);
     }
   }
 };

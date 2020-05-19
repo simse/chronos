@@ -30,11 +30,12 @@ class Script:
         # Store dictionary version of model
         self.dict = {
             "name": self.db.name,
-            "enabled": self.db.enabled,
             "triggers": self.db.triggers,
             "logs": self.logs(),
             "created": str(self.db.created)
         }
+
+        self.enabled = self.db.enabled
 
         # Get script folder
         self.folder = CHRONOS + os.path.sep + "scripts" + os.path.sep + self.uid
@@ -52,6 +53,10 @@ class Script:
         self.install_requirements_path = self.folder + os.path.sep + "install.sh"
 
         session.close()
+
+    def __dict__(self):
+        return self.to_dict()
+
 
     def delete(self):
         """Delete script."""
@@ -71,6 +76,9 @@ class Script:
 
         if action == "disable":
             self.disable()
+
+        if action == "enable":
+            self.enable()
 
         return "OK"
 
@@ -144,6 +152,7 @@ class Script:
                 "contents": self.get_contents(),
                 "requirements": self.get_requirements(),
                 "logs": self.logs(),
+                "enabled": self.enabled
             },
             **self.dict,
         }
@@ -165,3 +174,26 @@ class Script:
         script_from_database.enabled = False
         session.commit()
         session.close()
+
+        self.enabled = False
+
+        event.trigger("script_updated", self.__dict__())
+        event.trigger("action_complete", {
+            "action": "disable",
+            "uid": self.uid
+        })
+
+    def enable(self):
+        session = Session()
+        script_from_database = session.query(ScriptModel).get(self.uid)
+        script_from_database.enabled = True
+        session.commit()
+        session.close()
+
+        self.enabled = True
+
+        event.trigger("script_updated", self.__dict__())
+        event.trigger("action_complete", {
+            "action": "enable",
+            "uid": self.uid
+        })

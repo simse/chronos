@@ -12,7 +12,7 @@ import api from "./api";
 import events from "./events";
 
 Vue.use(VueAxios, axios);
-Vue.use(VModal);
+Vue.use(VModal, { dialog: true });
 
 Vue.config.productionTip = false;
 

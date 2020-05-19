@@ -12,7 +12,7 @@
       <h2>{{ script.name }}</h2>
 
       <span class="last-execution">
-        <span v-if="!this.script.loading">Last run: 2 hours ago</span>
+        <span v-if="!this.script.loading">Last run: {{ lastRun }}</span>
 
         <span v-else>Creating...</span>
       </span>
@@ -44,6 +44,10 @@
 
 <script>
 import Spinner from "vue-simple-spinner";
+import TimeAgo from "javascript-time-ago";
+import en from "javascript-time-ago/locale/en";
+
+TimeAgo.addLocale(en);
 
 export default {
   name: "ScriptItem",
@@ -68,6 +72,16 @@ export default {
       return (
         decodeURIComponent(routeParts[routeParts.length - 1]) == this.script.uid
       );
+    },
+    lastRun() {
+      if (this.script.logs.length === 0) {
+        return "Never";
+      } else {
+        const timeAgo = new TimeAgo("en-US");
+        let datetime = Date.parse(this.script.logs[0].date);
+
+        return timeAgo.format(datetime);
+      }
     }
   },
   methods: {

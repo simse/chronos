@@ -44,43 +44,67 @@ class Event:
         self.callbacks[id].append(callback)
 
     def listen(self, id, timeout=60):
+        # Ensure event ID exists, you can start listening before the event exists
         self._add_event(id)
 
+        # Construct listener ID from taks ID and current time
         listener_id = id + datetime.datetime.now().strftime("%H%M%S%f")
         self.listeners[id].append(listener_id)
 
-        # print(self.listeners[id])
-
+        # List of events seen by this listener
         seen_events = []
 
+        # Time listened by this listener (in seconds)
         listen_time = 0
 
+        # Infinite loop to be broken when done
         while True:
+            # List of event IDs to listen for
             event_ids = [id]
+
+            # If event ID is "any" or "all" gather all current event IDs
             if id in ["any", "all"]:
                 event_ids = list(self.events.keys())
             
+            # Break loop if timeout is reached
             if listen_time > timeout:
                 logger.debug("Listener: {} timed out after {} seconds", listener_id, timeout)
                 self.listeners[id].remove(listener_id)
                 return
 
+            # Gather all events to be yielded
+            events = []
+
+
+            # Loop over each event ID
             for event_id in event_ids:
-                for event in self.events[event_id]:
-                    event_uid = event["timestamp"] + event["id"]
+                # Gather all events with ID
+                events_with_id = self.events[event_id]
 
-                    if event_uid not in seen_events:
-                        seen_events.append(event_uid)
+                # Loop through each event
+                for event in events_with_id:
+                    events.append(event)
+            
+            # Sort events by oldest first
+            events.sort(key=lambda event: event["timestamp"])
 
-                        try:
-                            event["listeners"].remove(listener_id)
-                        except ValueError:
-                            pass
+            for event in events:
+                # Generate unique event ID from timestamp and event name
+                event_uid = event["timestamp"] + event["id"]
 
-                        yield event
+                # Yield event if listener has not yet heard it
+                if event_uid not in seen_events:
+                    seen_events.append(event_uid)
 
-                listen_time += 0.05
-                time.sleep(0.05)
+                    try:
+                        event["listeners"].remove(listener_id)
+                    except ValueError:
+                        pass
+
+                    yield event
+
+            listen_time += 0.01
+            time.sleep(0.01)
 
     def garbage_collect(self):
         for event_id in self.events.keys():

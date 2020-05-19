@@ -93,7 +93,6 @@ const api = {
         });
 
         events.$off("_task_output", taskOutputCallback);
-        events.$off("_task_output", taskOutputCallback);
         events.$off("_task_finished", taskCompleteCallback);
       }
     };
@@ -110,6 +109,10 @@ const api = {
   },
   listenToChronos() {
     this.events = new EventSource(this.getApiUrl() + "events/any");
+
+    events.$on("_script_updated", event => {
+      store.commit("updateScript", event);
+    });
   }
 };
 

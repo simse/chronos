@@ -6,6 +6,8 @@
     <div class="content">
       <router-view />
     </div>
+
+    <v-dialog />
   </div>
 </template>
 

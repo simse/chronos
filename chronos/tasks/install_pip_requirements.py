@@ -41,6 +41,12 @@ def run(arguments, event):
 
     output, error = process.communicate()
 
+    event.trigger("task_output", {
+        "task_id": task_id,
+        "output": "",
+        "script_uid": script.uid,
+        "task": "install_requirements"
+    })
     event.trigger("pip_requirements_installed", script.to_dict())
     event.trigger("action_complete", {
         "action": "install_requirements",

@@ -1,12 +1,9 @@
+import shutil
 import json
 import os
 
 from chronos.script import Script
-from chronos.config import CHRONOS
-from chronos.util import generate_uid, for_uid
-from chronos.venv import *
-from chronos.metadata import Session
-from chronos.metadata import Script as ScriptModel
+from chronos.metadata import Session, Log
 
 
 def run(arguments, event):
