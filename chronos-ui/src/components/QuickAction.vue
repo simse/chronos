@@ -19,6 +19,7 @@
 <script>
 import Spinner from "vue-simple-spinner";
 import api from "@/api";
+import events from "@/events";
 
 export default {
   name: "QuickAction",
@@ -63,11 +64,6 @@ export default {
       return script.actions[this.action].loading;
     }
   },
-  watch: {
-    script_uid() {
-      this.$forceUpdate();
-    }
-  },
   methods: {
     activate() {
       if (this.loading) {
@@ -76,22 +72,20 @@ export default {
       }
 
       if (this.confirm) {
-        this.$modal.show("dialog", {
-          title: "Are you sure?",
-          text: "If you delete this script, you will not get it back.",
-          buttons: [
-            {
-              title: "Delate script",
-              handler: () => {
-                this.doAction();
-              }
-            },
-            {
-              title: "Cancel",
-              default: true
-            }
-          ]
-        });
+        events.$emit("confirm");
+
+        let confirmHandler = () => {
+          this.doAction();
+          events.$off("confirmed", confirmHandler);
+        };
+
+        events.$on("confirmed", confirmHandler);
+
+        let cancelHandler = () => {
+          events.$off("cancelled", cancelHandler);
+        };
+
+        events.$on("cancelled", cancelHandler);
       } else {
         this.doAction();
       }

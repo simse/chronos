@@ -59,7 +59,7 @@ def test():
 
 
 # interval_trigger.listen(1000, test)
-interval_trigger.listen(10000, event.garbage_collect)
+interval_trigger.listen(100, event.garbage_collect)
 interval_trigger.listen(1000, evalaute_script_interval_triggers, clock=True)
 interval_trigger.listen(60000, evalaute_script_cron_triggers, clock=True)
 

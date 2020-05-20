@@ -17,6 +17,10 @@
     }
   }
 
+  &.just-text {
+    padding: 8px 12px;
+  }
+
   &.disabled {
     opacity: 0.5;
     filter: grayscale(0.6);
@@ -24,6 +28,14 @@
     &:hover {
       cursor: default;
       background: var(--blue);
+    }
+  }
+
+  &.grey {
+    background: var(--grey);
+
+    &:hover {
+      background: darken(#1f1f1f, 2%);
     }
   }
 

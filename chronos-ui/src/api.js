@@ -82,10 +82,11 @@ const api = {
     };
 
     let taskCompleteCallback = event => {
-      if (
-        event.task_id ===
-        store.getters.getScriptByUid(uid).actions[action].currentTaskId
-      ) {
+      let script = store.getters.getScriptByUid(uid);
+
+      if (typeof script === "undefined") return;
+
+      if (event.task_id === script.actions[action].currentTaskId) {
         store.commit("setActionDoneState", {
           scriptUid: uid,
           action: action,
@@ -112,6 +113,10 @@ const api = {
 
     events.$on("_script_updated", event => {
       store.commit("updateScript", event);
+    });
+
+    events.$on("_script_deleted", event => {
+      store.commit("deleteScript", event.uid);
     });
   }
 };

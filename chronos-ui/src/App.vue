@@ -7,18 +7,20 @@
       <router-view />
     </div>
 
-    <v-dialog />
+    <ConfirmModal />
   </div>
 </template>
 
 <script>
-import Navigation from "@/components/Navigation.vue";
+import Navigation from "@/components/Navigation";
+import ConfirmModal from "@/components/ConfirmModal";
 import api from "@/api";
 
 export default {
   name: "App",
   components: {
-    Navigation
+    Navigation,
+    ConfirmModal
   },
   mounted() {
     api.loadScripts();

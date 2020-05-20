@@ -72,7 +72,7 @@ def execute_next_task():
         if task.priority == "NOW":
             task_thread = threading.Thread(target=execute_task(task.id))
             task_thread.start()
-            logger.debug("Next task has been scheduled")
+            # logger.debug("Next task has been scheduled")
 
             return
 

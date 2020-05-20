@@ -57,6 +57,22 @@
           />
         </div>
       </div>
+
+      <div class="section">
+        <h2>Triggers</h2>
+      </div>
+
+      <div class="section">
+        <h2>Requirements</h2>
+      </div>
+
+      <div class="section">
+        <h2>Python script</h2>
+      </div>
+
+      <div class="section">
+        <h2>Execution reports</h2>
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +80,7 @@
 <script>
 import QuickAction from "@/components/QuickAction";
 import ActionOutput from "@/components/ActionOutput";
+import events from "@/events";
 
 export default {
   name: "ScriptViewer",
@@ -81,6 +98,13 @@ export default {
     return {
       loading: false
     };
+  },
+  mounted() {
+    events.$on("_script_deleted", event => {
+      if (event.uid === this.script_uid) {
+        this.$router.push("/scripts");
+      }
+    });
   },
   computed: {
     scripts() {

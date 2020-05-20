@@ -57,45 +57,45 @@ export default new Vuex.Store({
         uid: payload.uid,
         name: payload.name,
         loading: true,
-        created: new Date()
+        created: new Date(),
+        actions: {
+          execute: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          },
+          install_requirements: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          },
+          disable: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          },
+          enable: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          },
+          delete: {
+            loading: false,
+            done: false,
+            output: "",
+            currentTaskId: 0
+          }
+        }
       });
     },
     finishLoadingScript(state, payload) {
       state.scripts.some(value => {
         if (value.uid === payload.uid) {
           value.loading = false;
-          value.actions = {
-            execute: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            install_requirements: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            disable: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            enable: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            delete: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            }
-          };
 
           Object.keys(payload.script).forEach(key => {
             value[key] = payload.script[key];
@@ -117,12 +117,17 @@ export default new Vuex.Store({
         script[key] = payload[key];
       });
     },
+    deleteScript(state, uid) {
+      let index = state.scripts.findIndex(value => {
+        return value.uid === uid ? true : false;
+      });
+
+      state.scripts.splice(index);
+    },
     setActionLoadingState(state, payload) {
       let script = state.scripts.findIndex(value => {
         return value.uid === payload.scriptUid ? true : false;
       });
-
-      //console.log(state.scripts[script]);
 
       state.scripts[script].actions[payload.action].loading = payload.loading;
     },
