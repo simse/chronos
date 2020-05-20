@@ -9,15 +9,13 @@ from chronos.metadata import Task, Session
 from chronos.event import event
 
 
-
-
 def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
     session = Session()
     task = Task(
         task_id=task_id,
         task_arguments=json.dumps(task_arguments),
         priority=task_priority,
-        status="WAITING"
+        status="WAITING",
     )
 
     session.add(task)
@@ -44,9 +42,7 @@ def execute_task(id):
     session.commit()
 
     event.trigger("task_started", task_id_dict)
-    arguments = {
-        **json.loads(task.task_arguments),
-        **task_id_dict}
+    arguments = {**json.loads(task.task_arguments), **task_id_dict}
 
     task.output = task_module.run(json.dumps(arguments), event)
 
@@ -79,9 +75,6 @@ def execute_next_task():
     if tasks.count() > 0:
         task_thread = threading.Thread(target=execute_task(tasks[0].id))
         task_thread.start()
-       #  logger.debug("Next task has been scheduled")
-
-    
+    #  logger.debug("Next task has been scheduled")
 
     session.close()
-        

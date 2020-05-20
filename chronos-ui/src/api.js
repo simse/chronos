@@ -69,18 +69,6 @@ const api = {
       }
     };
 
-    let actionCompleteCallback = event => {
-      if (event.action == action && event.uid == uid) {
-        store.commit("setActionLoadingState", {
-          scriptUid: uid,
-          action: action,
-          loading: false
-        });
-
-        callback();
-      }
-    };
-
     let taskCompleteCallback = event => {
       let script = store.getters.getScriptByUid(uid);
 
@@ -102,11 +90,31 @@ const api = {
       .get(this.getApiUrl() + "script/" + uid + "/action/" + action)
       .then(response => {
         if (response.status === 200) {
-          events.$on("_action_complete", actionCompleteCallback);
+          events.$on("_action_complete", callback);
           events.$on("_task_output", taskOutputCallback);
           events.$on("_task_finished", taskCompleteCallback);
         }
       });
+  },
+  saveScript(script, callback = () => {}) {
+    axios.put(this.getApiUrl() + "script/" + script.uid, script).then(() => {
+      console.log("okay");
+      store.commit("updateScript", {
+        uid: script.uid,
+        synced: true,
+        internal: true
+      });
+      callback();
+    });
+  },
+  saveAllScripts() {
+    store.state.scripts.forEach(script => {
+      if (!script.synced) {
+        api.saveScript(script);
+      }
+    });
+
+    store.commit("resetSavePrompt");
   },
   listenToChronos() {
     this.events = new EventSource(this.getApiUrl() + "events/any");
@@ -117,6 +125,22 @@ const api = {
 
     events.$on("_script_deleted", event => {
       store.commit("deleteScript", event.uid);
+    });
+
+    events.$on("_action_started", event => {
+      store.commit("setActionLoadingState", {
+        scriptUid: event.uid,
+        action: event.action,
+        loading: true
+      });
+    });
+
+    events.$on("_action_complete", event => {
+      store.commit("setActionLoadingState", {
+        scriptUid: event.uid,
+        action: event.action,
+        loading: false
+      });
     });
   }
 };

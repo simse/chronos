@@ -65,16 +65,17 @@ class Event:
             # If event ID is "any" or "all" gather all current event IDs
             if id in ["any", "all"]:
                 event_ids = list(self.events.keys())
-            
+
             # Break loop if timeout is reached
             if listen_time > timeout:
-                logger.debug("Listener: {} timed out after {} seconds", listener_id, timeout)
+                logger.debug(
+                    "Listener: {} timed out after {} seconds", listener_id, timeout
+                )
                 self.listeners[id].remove(listener_id)
                 return
 
             # Gather all events to be yielded
             events = []
-
 
             # Loop over each event ID
             for event_id in event_ids:
@@ -84,7 +85,7 @@ class Event:
                 # Loop through each event
                 for event in events_with_id:
                     events.append(event)
-            
+
             # Sort events by oldest first
             events.sort(key=lambda event: event["timestamp"])
 
@@ -110,9 +111,15 @@ class Event:
         for event_id in self.events.keys():
             for index, event in enumerate(self.events[event_id]):
 
-                timestamp = datetime.datetime.strptime(event["timestamp"], "%d-%b-%Y (%H:%M:%S.%f)")
+                timestamp = datetime.datetime.strptime(
+                    event["timestamp"], "%d-%b-%Y (%H:%M:%S.%f)"
+                )
 
-                if event["listeners"] == [] or timestamp < datetime.datetime.now() - datetime.timedelta(seconds=60):
+                if event[
+                    "listeners"
+                ] == [] or timestamp < datetime.datetime.now() - datetime.timedelta(
+                    seconds=60
+                ):
                     logger.debug("Removed event with ID: {} from memory", event["uid"])
                     del self.events[event_id][index]
 

@@ -7,7 +7,17 @@ import json
 import sqlite3
 
 # Third-party dependencies
-from sqlalchemy import create_engine, MetaData, Column, Integer, String, DateTime, ForeignKey, Boolean, JSON
+from sqlalchemy import (
+    create_engine,
+    MetaData,
+    Column,
+    Integer,
+    String,
+    DateTime,
+    ForeignKey,
+    Boolean,
+    JSON,
+)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker, scoped_session
 import alembic.config
@@ -24,7 +34,9 @@ logs = None
 try:
     conn = sqlite3.connect(CHRONOS + "/chronos.db")
     cursor = conn.cursor()
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='setting'")
+    cursor.execute(
+        "SELECT name FROM sqlite_master WHERE type='table' AND name='setting'"
+    )
     rows = cursor.fetchall()
 
     if len(rows) == 1:
@@ -40,7 +52,12 @@ try:
 
         logger.debug("Backing up database and removing...")
         database_path = Path(CHRONOS + "/chronos.db")
-        database_path.rename(CHRONOS + "/" + str(int(datetime.datetime.utcnow().timestamp() * 1000)) + "-old-chronos.db")
+        database_path.rename(
+            CHRONOS
+            + "/"
+            + str(int(datetime.datetime.utcnow().timestamp() * 1000))
+            + "-old-chronos.db"
+        )
         logger.debug("Database backed up, creating new format...")
 
 except Error as e:
@@ -60,7 +77,8 @@ logger.debug("Database connection succesful")
 
 class Script(Base):
     """Script model to store metadata about scripts."""
-    __tablename__ = 'scripts'
+
+    __tablename__ = "scripts"
 
     name = Column(String)
     uid = Column(String, primary_key=True)
@@ -72,7 +90,8 @@ class Script(Base):
 
 class Log(Base):
     """Log model to store output from each script execution."""
-    __tablename__ = 'logs'
+
+    __tablename__ = "logs"
 
     id = Column(Integer, primary_key=True)
     script = Column(Integer, ForeignKey("scripts.uid"))
@@ -84,14 +103,15 @@ class Log(Base):
 
 class Setting(Base):
     """Key/value storage for settings, and other persistent information."""
-    __tablename__ = 'settings'
+
+    __tablename__ = "settings"
 
     key = Column(String, primary_key=True)
     value = Column(String)
 
 
 class Task(Base):
-    __tablename__ = 'tasks'
+    __tablename__ = "tasks"
 
     id = Column(Integer, primary_key=True)
     task_id = Column(String)
@@ -102,7 +122,6 @@ class Task(Base):
     time_scheduled = Column(DateTime, default=datetime.datetime.utcnow)
     time_started = Column(DateTime)
     time_finished = Column(DateTime)
-
 
 
 def migrate():
@@ -129,30 +148,25 @@ if scripts is not None:
         script_triggers = []
 
         if script[6] != 0 and script[3] != 0:
-            script_triggers.append({
-                'type': 'interval',
-                'options': {
-                    'interval': script[3]
-                } 
-            })
-
+            script_triggers.append(
+                {"type": "interval", "options": {"interval": script[3]}}
+            )
 
         if script[5] != None and script[7] != 0:
-            script_triggers.append({
-                'type': 'cron',
-                'options': {
-                    'expression': script[5]
-                } 
-            })
+            script_triggers.append(
+                {"type": "cron", "options": {"expression": script[5]}}
+            )
 
         script_lookup[script_id] = script_uid
 
-        session.add(Script(
-            name=script_name,
-            uid=script_uid,
-            enabled=(script_enabled == 1),
-            triggers=script_triggers
-        ))
+        session.add(
+            Script(
+                name=script_name,
+                uid=script_uid,
+                enabled=(script_enabled == 1),
+                triggers=script_triggers,
+            )
+        )
 
     if logs is not None:
 
@@ -166,15 +180,17 @@ if scripts is not None:
                 exitcode = log[4]
                 error = log[5]
 
-                session.add(Log(
-                    script=script_uid,
-                    text=text,
-                    exitcode=exitcode,
-                    error=error,
-                    date=datetime.datetime.strptime(date, '%Y-%m-%d %H:%M:%S.%f')
-                ))
+                session.add(
+                    Log(
+                        script=script_uid,
+                        text=text,
+                        exitcode=exitcode,
+                        error=error,
+                        date=datetime.datetime.strptime(date, "%Y-%m-%d %H:%M:%S.%f"),
+                    )
+                )
 
-            except(KeyError):
+            except (KeyError):
                 continue
 
     session.commit()

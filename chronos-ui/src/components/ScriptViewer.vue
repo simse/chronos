@@ -12,7 +12,7 @@
       </div>
 
       <div class="section">
-        <h2>Quick actions</h2>
+        <h2 class="section-title">Quick actions</h2>
 
         <div class="quick-actions">
           <QuickAction
@@ -64,30 +64,21 @@
 
       <div class="section">
         <div class="header">
-          <h2>Script triggers</h2>
+          <h2 class="section-title">Script triggers</h2>
 
           <div>
-            <a class="button blue">
+            <a class="button blue" @click="newTrigger">
               <i class="material-icons">add</i> Add trigger
             </a>
           </div>
         </div>
 
-        <div class="triggers">
-          <div class="empty">
-            <h2>No triggers</h2>
-
-            <p>
-              Use triggers to execute your scripts on an interval or using Cron
-              expressions
-            </p>
-          </div>
-        </div>
+        <Triggers :script_uid="script_uid" ref="triggers" />
       </div>
 
       <div class="section">
         <div class="header">
-          <h2>Pip requirements</h2>
+          <h2 class="section-title">Pip requirements</h2>
 
           <div>
             <a class="button blue">
@@ -111,7 +102,7 @@
       </div>
 
       <div class="section">
-        <h2>Python script</h2>
+        <h2 class="section-title">Python script</h2>
 
         <prism-editor
           :code="python_script"
@@ -122,7 +113,7 @@
       </div>
 
       <div class="section">
-        <h2>Execution reports</h2>
+        <h2 class="section-title">Execution reports</h2>
       </div>
     </div>
   </div>
@@ -131,13 +122,15 @@
 <script>
 import QuickAction from "@/components/QuickAction";
 import ActionOutput from "@/components/ActionOutput";
+import Triggers from "@/components/Triggers";
 import events from "@/events";
 
 export default {
   name: "ScriptViewer",
   components: {
     QuickAction,
-    ActionOutput
+    ActionOutput,
+    Triggers
   },
   props: {
     script_uid: {
@@ -170,6 +163,9 @@ export default {
         return value.uid === this.script_uid ? true : false;
       });
     },
+    shouldSave() {
+      return !this.script.synced;
+    },
     disableOrEnable() {
       if (this.script !== {}) {
         if (!this.script.enabled) {
@@ -198,14 +194,18 @@ export default {
       this.$store.commit("updateScript", {
         uid: this.script.uid,
         synced: false,
+        internal: true,
         contents: code
       });
+    },
+    newTrigger() {
+      this.$refs.triggers.newTrigger();
     }
   }
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .no-script,
 .script-viewer {
   width: 100%;
@@ -239,7 +239,7 @@ h1 {
   max-width: 800px;
   border-radius: 12px;
 
-  h2 {
+  h2.section-title {
     font-size: 1.3rem;
     font-weight: 600;
   }

@@ -193,6 +193,7 @@ h2 {
 span.last-execution {
   font-size: 0.95rem;
   opacity: 60%;
+  display: block;
 }
 
 .icon {

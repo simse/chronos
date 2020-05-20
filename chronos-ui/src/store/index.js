@@ -1,5 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import events from "@/events";
 
 Vue.use(Vuex);
 
@@ -7,7 +8,8 @@ export default new Vuex.Store({
   state: {
     scripts: [],
     settings: [],
-    isConnected: false
+    isConnected: false,
+    hasPromptedSave: false
   },
   mutations: {
     setScripts(state, payload) {
@@ -115,9 +117,35 @@ export default new Vuex.Store({
           })
         ];
 
-      Object.keys(payload).forEach(key => {
-        script[key] = payload[key];
-      });
+      if ("synced" in payload) {
+        if (!payload.synced && !state.hasPromptedSave) {
+          events.$emit("prompt-save");
+          state.hasPromptedSave = true;
+        }
+
+        if (!payload.synced && payload.internal) {
+          Object.keys(payload).forEach(key => {
+            script[key] = payload[key];
+          });
+        }
+
+        if (payload.synced && payload.internal) {
+          Object.keys(payload).forEach(key => {
+            script[key] = payload[key];
+          });
+        }
+      } else {
+        if (script.synced) {
+          Object.keys(payload).forEach(key => {
+            script[key] = payload[key];
+          });
+        } else if ("logs" in payload) {
+          script.logs = payload.logs;
+        }
+      }
+    },
+    resetSavePrompt(state) {
+      state.hasPromptedSave = false;
     },
     deleteScript(state, uid) {
       let index = state.scripts.findIndex(value => {

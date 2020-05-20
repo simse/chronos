@@ -10,15 +10,14 @@ def run(arguments, event):
     script_uid = arguments["script_uid"]
     task_id = arguments["task_id"]
 
+    event.trigger("action_started", {"uid": script_uid, "action": "execute"})
+
     script = Script(script_uid)
 
     process = Popen(
-        ["bash", script.execute_path],
-        stdout=PIPE,
-        shell=False
+        ["bash", script.execute_path], stdout=PIPE, stderr=PIPE, shell=False
     )
 
-    process_output = ""
     exitcode = 0
 
     while True:
@@ -27,52 +26,44 @@ def run(arguments, event):
             break
 
         if output:
-            event.trigger("task_output", {
-                "task_id": task_id,
-                "script_uid": script_uid,
-                "output": output.decode("utf-8").strip(),
-                "task": "execute"
-            })
-
-    """
-    while True:
-        output = process.stdout.readline().decode('utf-8')
-
-        if not output:
-            break
-
-        if output:
-            process_output += output
-            event.trigger("log_output", {
-                "task_id": task_id,
-                "script_uid": script_uid,
-                "output": output
-            })
-
-            print(output)"""
+            event.trigger(
+                "task_output",
+                {
+                    "task_id": task_id,
+                    "script_uid": script_uid,
+                    "output": output.decode("utf-8").strip(),
+                    "task": "execute",
+                },
+            )
 
     exitcode = process.poll()
 
+    stdout, stderr = process.communicate()
+
+    if stderr:
+        print(stderr)
+        event.trigger(
+            "task_output",
+            {
+                "task_id": task_id,
+                "script_uid": script_uid,
+                "output": stderr.decode("utf-8"),
+                "task": "execute",
+            },
+        )
 
     session = Session()
-    log = Log(
-        script=script_uid, text=process_output, error="", exitcode=exitcode
-    )
+    log = Log(script=script_uid, text=stdout, error=stderr, exitcode=exitcode)
     session.add(log)
     session.commit()
     session.close()
 
-    event.trigger("task_output", {
-        "task_id": task_id,
-        "output": "",
-        "script_uid": script.uid,
-        "task": "execute"
-    })
+    event.trigger(
+        "task_output",
+        {"task_id": task_id, "output": "", "script_uid": script.uid, "task": "execute"},
+    )
     event.trigger("script_executed", script.to_dict())
     event.trigger("script_updated", script.to_dict())
-    event.trigger("action_complete", {
-        "action": "execute",
-        "uid": script.uid
-    })
+    event.trigger("action_complete", {"action": "execute", "uid": script.uid})
 
-    return process_output
+    return stdout

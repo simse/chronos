@@ -155,7 +155,7 @@ export default {
 }
 
 .loading {
-  position: absolute;
+  position: fixed;
   background: rgba(0, 0, 0, 0.6);
   width: 170px;
   height: 170px;

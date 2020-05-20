@@ -13,12 +13,13 @@ import events from "./events";
 import VuePrismEditor from "vue-prism-editor";
 import "vue-prism-editor/dist/VuePrismEditor.css";
 import "prismjs";
-// import "prismjs/themes/prism.css";
 import "prismjs/components/prism-python";
+import { Snackbar } from "buefy";
 
 Vue.use(VueAxios, axios);
 Vue.use(VModal);
 Vue.component("prism-editor", VuePrismEditor);
+Vue.use(Snackbar);
 
 Vue.config.productionTip = false;
 
@@ -31,9 +32,6 @@ new Vue({
 
     api.events.onmessage = event => {
       let eventData = JSON.parse(event.data);
-
-      // console.log(eventData);
-
       events.$emit("_" + eventData.event, eventData.payload);
     };
   }

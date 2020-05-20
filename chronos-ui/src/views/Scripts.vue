@@ -35,7 +35,8 @@
 import ScriptItem from "@/components/ScriptItem";
 import NewScript from "@/components/NewScript";
 import ScriptViewer from "@/components/ScriptViewer";
-import store from "@/store/index.js";
+import events from "@/events";
+import api from "@/api";
 
 export default {
   name: "Scripts",
@@ -65,15 +66,19 @@ export default {
       return sortedScripts;
     }
   },
+  mounted() {
+    events.$on("prompt-save", () => {
+      this.$buefy.snackbar.open({
+        indefinite: true,
+        message: "You have unsaved changes",
+        position: "is-top",
+        onAction: api.saveAllScripts
+      });
+    });
+  },
   methods: {
     openNewScript() {
       this.$refs.newScript.open();
-    },
-    test() {
-      store.commit("addScriptLoading", {
-        name: "Hello",
-        uid: "hello"
-      });
     }
   }
 };

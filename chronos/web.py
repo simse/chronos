@@ -50,7 +50,7 @@ class Script(Resource):
         args = parser.parse_args()
 
         dispatch_task("create_script", {"name": args["name"]}, "NOW")
-        return {'uid': for_uid(args["name"])}, 200
+        return {"uid": for_uid(args["name"])}, 200
 
     def put(self, uid):
         """Update script."""
@@ -121,7 +121,7 @@ def scripts():
 def action(uid, action):
     script = chronos.script.Script(uid)
 
-    return jsonify({'response': script.action(action)})
+    return jsonify({"response": script.action(action)})
 
 
 # Install Pip requirements for specific script. This is a slow function.
@@ -145,7 +145,7 @@ def myconverter(o):
 def events(type):
     try:
         for e in event.listen(type):
-            logger.debug("Yielded event: {}", e['uid'])
+            logger.debug("Yielded event: {}", e["uid"])
             yield "data: %s\n\n" % json.dumps(e, default=myconverter)
     finally:
         logger.info("Stopping Sever Side Event stream")

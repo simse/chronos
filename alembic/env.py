@@ -17,6 +17,7 @@ fileConfig(config.config_file_name)
 # for 'autogenerate' support
 from chronos.config import CHRONOS
 from chronos.metadata import meta
+
 target_metadata = meta
 # target_metadata = None
 
@@ -25,7 +26,7 @@ target_metadata = meta
 # my_important_option = config.get_main_option("my_important_option")
 # ... etc.
 
-database_url = "sqlite:///" + CHRONOS + '/chronos.db'
+database_url = "sqlite:///" + CHRONOS + "/chronos.db"
 config.set_main_option("sqlalchemy.url", database_url)
 
 
@@ -67,9 +68,7 @@ def run_migrations_online():
     )
 
     with connectable.connect() as connection:
-        context.configure(
-            connection=connection, target_metadata=target_metadata
-        )
+        context.configure(connection=connection, target_metadata=target_metadata)
 
         with context.begin_transaction():
             context.run_migrations()

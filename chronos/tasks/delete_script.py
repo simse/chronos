@@ -25,12 +25,7 @@ def run(arguments, event):
     session.commit()
     session.close()
 
-    event.trigger("action_complete", {
-        "action": "delete",
-        "uid": script.uid
-    })
-    event.trigger("script_deleted", {
-        "uid": script.uid
-    })
+    event.trigger("action_complete", {"action": "delete", "uid": script.uid})
+    event.trigger("script_deleted", {"uid": script.uid})
 
     return uid

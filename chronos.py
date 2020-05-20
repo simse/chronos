@@ -14,7 +14,10 @@ from chronos.config import CHRONOS
 from chronos.task import execute_next_task
 from chronos.bus import interval_trigger, on_startup_trigger
 from chronos.event import event
-from chronos.runtime import evalaute_script_interval_triggers, evalaute_script_cron_triggers
+from chronos.runtime import (
+    evalaute_script_interval_triggers,
+    evalaute_script_cron_triggers,
+)
 from chronos.metadata import migrate
 
 

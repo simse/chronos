@@ -13,6 +13,7 @@ from chronos.venv import *
 from chronos.event import event
 from chronos.task import dispatch_task
 
+
 class Script:
     """Script class used to interact with scripts."""
 
@@ -32,7 +33,7 @@ class Script:
             "name": self.db.name,
             "triggers": self.db.triggers,
             "logs": self.logs(),
-            "created": str(self.db.created)
+            "created": str(self.db.created),
         }
 
         self.enabled = self.db.enabled
@@ -57,12 +58,9 @@ class Script:
     def __dict__(self):
         return self.to_dict()
 
-
     def delete(self):
         """Delete script."""
-        dispatch_task("delete_script", {
-            "uid": self.uid
-        }, task_priority="NOW")
+        dispatch_task("delete_script", {"uid": self.uid}, task_priority="NOW")
 
     def action(self, action):
         if action == "delete":
@@ -104,14 +102,19 @@ class Script:
 
         session = Session()
 
-        for log in session.query(Log).filter(Log.script == self.uid).order_by(Log.date.desc()).all():
+        for log in (
+            session.query(Log)
+            .filter(Log.script == self.uid)
+            .order_by(Log.date.desc())
+            .all()
+        ):
             try:
-                stdout = log.text.decode('utf-8')
+                stdout = log.text.decode("utf-8")
             except AttributeError:
                 stdout = log.text
-            
+
             try:
-                stderr = log.error.decode('utf-8')
+                stderr = log.error.decode("utf-8")
             except AttributeError:
                 stderr = log.error
 
@@ -152,21 +155,19 @@ class Script:
                 "contents": self.get_contents(),
                 "requirements": self.get_requirements(),
                 "logs": self.logs(),
-                "enabled": self.enabled
+                "enabled": self.enabled,
             },
             **self.dict,
         }
 
     def install_requirements(self):
         """Install requirements.txt"""
-        dispatch_task("install_pip_requirements", {
-            "script_uid": self.uid
-        }, task_priority="NOW")
+        dispatch_task(
+            "install_pip_requirements", {"script_uid": self.uid}, task_priority="NOW"
+        )
 
     def execute(self):
-        dispatch_task("execute_script", {
-            "script_uid": self.uid
-        }, task_priority="NOW")
+        dispatch_task("execute_script", {"script_uid": self.uid}, task_priority="NOW")
 
     def disable(self):
         session = Session()
@@ -178,10 +179,7 @@ class Script:
         self.enabled = False
 
         event.trigger("script_updated", self.__dict__())
-        event.trigger("action_complete", {
-            "action": "disable",
-            "uid": self.uid
-        })
+        event.trigger("action_complete", {"action": "disable", "uid": self.uid})
 
     def enable(self):
         session = Session()
@@ -193,7 +191,4 @@ class Script:
         self.enabled = True
 
         event.trigger("script_updated", self.__dict__())
-        event.trigger("action_complete", {
-            "action": "enable",
-            "uid": self.uid
-        })
+        event.trigger("action_complete", {"action": "enable", "uid": self.uid})
