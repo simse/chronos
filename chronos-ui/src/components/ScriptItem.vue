@@ -44,6 +44,7 @@
 
 <script>
 import Spinner from "vue-simple-spinner";
+import events from "@/events";
 import TimeAgo from "javascript-time-ago";
 import en from "javascript-time-ago/locale/en";
 
@@ -64,6 +65,24 @@ export default {
       required: true
     }
   },
+  data() {
+    return {
+      lastRun: "never"
+    };
+  },
+  mounted() {
+    this.recomputeLastRun();
+
+    window.setInterval(() => {
+      this.recomputeLastRun();
+    }, 30000);
+
+    events.$on("_script_executed", event => {
+      if (event.uid === this.script.uid) {
+        this.recomputeLastRun();
+      }
+    });
+  },
   computed: {
     isActive() {
       const routeParts = this.$route.path.split("/");
@@ -72,16 +91,6 @@ export default {
       return (
         decodeURIComponent(routeParts[routeParts.length - 1]) == this.script.uid
       );
-    },
-    lastRun() {
-      if (this.script.logs.length === 0) {
-        return "Never";
-      } else {
-        const timeAgo = new TimeAgo("en-US");
-        let datetime = Date.parse(this.script.logs[0].date);
-
-        return timeAgo.format(datetime);
-      }
     }
   },
   methods: {
@@ -111,6 +120,16 @@ export default {
         .catch(() => {
           void 0;
         });
+    },
+    recomputeLastRun() {
+      if (this.script.logs.length === 0) {
+        this.lastRun = "Never";
+      } else {
+        const timeAgo = new TimeAgo("en-US");
+        let datetime = Date.parse(this.script.logs[0].date + "+00:00");
+
+        this.lastRun = timeAgo.format(datetime);
+      }
     }
   }
 };

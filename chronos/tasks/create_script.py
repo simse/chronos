@@ -57,7 +57,7 @@ def run(arguments, event):
             '''#!/bin/bash
 cd "{}"
 source "{}"
-python "{}"'''.format(
+python -u "{}"'''.format(
                 path, get_activate(uid), script_path
             )
         )

@@ -64,9 +64,12 @@ export default {
 <style lang="scss" scoped>
 .navigation {
   min-height: 100vh;
-  width: 100%;
+  width: 90px;
   background: #000;
   text-align: center;
+  position: fixed;
+  top: 0;
+  left: 0;
 }
 
 .logo {

@@ -83,6 +83,14 @@ export default {
 .scripts {
   display: grid;
   grid-template-columns: 400px auto;
+  overflow-y: hidden;
+  height: 100vh;
+}
+
+.content {
+  overflow-y: scroll;
+  max-height: 100vh;
+  padding-bottom: 100px;
 }
 
 .sidebar {

@@ -63,6 +63,12 @@
     url(assets/fonts/Material-Icons-Rounded.woff2) format('woff2');
 }
 
+@font-face {
+  font-family: "Fira Code";
+  font-weight: 400;
+  src: url(assets/fonts/FiraCode-Regular.woff2);
+}
+
 .material-icons {
   font-family: 'Material Icons';
   font-weight: normal;

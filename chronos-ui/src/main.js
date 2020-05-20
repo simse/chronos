@@ -10,9 +10,15 @@ import VueAxios from "vue-axios";
 import VModal from "vue-js-modal";
 import api from "./api";
 import events from "./events";
+import VuePrismEditor from "vue-prism-editor";
+import "vue-prism-editor/dist/VuePrismEditor.css";
+import "prismjs";
+// import "prismjs/themes/prism.css";
+import "prismjs/components/prism-python";
 
 Vue.use(VueAxios, axios);
-Vue.use(VModal, { dialog: true });
+Vue.use(VModal);
+Vue.component("prism-editor", VuePrismEditor);
 
 Vue.config.productionTip = false;
 

@@ -69,6 +69,7 @@ def run(arguments, event):
         "task": "execute"
     })
     event.trigger("script_executed", script.to_dict())
+    event.trigger("script_updated", script.to_dict())
     event.trigger("action_complete", {
         "action": "execute",
         "uid": script.uid

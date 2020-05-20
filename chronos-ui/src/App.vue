@@ -31,6 +31,7 @@ export default {
 <style lang="scss">
 @import "styles/fonts.scss";
 @import "styles/buttons.scss";
+@import "styles/syntax.scss";
 
 :root {
   --grey: #1f1f1f;

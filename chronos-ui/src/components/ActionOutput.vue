@@ -2,15 +2,13 @@
   <modal
     :name="modalId"
     height="auto"
-    width="75%"
+    width="50%"
     :scrollable="true"
     @closed="reset"
   >
     <h2 class="modal-title">{{ title }}</h2>
 
-    <pre>
-      {{ output }}
-    </pre>
+    <pre>{{ output }}<span v-if="this.done && this.output === '\n'" class="no-output">No output from this command</span></pre>
 
     <a class="button" @click="close" v-if="done">Close</a>
   </modal>
@@ -78,14 +76,15 @@ export default {
 
 <style lang="scss" scoped>
 pre {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   white-space: pre-wrap;
   white-space: -moz-pre-wrap;
   white-space: -pre-wrap;
   white-space: -o-pre-wrap;
   word-wrap: break-word;
-  padding: 20px;
-  margin-bottom: 0;
+  padding: 0 30px 30px 30px;
+  margin: 0;
+  font-family: "Fira Code";
 }
 
 .button {
@@ -93,5 +92,10 @@ pre {
   display: block;
   width: 80px;
   text-align: center;
+}
+
+.no-output {
+  font-style: italic;
+  opacity: 0.6;
 }
 </style>

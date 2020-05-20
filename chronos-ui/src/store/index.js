@@ -6,7 +6,6 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     scripts: [],
-    actions: {},
     settings: [],
     isConnected: false
   },
@@ -48,6 +47,8 @@ export default new Vuex.Store({
             currentTaskId: 0
           }
         };
+
+        script.synced = true;
       });
 
       state.scripts = scripts;
@@ -89,7 +90,8 @@ export default new Vuex.Store({
             output: "",
             currentTaskId: 0
           }
-        }
+        },
+        synced: true
       });
     },
     finishLoadingScript(state, payload) {
@@ -122,7 +124,7 @@ export default new Vuex.Store({
         return value.uid === uid ? true : false;
       });
 
-      state.scripts.splice(index);
+      state.scripts.splice(index, 1);
     },
     setActionLoadingState(state, payload) {
       let script = state.scripts.findIndex(value => {
