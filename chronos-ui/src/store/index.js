@@ -110,6 +110,7 @@ export default new Vuex.Store({
       });
     },
     updateScript(state, payload) {
+      // TODO: Clean this garbage up
       let script =
         state.scripts[
           state.scripts.findIndex(value => {
@@ -142,6 +143,22 @@ export default new Vuex.Store({
         } else if ("logs" in payload) {
           script.logs = payload.logs;
         }
+      }
+    },
+    deleteTrigger(state, payload) {
+      let script =
+        state.scripts[
+          state.scripts.findIndex(value => {
+            return value.uid === payload.uid ? true : false;
+          })
+        ];
+
+      script.triggers.splice(payload.trigger_index);
+      script.synced = false;
+
+      if (!this.hasPromptedSave) {
+        events.$emit("prompt-save");
+        this.hasPromptedSave = true;
       }
     },
     resetSavePrompt(state) {

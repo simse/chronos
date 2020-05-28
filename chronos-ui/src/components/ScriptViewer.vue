@@ -7,10 +7,6 @@
     <div class="script" v-else>
       <h1>{{ script.name }}</h1>
 
-      <div v-if="!script.synced">
-        You have unsaved changes.
-      </div>
-
       <div class="section">
         <h2 class="section-title">Quick actions</h2>
 

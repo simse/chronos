@@ -11,11 +11,9 @@
       </div>
 
       <div v-else>
-        <ul>
-          <li v-for="trigger in triggers" :key="trigger.name">
-            {{ trigger.name }}
-          </li>
-        </ul>
+        <div v-for="(trigger, index) in triggers" :key="trigger.id">
+          <Trigger :trigger="trigger" :index="index" :script_uid="script_uid" />
+        </div>
       </div>
     </div>
 
@@ -58,6 +56,8 @@
 </template>
 
 <script>
+import Trigger from "@/components/Trigger";
+
 export default {
   name: "Triggers",
   props: {
@@ -65,6 +65,9 @@ export default {
       type: String,
       required: true
     }
+  },
+  components: {
+    Trigger
   },
   data() {
     return {
@@ -88,7 +91,13 @@ export default {
         {
           type: "cron",
           name: "CRON trigger",
-          fields: []
+          fields: [
+            {
+              name: "CRON expression",
+              key: "expression",
+              type: "text"
+            }
+          ]
         }
       ],
       newTriggerContent: {
@@ -132,7 +141,8 @@ export default {
       this.$store.commit("updateScript", {
         uid: this.script.uid,
         triggers: currentTriggers,
-        synced: false
+        synced: false,
+        internal: true
       });
       this.$modal.hide("new-trigger");
       this.newTriggerContent = {
@@ -146,6 +156,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.triggers {
+  padding: 18px;
+}
+
 .new-trigger {
   padding: 30px 50px;
 

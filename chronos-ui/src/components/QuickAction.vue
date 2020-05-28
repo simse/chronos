@@ -107,6 +107,7 @@ export default {
 
 <style lang="scss" scoped>
 .quick-action {
+  position: relative;
   height: 170px;
   width: 170px;
   background: #101010;
@@ -155,7 +156,7 @@ export default {
 }
 
 .loading {
-  position: fixed;
+  position: absolute;
   background: rgba(0, 0, 0, 0.6);
   width: 170px;
   height: 170px;

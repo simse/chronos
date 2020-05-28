@@ -29,7 +29,7 @@ export default {
       const routes = this.$router.options.routes;
 
       return routes.filter(value => {
-        if (value.path !== "/scripts/:script_uid") {
+        if (value.path !== "/scripts/:script_uid" && value.path !== "/") {
           return value;
         }
       });
