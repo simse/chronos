@@ -1,7 +1,7 @@
 #!/bin/bash
 if [ $TRAVIS_BRANCH = "master" ]
 then
-    export TAG=master
+    export TAG=latest
 else
     export TAG=$TRAVIS_BRANCH
 fi
