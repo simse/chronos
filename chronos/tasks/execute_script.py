@@ -1,4 +1,5 @@
 import json
+from datetime import datetime
 from subprocess import PIPE, Popen
 
 from chronos.script import Script
@@ -19,9 +20,11 @@ def run(arguments, event):
     )
 
     exitcode = 0
+    process_output = ""
 
     while True:
         output = process.stdout.readline()
+        process_output += output.decode("utf-8")
         if process.poll() is not None:
             break
 
@@ -31,7 +34,7 @@ def run(arguments, event):
                 {
                     "task_id": task_id,
                     "script_uid": script_uid,
-                    "output": output.decode("utf-8").strip(),
+                    "output": output.decode("utf-8"),
                     "task": "execute",
                 },
             )
@@ -41,7 +44,6 @@ def run(arguments, event):
     stdout, stderr = process.communicate()
 
     if stderr:
-        print(stderr)
         event.trigger(
             "task_output",
             {
@@ -53,7 +55,7 @@ def run(arguments, event):
         )
 
     session = Session()
-    log = Log(script=script_uid, text=stdout, error=stderr, exitcode=exitcode)
+    log = Log(script=script_uid, text=process_output, error=stderr, exitcode=exitcode)
     session.add(log)
     session.commit()
     session.close()
@@ -62,8 +64,16 @@ def run(arguments, event):
         "task_output",
         {"task_id": task_id, "output": "", "script_uid": script.uid, "task": "execute"},
     )
-    event.trigger("script_executed", script.to_dict())
-    event.trigger("script_updated", script.to_dict())
-    event.trigger("action_complete", {"action": "execute", "uid": script.uid})
+    script = script.to_dict()
+    script["logs"].insert(0, {
+        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+        "stderr": stderr,
+        "stdout": process_output,
+        "exitcode": exitcode
+    })
+    event.trigger("script_executed", script)
+
+    event.trigger("script_updated", script)
+    event.trigger("action_complete", {"action": "execute", "uid": script["uid"]})
 
     return stdout

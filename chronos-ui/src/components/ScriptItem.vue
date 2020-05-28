@@ -192,7 +192,7 @@ h2 {
 
 span.last-execution {
   font-size: 0.95rem;
-  opacity: 60%;
+  opacity: 0.6;
   display: block;
 }
 

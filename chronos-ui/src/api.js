@@ -5,9 +5,6 @@ import axios from "axios";
 const api = {
   events: null,
   getApiUrl() {
-    let url = window.location.hostname;
-    console.log(url);
-
     if (
       process.env.NODE_ENV !== "production" &&
       process.env.NODE_ENV !== "test" &&
