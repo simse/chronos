@@ -114,6 +114,8 @@
 
       <div class="section">
         <h2 class="section-title">Execution reports</h2>
+
+        <Logs :logs="this.script.logs" />
       </div>
     </div>
   </div>
@@ -123,6 +125,7 @@
 import QuickAction from "@/components/QuickAction";
 import ActionOutput from "@/components/ActionOutput";
 import Triggers from "@/components/Triggers";
+import Logs from "@/components/Logs";
 import events from "@/events";
 
 export default {
@@ -130,7 +133,8 @@ export default {
   components: {
     QuickAction,
     ActionOutput,
-    Triggers
+    Triggers,
+    Logs
   },
   props: {
     script_uid: {

@@ -15,11 +15,13 @@ import "vue-prism-editor/dist/VuePrismEditor.css";
 import "prismjs";
 import "prismjs/components/prism-python";
 import { Snackbar } from "buefy";
+import VueCollapse from "vue2-collapse";
 
 Vue.use(VueAxios, axios);
 Vue.use(VModal);
 Vue.component("prism-editor", VuePrismEditor);
 Vue.use(Snackbar);
+Vue.use(VueCollapse);
 
 Vue.config.productionTip = false;
 

@@ -96,7 +96,7 @@ class Script:
         """Write new contents to requirements.txt"""
         return open(self.requirements, "w").write(requirements)
 
-    def logs(self, limit=100):
+    def logs(self, limit=10):
         """Find all log entries for script"""
         logs = []
 
@@ -106,6 +106,7 @@ class Script:
             session.query(Log)
             .filter(Log.script == self.uid)
             .order_by(Log.date.desc())
+            .limit(limit)
             .all()
         ):
             try:
