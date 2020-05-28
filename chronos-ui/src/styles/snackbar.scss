@@ -1,0 +1,114 @@
+@keyframes fadeInDown {
+    from {
+      opacity: 0;
+      transform: translate3d(0, -100%, 0);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+.notices .snackbar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-around;
+  animation-duration: 150ms;
+  animation-name: fadeInDown;
+  margin: 0.5em 0;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
+  border-radius: 12px;
+  pointer-events: auto;
+  background: #444;
+  color: whitesmoke;
+  min-height: 3em;
+  font-family: "Inter";
+}
+
+.notices .snackbar .text {
+  padding: 0.5em 1em;
+}
+
+.notices .snackbar .action {
+  margin-left: auto;
+  padding: 0.5em;
+  padding-left: 0;
+}
+
+.notices .snackbar .action .button {
+  font-weight: 600;
+  text-transform: uppercase;
+  background: #363636;
+  border: transparent;
+}
+
+.notices .snackbar .action.is-success .button {
+  color: var(--blue);
+}
+
+@media screen and (max-width: 768px) {
+  .notices .snackbar {
+    width: 100%;
+    margin: 0;
+    border-radius: 0;
+  }
+}
+
+@media screen and (min-width: 769px), print {
+  .notices .snackbar {
+    min-width: 350px;
+    max-width: 600px;
+    overflow: hidden;
+  }
+}
+
+.notices .notification {
+  max-width: 600px;
+}
+
+.notices .toast.is-top,
+.notices .toast.is-bottom,
+.notices .snackbar.is-top,
+.notices .snackbar.is-bottom,
+.notices .notification.is-top,
+.notices .notification.is-bottom {
+  align-self: flex-start;
+}
+
+.notices .toast.is-top-right,
+.notices .toast.is-bottom-right,
+.notices .snackbar.is-top-right,
+.notices .snackbar.is-bottom-right,
+.notices .notification.is-top-right,
+.notices .notification.is-bottom-right {
+  align-self: flex-end;
+}
+
+.notices .toast.is-top-left,
+.notices .toast.is-bottom-left,
+.notices .snackbar.is-top-left,
+.notices .snackbar.is-bottom-left,
+.notices .notification.is-top-left,
+.notices .notification.is-bottom-left {
+  align-self: flex-start;
+}
+
+.notices .toast.is-toast,
+.notices .snackbar.is-toast,
+.notices .notification.is-toast {
+  opacity: 0.92;
+}
+
+.notices {
+  position: fixed;
+  display: flex;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2em;
+  overflow: hidden;
+  z-index: 1000;
+  pointer-events: none;
+  justify-content: center;
+}

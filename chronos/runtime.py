@@ -29,10 +29,12 @@ def evalaute_script_interval_triggers(tick, interval):
 
             for trigger in script.triggers:
 
-                if trigger['type'] == "interval":
+                if trigger["type"] == "interval":
                     if second % int(trigger["options"]["interval"]) == 0:
                         dispatch_task(
-                            "execute_script", {"script_uid": script.uid}, task_priority="NOW"
+                            "execute_script",
+                            {"script_uid": script.uid},
+                            task_priority="NOW",
                         )
 
         # Check that the script is enabled to run and that the interval is above 0
@@ -55,17 +57,18 @@ def evalaute_script_cron_triggers(tick, interval):
 
             for trigger in script.triggers:
 
-                if trigger['type'] == "cron":
+                if trigger["type"] == "cron":
                     # Evaluate cron expression
-                    cron = cronex.CronExpression(trigger['options']['expression'])
+                    cron = cronex.CronExpression(trigger["options"]["expression"])
                     time = tuple(list(datetime.now().timetuple())[:5])
 
                     if cron.check_trigger(time):
                         # Execute script in seperate thread, such that the loop is not affected
                         dispatch_task(
-                            "execute_script", {"script_uid": script.uid}, task_priority="NOW"
+                            "execute_script",
+                            {"script_uid": script.uid},
+                            task_priority="NOW",
                         )
-
 
 
 # interval_trigger.listen(1000, evalaute_script_cron_triggers, clock=True)

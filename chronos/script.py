@@ -11,6 +11,8 @@ from chronos.metadata import Script as ScriptModel
 from chronos.config import *
 from chronos.venv import *
 from chronos.event import event
+from chronos.task import dispatch_task
+
 
 class Script:
     """Script class used to interact with scripts."""
@@ -29,9 +31,12 @@ class Script:
         # Store dictionary version of model
         self.dict = {
             "name": self.db.name,
-            "enabled": self.db.enabled,
-            "triggers": self.db.triggers
+            "triggers": self.db.triggers,
+            "logs": self.logs(),
+            "created": str(self.db.created),
         }
+
+        self.enabled = self.db.enabled
 
         # Get script folder
         self.folder = CHRONOS + os.path.sep + "scripts" + os.path.sep + self.uid
@@ -50,22 +55,30 @@ class Script:
 
         session.close()
 
+    def __dict__(self):
+        return self.to_dict()
+
     def delete(self):
         """Delete script."""
-        session = Session()
+        dispatch_task("delete_script", {"uid": self.uid}, task_priority="NOW")
 
-        # Remove script folder
-        shutil.rmtree(self.folder)
+    def action(self, action):
+        if action == "delete":
+            self.delete()
 
-        # Remove all logs from script
-        session.query(Log).filter(Log.script == self.uid).delete()
+        if action == "execute":
+            self.execute()
 
-        # Delete metadata
-        session.delete(self.db)
-        session.commit()
-        session.close()
+        if action == "install_requirements":
+            self.install_requirements()
 
-        event.trigger("script_deleted", self.dict)
+        if action == "disable":
+            self.disable()
+
+        if action == "enable":
+            self.enable()
+
+        return "OK"
 
     def get_contents(self):
         """Read contents of script"""
@@ -83,20 +96,26 @@ class Script:
         """Write new contents to requirements.txt"""
         return open(self.requirements, "w").write(requirements)
 
-    def logs(self, limit=100):
+    def logs(self, limit=10):
         """Find all log entries for script"""
         logs = []
 
         session = Session()
 
-        for log in session.query(Log).filter(Log.script == self.uid).order_by(Log.date.desc()).all():
+        for log in (
+            session.query(Log)
+            .filter(Log.script == self.uid)
+            .order_by(Log.date.desc())
+            .limit(limit)
+            .all()
+        ):
             try:
-                stdout = log.text.decode('utf-8')
+                stdout = log.text.decode("utf-8")
             except AttributeError:
                 stdout = log.text
-            
+
             try:
-                stderr = log.error.decode('utf-8')
+                stderr = log.error.decode("utf-8")
             except AttributeError:
                 stderr = log.error
 
@@ -137,56 +156,40 @@ class Script:
                 "contents": self.get_contents(),
                 "requirements": self.get_requirements(),
                 "logs": self.logs(),
+                "enabled": self.enabled,
             },
             **self.dict,
         }
 
     def install_requirements(self):
         """Install requirements.txt"""
-        process = Popen(
-            ["bash", self.install_requirements_path],
-            stdin=PIPE,
-            stdout=PIPE,
-            stderr=PIPE,
-            bufsize=-1,
+        dispatch_task(
+            "install_pip_requirements", {"script_uid": self.uid}, task_priority="NOW"
         )
-
-        output, error = process.communicate()
-
-        # Check if it errored or was successful
-        process_output = ""
-        if process.returncode == 0:
-            process_output = output
-        else:
-            process_output = error
-
-        return process_output.decode("utf-8")
 
     def execute(self):
+        dispatch_task("execute_script", {"script_uid": self.uid}, task_priority="NOW")
+
+    def disable(self):
         session = Session()
-        """Execute script"""
-        script_path = self.execute_path
-
-        logger.debug("Executing script: {}", self.dict["name"])
-
-        # Run the script
-        process = Popen(
-            ["bash", script_path], stdin=PIPE, stdout=PIPE, stderr=PIPE, bufsize=-1
-        )
-
-        output, error = process.communicate()
-
-        # Log the output
-        log = Log(
-            script=self.db.uid, text=output, error=error, exitcode=process.returncode
-        )
-        session.add(log)
+        script_from_database = session.query(ScriptModel).get(self.uid)
+        script_from_database.enabled = False
         session.commit()
         session.close()
 
-        logger.debug("Script executed and output logged: {}", self.dict["name"])
+        self.enabled = False
 
-        event.trigger("script_executed", self.dict)
+        event.trigger("script_updated", self.__dict__())
+        event.trigger("action_complete", {"action": "disable", "uid": self.uid})
 
-        # Return stdout and stderr
-        return {"stdout": output.decode("utf-8"), "stderr": error.decode("utf-8")}
+    def enable(self):
+        session = Session()
+        script_from_database = session.query(ScriptModel).get(self.uid)
+        script_from_database.enabled = True
+        session.commit()
+        session.close()
+
+        self.enabled = True
+
+        event.trigger("script_updated", self.__dict__())
+        event.trigger("action_complete", {"action": "enable", "uid": self.uid})

@@ -57,7 +57,7 @@ def run(arguments, event):
             '''#!/bin/bash
 cd "{}"
 source "{}"
-python "{}"'''.format(
+python -u "{}"'''.format(
                 path, get_activate(uid), script_path
             )
         )
@@ -73,6 +73,6 @@ pip install -r "{}"'''.format(
             )
         )
 
-    event.trigger("script_created", Script(uid).dict)
+    event.trigger("script_created", Script(uid).to_dict())
 
     return uid

@@ -2,6 +2,7 @@
 import time
 import json
 import os
+import datetime
 
 # Third-party dependencies
 from flask import Flask, jsonify, send_from_directory, Response, request
@@ -49,7 +50,7 @@ class Script(Resource):
         args = parser.parse_args()
 
         dispatch_task("create_script", {"name": args["name"]}, "NOW")
-        return {'uid': for_uid(args["name"])}, 200
+        return {"uid": for_uid(args["name"])}, 200
 
     def put(self, uid):
         """Update script."""
@@ -116,6 +117,13 @@ def scripts():
     return jsonify(scripts), 200
 
 
+@app.route("/api/script/<string:uid>/action/<string:action>")
+def action(uid, action):
+    script = chronos.script.Script(uid)
+
+    return jsonify({"response": script.action(action)})
+
+
 # Install Pip requirements for specific script. This is a slow function.
 @app.route("/api/script/<string:uid>/install_requirements")
 def install_requirements(uid):
@@ -125,14 +133,20 @@ def install_requirements(uid):
 # Execute specific script and return result.
 @app.route("/api/script/<string:uid>/execute")
 def execute(uid):
-    return jsonify({"response": chronos.script.Script(uid).execute()}), 200
+    chronos.script.Script(uid).execute()
+    return jsonify({"response": "OK"}), 200
+
+
+def myconverter(o):
+    if isinstance(o, datetime.datetime):
+        return o.__str__()
 
 
 def events(type):
     try:
         for e in event.listen(type):
-            logger.debug("Yielded event: {}", e['uid'])
-            yield "data: %s\n\n" % json.dumps(e)
+            logger.debug("Yielded event: {}", e["uid"])
+            yield "data: %s\n\n" % json.dumps(e, default=myconverter)
     finally:
         logger.info("Stopping Sever Side Event stream")
 
@@ -157,7 +171,7 @@ def serve_dir_directory_index():
 def serve_file_in_dir(path):
 
     if not os.path.isfile(os.path.join(ui_path, path)):
-        path = os.path.join(path, "index.html")
+        path = os.path.join("index.html")
 
     return send_from_directory(ui_path, path)
 

@@ -1,91 +1,40 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
+import Vue from "vue";
+import App from "./App.vue";
+import "./registerServiceWorker";
+import router from "./router";
+import store from "./store";
+import "./api";
 
-import App from './App.vue'
-import router from './router'
-import { EventBus } from './bus.js'
+import axios from "axios";
+import VueAxios from "vue-axios";
+import VModal from "vue-js-modal";
+import api from "./api";
+import events from "./events";
+import VuePrismEditor from "vue-prism-editor";
+import "vue-prism-editor/dist/VuePrismEditor.css";
+import "prismjs";
+import "prismjs/components/prism-python";
+import { Snackbar } from "buefy";
+import VueCollapse from "vue2-collapse";
 
-import Buefy from 'buefy'
-import 'buefy/dist/buefy.css'
+Vue.use(VueAxios, axios);
+Vue.use(VModal);
+Vue.component("prism-editor", VuePrismEditor);
+Vue.use(Snackbar);
+Vue.use(VueCollapse);
 
-import axios from 'axios'
-import i18n from './i18n'
-import {
-  capitalize
-} from './filters/capitalize'
-
-Vue.prototype.$http = axios
-Vue.config.productionTip = false
-Vue.use(Buefy)
-Vue.use(Vuex)
-Vue.filter('capitalize', capitalize);
-
-if (Vue.config.devtools) {
-  Vue.prototype.api = 'http://localhost:5000/api'
-} else {
-  Vue.prototype.api = '/api'
-}
-
-
-const store = new Vuex.Store({
-  state: {
-    $chronos: {
-      connected: false
-    },
-    scripts: []
-  },
-  mutations: {
-    connected(state, payload) {
-      state.$chronos.connected = payload
-    },
-    scripts(state, payload) {
-      state.scripts = payload
-    }
-  }
-})
-
+Vue.config.productionTip = false;
 
 new Vue({
   router,
-  i18n,
   store,
   render: h => h(App),
   mounted() {
-    this.loadAllScripts();
+    api.listenToChronos();
 
-    EventBus.$on('reloadScripts', () => {
-      this.loadAllScripts();
-    })
-
-    EventBus.$on('addLoadingScript', (payload) => {
-      this.addLoadingScript(payload.name, payload.uid)
-    })
-
-    
-  },
-  methods: {
-    loadAllScripts() {
-      this.$http.get(this.api + '/scripts').then(response => {
-        store.commit('scripts', response.data)
-        store.commit('connected', true)
-
-        
-      }).catch(() => {
-        store.commit('connected', false)
-      })
-
-      
-    },
-    addLoadingScript(name, uid) {
-      let scripts = this.$store.state.scripts;
-      scripts.push({
-        name: name,
-        uid: uid,
-        loading: true,
-        logs: []
-      })
-
-      store.commit('scripts', scripts)
-    },
+    api.events.onmessage = event => {
+      let eventData = JSON.parse(event.data);
+      events.$emit("_" + eventData.event, eventData.payload);
+    };
   }
-}).$mount('#app')
+}).$mount("#app");

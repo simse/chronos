@@ -12,6 +12,6 @@ script:
 
 deploy:
     provider: script
-    script: bash build
+    script: bash build.sh
     on:
-        branch: master
+        all_branches: true

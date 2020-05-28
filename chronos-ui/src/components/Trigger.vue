@@ -1,67 +1,95 @@
 <template>
-    <div>
-        <div v-if="trigger.type == 'interval'" @click="removeTrigger">
-            <p>Every</p>
-            <h2>{{ trigger.options.interval }}</h2>
-            <p>seconds</p>
-        </div>
+  <div class="trigger">
+    <p class="trigger-name">{{ triggerName }}</p>
 
-        <div v-if="trigger.type == 'cron'" @click="removeTrigger">
-            <p>CRON expression</p>
-            <h3><code>{{ trigger.options.expression }}</code></h3>
-        </div>
+    <p class="trigger-detail">{{ triggerDetail }}</p>
+
+    <div class="trigger-actions">
+      <i class="material-icons" @click="deleteTrigger">delete</i>
     </div>
+  </div>
 </template>
 
 <script>
+import cronstrue from "cronstrue";
+
 export default {
-    name: 'Trigger',
-    props: {
-        trigger: {
-            type: Object,
-            required: true
-        }
+  name: "Trigger",
+  props: {
+    trigger: {
+      type: Object,
+      required: true
     },
-    methods: {
-        removeTrigger: function() {
-            this.$emit('removeTrigger')
-        }
+    index: {
+      type: Number,
+      required: true
+    },
+    script_uid: {
+      type: String,
+      required: true
     }
-}
+  },
+  computed: {
+    triggerName() {
+      return this.trigger.name;
+    },
+    triggerDetail() {
+      if (this.trigger.type === "interval") {
+        return "Every " + this.trigger.options.interval + " seconds";
+      }
+
+      if (this.trigger.type === "cron") {
+        return cronstrue.toString(this.trigger.options.expression);
+      }
+
+      return "";
+    }
+  },
+  methods: {
+    deleteTrigger() {
+      this.$store.commit("deleteTrigger", {
+        uid: this.script_uid,
+        trigger_index: this.index
+      });
+    }
+  }
+};
 </script>
 
 <style lang="scss" scoped>
-div {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    height: 200px;
-    width: 200px;
-    border: 1px solid lightgray;
-    border-radius: 4px;
-    transition: .1s background;
+.trigger {
+  width: 100%;
+  background: #181818;
+  margin-bottom: 18px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  display: flex;
 
-    &:hover {
+  p {
+    margin: 0;
+  }
+
+  .trigger-name {
+    font-weight: 700;
+    min-width: 150px;
+  }
+
+  .trigger-detail {
+    margin-left: 20px;
+  }
+
+  .trigger-actions {
+    margin-left: auto;
+
+    i {
+      font-size: 1.2rem;
+      vertical-align: middle;
+      transition: cubic-bezier(0.075, 0.82, 0.165, 1) 200ms background;
+
+      &:hover {
         cursor: pointer;
-        background: darken(#fff, 5%);
+      }
     }
-
-    p {
-        margin: 0;
-    }
-
-    h2 {
-        margin: 0;
-        margin-top: 0 !important;
-        font-size: 3rem;
-    }
-
-    h3 {
-        margin-top: 0 !important;
-        font-size: 1.2rem;
-    }
+  }
 }
-
-
 </style>

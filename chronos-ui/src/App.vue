@@ -1,117 +1,92 @@
 <template>
   <div id="app">
-    <link rel="stylesheet" href="https://cdn.materialdesignicons.com/2.5.94/css/materialdesignicons.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <div id="nav">
+      <Navigation />
+    </div>
+    <div class="content">
+      <router-view />
+    </div>
 
-    <!--h1 class="is-size-1 title">Chronos</h1>
-    <p class="is-size-5 subtitle">{{ $t('version') | capitalize }}: {{ version }}</p-->
-
-    <Navbar />
-
-    <router-view/>
-
-    <!--div class="bottom-bar">
-      <div class="status">
-        <span>
-          <span :class="{'icon':true,'red':!connectedBool}"></span>
-          {{ $t(connected) }}
-        </span>
-      </div>
-
-      <div class="tasks">
-
-      </div>
-    </div-->
+    <ConfirmModal />
   </div>
 </template>
 
 <script>
-import version from '!raw-loader!./VERSION'
-import Navbar from './components/Navbar.vue'
+import Navigation from "@/components/Navigation";
+import ConfirmModal from "@/components/ConfirmModal";
+import api from "@/api";
 
 export default {
-    name: 'App',
-    components: {
-      Navbar
-    },
-    data() {
-        return {
-            version: version
-        }
-    },
-    computed: {
-      connectedBool() {
-        return this.$store.state.$chronos.connected
-      },
-      connected() {
-        if(this.connectedBool) {
-          return 'connected'
-        } else {
-          return 'disconnected'
-        }
-      }
-    }
-}
-
+  name: "App",
+  components: {
+    Navigation,
+    ConfirmModal
+  },
+  mounted() {
+    api.loadScripts();
+  }
+};
 </script>
 
 <style lang="scss">
-*,
-*::before,
-*::after {
-    box-sizing: border-box;
+@import "styles/fonts.scss";
+@import "styles/buttons.scss";
+@import "styles/syntax.scss";
+@import "styles/snackbar.scss";
+
+:root {
+  --grey: #1f1f1f;
+  --blue: #007aff;
+  --blue-dark: #006ee6;
+  --green: #04cd00;
+  --yellow: #dcac00;
+  --red: #dc0000;
 }
 
-html {
-    font-size: 100%;
+* {
+  box-sizing: border-box;
 }
 
 body {
-  background: #f6f9fc;
-  min-height: 100vh;
-  font-family: 'Nunito' !important;
+  margin: 0;
+  box-sizing: border-box;
 }
 
-.title,
-.subtitle {
-  text-align: center;
-}
-
-.title {
-    padding-bottom: 10px;
-}
-
-.subtitle {
-    padding-bottom: 45px;
-}
-
-.version {
-    opacity: 0.7;
-}
-
-.bottom-bar {
-  display: flex;
-  justify-content: space-between;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100vw;
-  padding: 12px 20px;
-  background: #000;
+#app {
+  font-family: "Inter";
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   color: #fff;
+  background: var(--grey);
+  min-height: 100vh;
 
-  .icon {
-    width: 7px;
-    height: 7px;
-    background: #4cd137;
-    border-radius: 100%;
-    margin-bottom: 2px;
-    margin-right: 5px;
+  display: grid;
+  grid-template-columns: 90px auto;
+}
 
-    &.red {
-      background: #e84118;
-    }
-  }
+h1.page-title {
+  padding-top: 70px;
+  padding-left: 40px;
+  padding-bottom: 40px;
+  font-weight: 400;
+  font-size: 3rem;
+  margin: 0;
+  opacity: 0.9;
+}
+
+.vm--overlay {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(10px);
+}
+
+.vm--modal {
+  background: #101010 !important;
+  box-shadow: 0 20px 60px -2px rgba(0, 0, 0, 0.3) !important;
+}
+
+h2.modal-title {
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 45px;
 }
 </style>

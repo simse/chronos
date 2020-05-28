@@ -9,20 +9,19 @@ from chronos.metadata import Task, Session
 from chronos.event import event
 
 
-
-
 def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
     session = Session()
     task = Task(
         task_id=task_id,
         task_arguments=json.dumps(task_arguments),
         priority=task_priority,
-        status="WAITING"
+        status="WAITING",
     )
 
     session.add(task)
     session.commit()
     logger.debug("Dispatched task: {}", task_id)
+    event.trigger("task_dispatched", {"task_id": task_id})
 
     session.close()
 
@@ -35,13 +34,19 @@ def execute_task(id):
     logger.debug("Processing task with ID: {}", id)
     task_uid = task.task_id
     task_module = importlib.import_module("chronos.tasks.{}".format(task_uid))
+    task_id_dict = {"task_id": id}
 
     logger.debug("Starting task with ID: {}", id)
     task.time_started = datetime.datetime.now()
     task.status = "STARTED"
     session.commit()
 
-    task_module.run(task.task_arguments, event)
+    event.trigger("task_started", task_id_dict)
+    arguments = {**json.loads(task.task_arguments), **task_id_dict}
+
+    task.output = task_module.run(json.dumps(arguments), event)
+
+    event.trigger("task_finished", task_id_dict)
 
     task.time_finished = datetime.datetime.now()
     task.status = "FINISHED"
@@ -63,16 +68,13 @@ def execute_next_task():
         if task.priority == "NOW":
             task_thread = threading.Thread(target=execute_task(task.id))
             task_thread.start()
-            logger.debug("Next task has been scheduled")
+            # logger.debug("Next task has been scheduled")
 
             return
 
     if tasks.count() > 0:
         task_thread = threading.Thread(target=execute_task(tasks[0].id))
         task_thread.start()
-       #  logger.debug("Next task has been scheduled")
-
-    
+    #  logger.debug("Next task has been scheduled")
 
     session.close()
-        
