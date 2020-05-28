@@ -5,7 +5,18 @@ import axios from "axios";
 const api = {
   events: null,
   getApiUrl() {
-    return "http://localhost:5000/api/";
+    let url = window.location.hostname;
+    console.log(url);
+
+    if (
+      process.env.NODE_ENV !== "production" &&
+      process.env.NODE_ENV !== "test" &&
+      typeof console !== "undefined"
+    ) {
+      return "http://localhost:5000/api/";
+    } else {
+      return "/api/";
+    }
   },
   loadScripts() {
     axios.get(this.getApiUrl() + "scripts").then(response => {

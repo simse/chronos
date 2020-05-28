@@ -58,6 +58,7 @@ export default {
     font-weight: 600;
   }
 
+  // TODO: Make opening animation work
   .v-collapse-content {
     max-height: 0px;
     overflow: hidden;

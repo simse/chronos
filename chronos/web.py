@@ -171,7 +171,7 @@ def serve_dir_directory_index():
 def serve_file_in_dir(path):
 
     if not os.path.isfile(os.path.join(ui_path, path)):
-        path = os.path.join(path, "index.html")
+        path = os.path.join("index.html")
 
     return send_from_directory(ui_path, path)
 
