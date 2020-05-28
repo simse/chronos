@@ -76,25 +76,29 @@
         <div class="header">
           <h2 class="section-title">Pip requirements</h2>
 
-          <div>
+          <!--div>
             <a class="button blue">
               <i class="material-icons">add</i> Add requirement
             </a>
-          </div>
+          </div-->
         </div>
 
         <div class="requirements">
-          <div class="empty">
+          <!--div class="empty">
             <h2>No dependencies</h2>
 
             <p>
               That’s okay, but if your script requires external Python packages,
               now is the time to declare it
             </p>
-          </div>
+          </div-->
+          <textarea
+            placeholder="Please enter your requirements (if any)..."
+            v-model="pipRequirements"
+          ></textarea>
         </div>
 
-        <a class="raw">Switch to raw mode</a>
+        <!--a class="raw">Switch to raw mode</a-->
       </div>
 
       <div class="section">
@@ -182,6 +186,19 @@ export default {
     python_script: {
       get() {
         return this.script.contents;
+      }
+    },
+    pipRequirements: {
+      get() {
+        return this.script.requirements;
+      },
+      set(value) {
+        this.$store.commit("updateScript", {
+          uid: this.script.uid,
+          synced: false,
+          internal: true,
+          requirements: value
+        });
       }
     }
   },
@@ -311,6 +328,22 @@ h1 {
       font-size: 1.1rem;
       line-height: 1.6em;
     }
+  }
+}
+
+.requirements {
+  textarea {
+    width: 100%;
+    min-height: 400px;
+    border: 0;
+    border-radius: 12px;
+    outline: 0;
+    padding: 22px;
+    font-size: 1.2rem;
+    resize: none;
+    display: block;
+    background: transparent;
+    color: darken(#fff, 10%);
   }
 }
 </style>
