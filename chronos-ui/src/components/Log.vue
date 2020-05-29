@@ -66,7 +66,7 @@ export default {
   }
 
   .v-collapse-content-end {
-    max-height: 500px;
+    max-height: 4000px;
     //transition: cubic-bezier(0.075, 0.82, 0.165, 1) 300ms max-height;
   }
 }
