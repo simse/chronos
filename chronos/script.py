@@ -1,5 +1,6 @@
 # Python dependencies
 import shutil
+from datetime import timedelta
 from subprocess import Popen, PIPE
 
 # Third-party dependencies
@@ -132,21 +133,12 @@ class Script:
 
         return logs
 
-    def prune_logs(self, limit=500):
-        return
-
-        """log_count = (
-            chronos.metadata.Log.select()
-            .where(chronos.metadata.Log.script_id == self.db.id)
-            .count()
-        )
-
-        if log_count > limit:
-            to_delete = log_count - limit
-
-            chronos.metadata.Log.delete().where(
-                chronos.metadata.Log.script_id == self.db.id
-            ).order_by(chronos.metadata.Log.date.asc()).limit(to_delete).execute()"""
+    def prune_logs(self):
+        session = Session()
+        session.query(Log).filter(Log.date >= timedelta(days=3)).delete()
+        session.commit()
+        session.close()
+        
 
     def to_dict(self):
         """Return dictionary with script metadata"""

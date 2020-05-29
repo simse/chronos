@@ -34,7 +34,8 @@ def run(arguments, event):
     if not os.path.isdir(path):
         os.mkdir(path)
     else:
-        return uid
+        os.rmdir(path)
+        os.mkdir(path)
 
     # Create virtual environment
     create_env(uid)

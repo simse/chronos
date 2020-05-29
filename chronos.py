@@ -17,6 +17,7 @@ from chronos.event import event
 from chronos.runtime import (
     evalaute_script_interval_triggers,
     evalaute_script_cron_triggers,
+    prune_script_logs,
 )
 from chronos.metadata import migrate
 
@@ -65,6 +66,7 @@ def test():
 interval_trigger.listen(100, event.garbage_collect)
 interval_trigger.listen(1000, evalaute_script_interval_triggers, clock=True)
 interval_trigger.listen(60000, evalaute_script_cron_triggers, clock=True)
+interval_trigger.listen(60000, prune_script_logs)
 
 
 logger.info("Starting API server")

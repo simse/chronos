@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="chronos",  # Replace with your own username
+    name="chronos-executor",
     version="0.0.1",
     author="Simon Sorensen",
     author_email="hello@simse.io",
