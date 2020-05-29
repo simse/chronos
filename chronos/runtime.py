@@ -71,4 +71,5 @@ def evalaute_script_cron_triggers(tick, interval):
                         )
 
 
-# interval_trigger.listen(1000, evalaute_script_cron_triggers, clock=True)
+def prune_script_logs():
+    dispatch_task("prune_logs", {})

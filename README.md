@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Chronos Logo" src="https://github.com/simse/chronos/raw/master/logo.png" width="100" />
+  <img alt="Chronos Logo" src="https://github.com/simse/chronos/raw/master/logo.png" width="80" />
 </p>
 <h1 align="center">
   Chronos
