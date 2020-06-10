@@ -136,10 +136,13 @@ class Script:
     def prune_logs(self):
         session = Session()
         
-        if session.query(Log).count() > 50:
+        if session.query(Log).count() > 10:
             logger.debug("Pruning logs for {}".format(self.uid))
             too_old = datetime.now() - timedelta(days=3)
 
+            # logger.debug(too_old)
+            
+            logger.debug("Found {} logs to be pruned".format(session.query(Log).filter(Log.date < too_old).count()))
             session.query(Log).filter(Log.date < too_old).delete()
 
         session.commit()
