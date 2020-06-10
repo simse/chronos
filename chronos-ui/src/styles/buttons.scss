@@ -39,6 +39,14 @@
     }
   }
 
+  &.red {
+    background: var(--red);
+
+    &:hover {
+      background: darken(#dc0000, 2%);
+    }
+  }
+
   i {
     vertical-align: middle;
     margin-top: -1px;
