@@ -1,6 +1,6 @@
 # Python dependencies
 import shutil
-from datetime import timedelta
+from datetime import timedelta, datetime
 from subprocess import Popen, PIPE
 
 # Third-party dependencies
@@ -135,7 +135,13 @@ class Script:
 
     def prune_logs(self):
         session = Session()
-        session.query(Log).filter(Log.date >= timedelta(days=3)).delete()
+        
+        if session.query(Log).count() > 50:
+            logger.debug("Pruning logs for {}".format(self.uid))
+            too_old = datetime.now() - timedelta(days=3)
+
+            session.query(Log).filter(Log.date < too_old).delete()
+
         session.commit()
         session.close()
         
