@@ -2,12 +2,12 @@
   <modal name="confirm" height="auto">
     <h2 class="modal-title">Are you sure?</h2>
     <p>
-      This will completely delete the script and everything related to it.
+      When I'm done here, everything about your script will be gone.
     </p>
 
     <div class="buttons">
       <a class="button grey just-text" @click="cancel">Cancel</a>
-      <a class="button blue just-text" @click="confirm">Confirm</a>
+      <a class="button red just-text" @click="confirm">Confirm</a>
     </div>
   </modal>
 </template>

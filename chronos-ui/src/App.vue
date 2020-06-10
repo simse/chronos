@@ -75,8 +75,7 @@ h1.page-title {
 }
 
 .vm--overlay {
-  background: rgba(0, 0, 0, 0.7) !important;
-  backdrop-filter: blur(10px);
+  background: rgba(0, 0, 0, 0.9) !important;
 }
 
 .vm--modal {
