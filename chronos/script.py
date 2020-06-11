@@ -5,6 +5,7 @@ from subprocess import Popen, PIPE
 
 # Third-party dependencies
 from loguru import logger
+import maya
 
 # First-party dependencies
 from chronos.metadata import Session, Log
@@ -124,7 +125,7 @@ class Script:
                 {
                     "stdout": stdout,
                     "stderr": stderr,
-                    "date": log.date,
+                    "date": maya.parse(log.date).rfc2822(),
                     "exitcode": log.exitcode,
                 }
             )

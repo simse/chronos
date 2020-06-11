@@ -17,6 +17,7 @@ from chronos.metadata import Script as ScriptModel
 from chronos.task import dispatch_task
 from chronos.event import event
 from chronos.util import for_uid
+from chronos.settings import get_setting, set_setting
 
 
 # Create Flask app
@@ -102,6 +103,16 @@ class Script(Resource):
         return "OK", 200
 
 
+class Setting(Resource):
+    def get(self, key):
+        return get_setting(key)
+
+    def post(self, key):
+        args = request.get_json(force=True)
+
+        return set_setting(key, args["value"])
+
+
 # Get all scripts
 @app.route("/api/scripts")
 def scripts():
@@ -178,3 +189,4 @@ def serve_file_in_dir(path):
 
 # Register script API resource.
 api.add_resource(Script, "/api/script/<string:uid>")
+api.add_resource(Setting, "/api/setting/<string:key>")

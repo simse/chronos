@@ -33,7 +33,7 @@ migrate()
 
 IS_RUNNING = True
 
-interval_trigger.listen(100, execute_next_task)
+# interval_trigger.listen(1000, execute_next_task)
 
 
 def main():
@@ -49,7 +49,7 @@ def main():
         interval_trigger.tick()
 
         # Sleep for exactly one second, taking drift and execution time into account
-        time.sleep(0.1 - ((time.time() - starttime) % 0.1))
+        time.sleep(1 - ((time.time() - starttime) % 1))
         i += 1
 
     logger.info("Exiting main loop")
@@ -59,12 +59,7 @@ main_thread = threading.Thread(target=main)
 main_thread.start()
 
 
-def test():
-    event.trigger("test")
-
-
-# interval_trigger.listen(1000, test)
-interval_trigger.listen(100, event.garbage_collect)
+interval_trigger.listen(1000, event.garbage_collect)
 interval_trigger.listen(1000, evalaute_script_interval_triggers, clock=True)
 interval_trigger.listen(60000, evalaute_script_cron_triggers, clock=True)
 interval_trigger.listen(60000, prune_script_logs)

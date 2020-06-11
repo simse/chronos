@@ -1,3 +1,4 @@
+from loguru import logger
 
 from chronos.metadata import Setting, Session
 
@@ -21,8 +22,10 @@ def set_setting(key, value):
                 value=value
             )
         )
+        logger.debug("Created new setting: {} with value: {}", key, value)
     else:
         session.query(Setting).get(key).value = value
+        logger.debug("Updated setting: {} with value: {}", key, value)
 
     session.commit()
     session.close()

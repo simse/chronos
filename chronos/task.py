@@ -23,6 +23,7 @@ def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
     logger.debug("Dispatched task: {}", task_id)
     event.trigger("task_dispatched", {"task_id": task_id})
 
+    execute_task_in_thread(task.id)
     session.close()
 
     return True
@@ -56,6 +57,11 @@ def execute_task(id):
     session.close()
 
     return
+
+
+def execute_task_in_thread(id):
+    task_thread = threading.Thread(target=execute_task(id))
+    task_thread.start()
 
 
 def execute_next_task():
