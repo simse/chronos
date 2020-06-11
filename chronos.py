@@ -23,9 +23,10 @@ from chronos.metadata import migrate
 
 
 # Configure logger
-logger.remove()
-logger.add(sys.stderr, level="DEBUG")
-logger.add(CHRONOS + "chronos.log", rotation="00:00", level="DEBUG")
+# logger.remove()
+# logger.add(sys.stderr, level="INFO")
+# logger.add(CHRONOS + "/logs/chronos.log", rotation="00:00", level="DEBUG")
+
 
 
 migrate()
