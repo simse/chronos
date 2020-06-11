@@ -94,15 +94,11 @@ const api = {
       }
     };
 
-    axios
-      .get(this.getApiUrl() + "script/" + uid + "/action/" + action)
-      .then(response => {
-        if (response.status === 200) {
-          events.$on("_action_complete", callback);
-          events.$on("_task_output", taskOutputCallback);
-          events.$on("_task_finished", taskCompleteCallback);
-        }
-      });
+    events.$on("_action_complete", callback);
+    events.$on("_task_output", taskOutputCallback);
+    events.$on("_task_finished", taskCompleteCallback);
+
+    axios.get(this.getApiUrl() + "script/" + uid + "/action/" + action);
   },
   saveScript(script, callback = () => {}) {
     axios.put(this.getApiUrl() + "script/" + script.uid, script).then(() => {
