@@ -1,6 +1,7 @@
 import store from "./store";
 import events from "./events";
 import axios from "axios";
+import slugify from "slugify";
 
 const api = {
   events: null,
@@ -21,6 +22,12 @@ const api = {
   getWsUrl() {
     return this.getBaseUrl().replace("http", "ws") + "ws/";
   },
+  guessScriptUid(name) {
+    return slugify(name, {
+      lower: true,
+      strict: true
+    });
+  },
   loadScripts() {
     axios.get(this.getApiUrl() + "scripts").then(response => {
       if (response.status === 200) {
@@ -29,31 +36,29 @@ const api = {
     });
   },
   createScript(name, callback = () => {}) {
-    axios
-      .post(this.getApiUrl() + "script/null", {
-        name: name
-      })
-      .then(response => {
-        if (response.status === 200) {
-          store.commit("addScriptLoading", {
-            name: name,
-            uid: response.data.uid
-          });
+    let scriptUid = this.guessScriptUid(name);
 
-          events.$on("_script_created", event => {
-            let payload = event;
+    store.commit("addScriptLoading", {
+      name: name,
+      uid: scriptUid
+    });
 
-            if (payload.uid === response.data.uid) {
-              store.commit("finishLoadingScript", {
-                uid: response.data.uid,
-                script: payload
-              });
+    let createScriptCallback = event => {
+      let payload = event;
+      if (payload.uid === scriptUid) {
+        store.commit("finishLoadingScript", {
+          uid: event.uid,
+          script: payload
+        });
+        events.$off("_script_created", createScriptCallback);
+        callback();
+      }
+    };
+    events.$on("_script_created", createScriptCallback);
 
-              callback();
-            }
-          });
-        }
-      });
+    axios.post(this.getApiUrl() + "script/null", {
+      name: name
+    });
   },
   scriptAction(uid, action, callback = () => {}) {
     store.commit("resetActionOutput", {

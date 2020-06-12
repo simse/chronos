@@ -56,47 +56,93 @@ export default new Vuex.Store({
       state.scripts = scripts;
     },
     addScriptLoading(state, payload) {
-      state.scripts.push({
-        uid: payload.uid,
-        name: payload.name,
-        loading: true,
-        created: new Date(),
-        actions: {
-          execute: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
+      if (!this.getters.scriptUidExists(payload.uid)) {
+        state.scripts.push({
+          uid: payload.uid,
+          name: payload.name,
+          loading: true,
+          created: new Date(),
+          logs: [],
+          actions: {
+            execute: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            install_requirements: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            disable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            enable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            delete: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            }
           },
-          install_requirements: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          disable: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          enable: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          delete: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          }
-        },
-        synced: true
-      });
+          synced: true
+        });
+      }
     },
     finishLoadingScript(state, payload) {
+      if (!this.getters.scriptUidExists(payload.uid)) {
+        state.scripts.push({
+          uid: payload.uid,
+          name: payload.name,
+          loading: true,
+          created: new Date(),
+          logs: [],
+          actions: {
+            execute: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            install_requirements: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            disable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            enable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            delete: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            }
+          },
+          synced: true
+        });
+      }
+
       state.scripts.some(value => {
         if (value.uid === payload.uid) {
           value.loading = false;
@@ -218,11 +264,13 @@ export default new Vuex.Store({
       return state.scripts.find(value => {
         return value.uid === uid ? true : false;
       });
-    }
-  },
-  actions: {
-    socket_sse(context) {
-      console.log(context);
+    },
+    scriptUidExists: state => uid => {
+      let script = state.scripts.find(value => {
+        return value.uid === uid ? true : false;
+      });
+
+      return !(typeof script === "undefined");
     }
   }
 });

@@ -15,6 +15,7 @@
     "javascript-time-ago": "^2.0.7",
     "prismjs": "^1.20.0",
     "register-service-worker": "^1.7.1",
+    "slugify": "^1.4.0",
     "vue": "^2.6.11",
     "vue-axios": "^2.1.5",
     "vue-formly": "^2.5.8",

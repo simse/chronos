@@ -42,9 +42,18 @@
           />
 
           <QuickAction
-            :icon="disableOrEnable.icon"
-            :text="disableOrEnable.text"
-            :action="disableOrEnable.action"
+            v-if="this.script.enabled"
+            icon="clear"
+            text="Disable"
+            action="disable"
+            :script_uid="script_uid"
+          />
+
+          <QuickAction
+            v-if="!this.script.enabled"
+            icon="check"
+            text="Enable"
+            action="enable"
             :script_uid="script_uid"
           />
 
