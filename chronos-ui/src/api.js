@@ -12,7 +12,7 @@ const api = {
     ) {
       return "http://localhost:5000/";
     } else {
-      return "/";
+      return window.location.origin + "/";
     }
   },
   getApiUrl() {
