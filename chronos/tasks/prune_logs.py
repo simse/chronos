@@ -10,4 +10,4 @@ def run(arguments, event):
         script = Script(script.uid)
         script.prune_logs()
 
-    return 
+    return

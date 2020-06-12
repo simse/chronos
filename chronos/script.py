@@ -136,19 +136,22 @@ class Script:
 
     def prune_logs(self):
         session = Session()
-        
+
         if session.query(Log).count() > 10:
             logger.debug("Pruning logs for {}".format(self.uid))
             too_old = datetime.now() - timedelta(days=3)
 
             # logger.debug(too_old)
-            
-            logger.debug("Found {} logs to be pruned".format(session.query(Log).filter(Log.date < too_old).count()))
+
+            logger.debug(
+                "Found {} logs to be pruned".format(
+                    session.query(Log).filter(Log.date < too_old).count()
+                )
+            )
             session.query(Log).filter(Log.date < too_old).delete()
 
         session.commit()
         session.close()
-        
 
     def to_dict(self):
         """Return dictionary with script metadata"""
@@ -195,3 +198,17 @@ class Script:
 
         event.trigger("script_updated", self.__dict__())
         event.trigger("action_complete", {"action": "enable", "uid": self.uid})
+
+
+
+def get_all_scripts():
+    scripts = []
+
+    session = Session()
+
+    for s in session.query(ScriptModel).all():
+        scripts.append(Script(s.uid).to_dict())
+
+    session.close()
+
+    return scripts

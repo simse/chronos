@@ -219,5 +219,10 @@ export default new Vuex.Store({
         return value.uid === uid ? true : false;
       });
     }
+  },
+  actions: {
+    socket_sse(context) {
+      console.log(context);
+    }
   }
 });

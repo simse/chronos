@@ -68,7 +68,7 @@ finally:
 
 
 logger.debug("Connecting to local Chronos database")
-db = create_engine("sqlite:///" + CHRONOS + "/chronos.db", echo=False)
+db = create_engine("sqlite:///" + CHRONOS + "/chronos.db", echo=False, connect_args={'check_same_thread':False})
 meta = MetaData()
 Session = scoped_session(sessionmaker(bind=db))
 Base = declarative_base(metadata=meta)

@@ -3,13 +3,13 @@ import App from "./App.vue";
 import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
-import "./api";
+// import "./api";
 
 import axios from "axios";
 import VueAxios from "vue-axios";
 import VModal from "vue-js-modal";
 import api from "./api";
-import events from "./events";
+//import events from "./events";
 import VuePrismEditor from "vue-prism-editor";
 import "vue-prism-editor/dist/VuePrismEditor.css";
 import "prismjs";
@@ -31,10 +31,5 @@ new Vue({
   render: h => h(App),
   mounted() {
     api.listenToChronos();
-
-    api.events.onmessage = event => {
-      let eventData = JSON.parse(event.data);
-      events.$emit("_" + eventData.event, eventData.payload);
-    };
   }
 }).$mount("#app");

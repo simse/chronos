@@ -9,9 +9,9 @@ import os
 from loguru import logger
 
 # First-party dependencies
-from chronos.web import app
+from chronos.web import start_server
 from chronos.config import CHRONOS
-from chronos.task import execute_next_task
+from chronos.task import dispatch_task
 from chronos.bus import interval_trigger, on_startup_trigger
 from chronos.event import event
 from chronos.runtime import (
@@ -28,7 +28,6 @@ from chronos.metadata import migrate
 # logger.add(CHRONOS + "/logs/chronos.log", rotation="00:00", level="DEBUG")
 
 
-
 migrate()
 
 IS_RUNNING = True
@@ -42,7 +41,8 @@ def main():
     starttime = time.time()
     i = 1
 
-    on_startup_trigger.tick
+    # on_startup_trigger.tick
+    dispatch_task("create_default_settings")
 
     while IS_RUNNING:
         # execute_next_task()
@@ -67,17 +67,10 @@ interval_trigger.listen(60000, prune_script_logs)
 
 logger.info("Starting API server")
 
-# Surpress Werkzeug output
-"""
-log = logging.getLogger("werkzeug")
-log.disabled = True
-log.setLevel(logging.ERROR)
-os.environ["WERKZEUG_RUN_MAIN"] = "true"
-"""
-
 # Start REST API
 try:
     logger.info("API server started")
-    app.run(host="0.0.0.0", port=5000)
+    start_server()
 except (KeyboardInterrupt):
     IS_RUNNING = False
+    reactor.callFromThread(reactor.stop)

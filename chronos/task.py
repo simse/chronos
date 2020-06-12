@@ -9,7 +9,7 @@ from chronos.metadata import Task, Session
 from chronos.event import event
 
 
-def dispatch_task(task_id, task_arguments, task_priority="ROUTINE"):
+def dispatch_task(task_id, task_arguments={}, task_priority="ROUTINE"):
     session = Session()
     task = Task(
         task_id=task_id,

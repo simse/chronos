@@ -4,16 +4,22 @@ import axios from "axios";
 
 const api = {
   events: null,
-  getApiUrl() {
+  getBaseUrl() {
     if (
       process.env.NODE_ENV !== "production" &&
       process.env.NODE_ENV !== "test" &&
       typeof console !== "undefined"
     ) {
-      return "http://localhost:5000/api/";
+      return "http://localhost:5000/";
     } else {
-      return "/api/";
+      return "/";
     }
+  },
+  getApiUrl() {
+    return this.getBaseUrl() + "api/";
+  },
+  getWsUrl() {
+    return this.getBaseUrl().replace("http", "ws") + "ws/";
   },
   loadScripts() {
     axios.get(this.getApiUrl() + "scripts").then(response => {
@@ -121,8 +127,6 @@ const api = {
     store.commit("resetSavePrompt");
   },
   listenToChronos() {
-    this.events = new EventSource(this.getApiUrl() + "events/any");
-
     events.$on("_script_updated", event => {
       store.commit("updateScript", event);
     });
@@ -146,6 +150,14 @@ const api = {
         loading: false
       });
     });
+
+    // Start WebSocket connection
+    const ws = new WebSocket(this.getWsUrl());
+    ws.onmessage = event => {
+      let data = JSON.parse(event.data);
+
+      events.$emit("_" + data.event, data.payload);
+    };
   }
 };
 
