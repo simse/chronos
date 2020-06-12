@@ -9,6 +9,7 @@ A small Docker container to run and schedule Python scripts
 </p>
 
 [![Build Status](https://travis-ci.com/simse/chronos.svg?branch=master)](https://travis-ci.com/simse/chronos)
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsimse%2Fchronos.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsimse%2Fchronos?ref=badge_shield)
 
 ## About
 Chronos is a simple application to execute Python scripts in response to certain events. Each script will be assigned a virtual environment and folder, allowing Pip dependencies to be installed with conflicting with other scripts. The current Python version is 3.7.
@@ -45,3 +46,7 @@ You can find screenshots [right here](https://imgur.com/a/PQdH5ro).
 
 ## Bug reporting
 If you found a bug, which wouldn't surprise me, please do send me an email at bug-reports@simse.io or better yet, open an issue on GitHub.
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fsimse%2Fchronos.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fsimse%2Fchronos?ref=badge_large)
