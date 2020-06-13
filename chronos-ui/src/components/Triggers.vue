@@ -57,6 +57,7 @@
 
 <script>
 import Trigger from "@/components/Trigger";
+import api from "@/api";
 
 export default {
   name: "Triggers",
@@ -149,6 +150,7 @@ export default {
         synced: false,
         internal: true
       });
+      api.saveScriptByUid(this.script_uid);
       this.$modal.hide("new-trigger");
       this.newTriggerContent = {
         type: "none",

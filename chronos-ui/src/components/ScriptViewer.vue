@@ -106,6 +106,46 @@
             placeholder="Please enter your requirements (if any)..."
             v-model="pipRequirements"
           ></textarea>
+
+          <div class="save-bar">
+            <div
+              class="save"
+              :class="{ loading: requirementsSaveButton.loading }"
+              @click="saveRequirementsButton"
+            >
+              <i
+                class="material-icons"
+                v-if="
+                  !requirementsSaveButton.loading &&
+                    !requirementsSaveButton.finished
+                "
+              >
+                save
+              </i>
+
+              <svg
+                v-if="requirementsSaveButton.finished"
+                class="checkmark"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  class="checkmark__circle"
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  class="checkmark__check"
+                  fill="none"
+                  d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                />
+              </svg>
+
+              <span>{{ requirementsSaveButton.text }}</span>
+            </div>
+          </div>
         </div>
 
         <!--a class="raw">Switch to raw mode</a-->
@@ -214,15 +254,18 @@ export default {
       loading: false,
       scriptEditorBar: {
         executeButton: {
-          text: "Run",
-          loading: false,
-          finished: false
+          text: "Run"
         },
         saveButton: {
           text: "Save",
           loading: false,
           finished: false
         }
+      },
+      requirementsSaveButton: {
+        text: "Save",
+        loading: false,
+        finished: false
       }
     };
   },
@@ -293,6 +336,18 @@ export default {
         this.scriptEditorBar.saveButton.text = "Save";
         this.scriptEditorBar.saveButton.loading = false;
         this.scriptEditorBar.saveButton.finished = false;
+      }, 3000);
+    },
+    saveRequirementsButton() {
+      api.saveScript(this.script);
+      this.requirementsSaveButton.text = "Saved";
+      this.requirementsSaveButton.loading = false;
+      this.requirementsSaveButton.finished = true;
+
+      window.setTimeout(() => {
+        this.requirementsSaveButton.text = "Save";
+        this.requirementsSaveButton.loading = false;
+        this.requirementsSaveButton.finished = false;
       }, 3000);
     },
     executeScriptButton() {
@@ -478,6 +533,7 @@ $border-radius: 12px;
   background: #101010;
   border-radius: 12px;
   min-height: 400px;
+  overflow: hidden;
 
   .empty {
     width: 100%;
@@ -520,6 +576,7 @@ $border-radius: 12px;
     display: block;
     background: transparent;
     color: darken(#fff, 10%);
+    line-height: 1.8em;
   }
 }
 </style>

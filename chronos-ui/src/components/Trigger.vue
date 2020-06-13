@@ -12,6 +12,7 @@
 
 <script>
 import cronstrue from "cronstrue";
+import api from "@/api";
 
 export default {
   name: "Trigger",
@@ -55,6 +56,7 @@ export default {
         uid: this.script_uid,
         trigger_index: this.index
       });
+      api.saveScriptByUid(this.script_uid);
     }
   }
 };

@@ -123,6 +123,10 @@ const api = {
       callback();
     });
   },
+  saveScriptByUid(uid, callback = () => {}) {
+    let script = store.getters.getScriptByUid(uid);
+    this.saveScript(script, callback);
+  },
   saveAllScripts() {
     store.state.scripts.forEach(script => {
       if (!script.synced) {
