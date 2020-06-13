@@ -5,6 +5,7 @@ import os
 import uuid
 import sys
 import datetime
+import signal
 
 # Third-party dependencies
 from flask import (
@@ -28,6 +29,7 @@ from autobahn.twisted.resource import WebSocketResource, WSGIRootResource
 
 
 # First-party dependencies
+import chronos
 import chronos.script
 from chronos.script import get_all_scripts
 from chronos.metadata import Session
@@ -50,6 +52,14 @@ CORS(app)
 # Register Flask API
 api = Api(app)
 
+
+@app.route("/api/")
+def chronos_info():
+    """Print general information about this Chronos instance."""
+    return jsonify({
+        "name": "Chronos",
+        "version": chronos.__version__
+    }), 200
 
 
 class Script(Resource):
@@ -164,30 +174,6 @@ def execute(uid):
     return jsonify({"response": "OK"}), 200
 
 
-def myconverter(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
-
-
-def events(type):
-    try:
-        for e in event.listen(type):
-            logger.debug("Yielded event: {}", e["uid"])
-            yield "data: %s\n\n" % json.dumps(e, default=myconverter)
-
-    except GeneratorExit:
-        logger.debug("Bye bye")
-
-    finally:
-        logger.info("Stopping Sever Side Event stream")
-
-
-@app.route("/api/events/<string:type>")
-def stream(type):
-    #return Response(stream_with_context(events(type)), mimetype="text/event-stream")
-    return ""
-
-
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.
 ui_path = os.path.join(
     os.path.dirname(os.path.dirname(os.path.realpath(__file__))), "chronos-ui/dist"
@@ -241,6 +227,10 @@ def emit_message(key, data):
     })
 
 
+def cleanup():
+    reactor.callFromThread(reactor._stopThreadPool)
+    reactor.callFromThread(reactor.stop)
+    os._exit(0)
 
 
 def start_server():
@@ -260,6 +250,8 @@ def start_server():
 
     # create a Twisted Web Site and run everything
     site = Site(rootResource)
+
+    reactor.addSystemEventTrigger('before', 'shutdown', cleanup)
 
     reactor.listenTCP(5000, site)
     reactor.run()

@@ -9,6 +9,11 @@ import os
 from loguru import logger
 
 # First-party dependencies
+import chronos
+
+# Print Chronos version
+logger.info("Starting Chronos: {}", chronos.__version__)
+
 from chronos.web import start_server
 from chronos.config import CHRONOS
 from chronos.task import dispatch_task

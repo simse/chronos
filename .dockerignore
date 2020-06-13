@@ -1,6 +1,5 @@
 **/node_modules
 node_modules
 .venv
-.git
 __pycache__
 *.pyc
