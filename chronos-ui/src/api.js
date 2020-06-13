@@ -114,7 +114,7 @@ const api = {
   },
   saveScript(script, callback = () => {}) {
     axios.put(this.getApiUrl() + "script/" + script.uid, script).then(() => {
-      console.log("okay");
+      // console.log("okay");
       store.commit("updateScript", {
         uid: script.uid,
         synced: true,

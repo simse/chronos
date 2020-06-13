@@ -103,49 +103,6 @@ export default new Vuex.Store({
       }
     },
     finishLoadingScript(state, payload) {
-      if (!this.getters.scriptUidExists(payload.uid)) {
-        state.scripts.push({
-          uid: payload.uid,
-          name: payload.name,
-          loading: true,
-          created: new Date(),
-          logs: [],
-          actions: {
-            execute: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            install_requirements: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            disable: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            enable: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            },
-            delete: {
-              loading: false,
-              done: false,
-              output: "",
-              currentTaskId: 0
-            }
-          },
-          synced: true
-        });
-      }
-
       state.scripts.some(value => {
         if (value.uid === payload.uid) {
           value.loading = false;
@@ -168,11 +125,6 @@ export default new Vuex.Store({
         ];
 
       if ("synced" in payload) {
-        if (!payload.synced && !state.hasPromptedSave) {
-          events.$emit("prompt-save");
-          state.hasPromptedSave = true;
-        }
-
         if (!payload.synced && payload.internal) {
           Object.keys(payload).forEach(key => {
             script[key] = payload[key];
