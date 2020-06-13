@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import events from "@/events";
 
 Vue.use(Vuex);
 
@@ -155,15 +154,6 @@ export default new Vuex.Store({
         ];
 
       script.triggers.splice(payload.trigger_index, 1);
-      script.synced = false;
-
-      if (!this.hasPromptedSave) {
-        events.$emit("prompt-save");
-        this.hasPromptedSave = true;
-      }
-    },
-    resetSavePrompt(state) {
-      state.hasPromptedSave = false;
     },
     deleteScript(state, uid) {
       let index = state.scripts.findIndex(value => {

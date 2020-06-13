@@ -33,6 +33,7 @@
             action="install_requirements"
             :showOutput="true"
             :script_uid="script_uid"
+            ref="install_requirements"
           />
 
           <ActionOutput
@@ -85,29 +86,22 @@
       <div class="section">
         <div class="header">
           <h2 class="section-title">Pip requirements</h2>
-
-          <!--div>
-            <a class="button blue">
-              <i class="material-icons">add</i> Add requirement
-            </a>
-          </div-->
         </div>
 
         <div class="requirements">
-          <!--div class="empty">
-            <h2>No dependencies</h2>
-
-            <p>
-              That’s okay, but if your script requires external Python packages,
-              now is the time to declare it
-            </p>
-          </div-->
           <textarea
             placeholder="Please enter your requirements (if any)..."
             v-model="pipRequirements"
           ></textarea>
 
           <div class="save-bar">
+            <div class="execute" @click="installPipRequirements">
+              <i class="material-icons">
+                download
+              </i>
+
+              <span>Install Pip requirements</span>
+            </div>
             <div
               class="save"
               :class="{ loading: requirementsSaveButton.loading }"
@@ -147,8 +141,6 @@
             </div>
           </div>
         </div>
-
-        <!--a class="raw">Switch to raw mode</a-->
       </div>
 
       <div class="section">
@@ -352,6 +344,9 @@ export default {
     },
     executeScriptButton() {
       this.$refs["execute_script"].activate();
+    },
+    installPipRequirements() {
+      this.$refs["install_requirements"].activate();
     }
   }
 };
