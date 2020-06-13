@@ -27,7 +27,7 @@ logger.info("Starting Chronos: {}", chronos.__version__)
 
 from chronos.web import start_server
 from chronos.task import dispatch_task
-from chronos.bus import interval_trigger, on_startup_trigger
+from chronos.bus import interval_trigger
 from chronos.event import event
 from chronos.runtime import (
     evalaute_script_interval_triggers,
@@ -47,7 +47,7 @@ def main():
     starttime = time.time()
     i = 1
 
-    # on_startup_trigger.tick
+    dispatch_task("trigger_on_startup")
     dispatch_task("create_default_settings")
 
     while IS_RUNNING:

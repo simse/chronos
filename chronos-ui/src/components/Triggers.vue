@@ -98,6 +98,11 @@ export default {
               type: "text"
             }
           ]
+        },
+        {
+          type: "on_startup",
+          name: "On startup trigger",
+          fields: []
         }
       ],
       newTriggerContent: {

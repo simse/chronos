@@ -42,6 +42,10 @@ export default {
         return cronstrue.toString(this.trigger.options.expression);
       }
 
+      if (this.trigger.type === "on_startup") {
+        return "";
+      }
+
       return "";
     }
   },
