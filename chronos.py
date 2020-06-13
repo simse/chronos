@@ -8,6 +8,17 @@ import os
 # Third-party dependencies
 from loguru import logger
 
+# Configure logger
+from chronos.config import CHRONOS
+logger.remove()
+logger.add(CHRONOS + "/logs/chronos.log", rotation="00:00", level="DEBUG")
+
+if os.getenv("CHRONOS_DEBUG") == "true":
+    logger.add(sys.stderr, level="DEBUG")
+    logger.debug("Chronos debug mode enabled")
+else:
+    logger.add(sys.stderr, level="INFO")
+
 # First-party dependencies
 import chronos
 
@@ -15,7 +26,6 @@ import chronos
 logger.info("Starting Chronos: {}", chronos.__version__)
 
 from chronos.web import start_server
-from chronos.config import CHRONOS
 from chronos.task import dispatch_task
 from chronos.bus import interval_trigger, on_startup_trigger
 from chronos.event import event
@@ -26,18 +36,9 @@ from chronos.runtime import (
 )
 from chronos.metadata import migrate
 
-
-# Configure logger
-# logger.remove()
-# logger.add(sys.stderr, level="INFO")
-# logger.add(CHRONOS + "/logs/chronos.log", rotation="00:00", level="DEBUG")
-
-
 migrate()
 
 IS_RUNNING = True
-
-# interval_trigger.listen(1000, execute_next_task)
 
 
 def main():

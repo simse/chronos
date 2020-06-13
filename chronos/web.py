@@ -234,7 +234,7 @@ def cleanup():
 
 
 def start_server():
-    log.startLogging(sys.stdout)
+    # log.startLogging(sys.stdout)
 
     # create a Twisted Web resource for our WebSocket server
     wsFactory = WebSocketServerFactory("ws://127.0.0.1:5000")
