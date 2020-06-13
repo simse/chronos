@@ -2,6 +2,7 @@ import store from "./store";
 import events from "./events";
 import axios from "axios";
 import slugify from "slugify";
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 const api = {
   events: null,
@@ -157,11 +158,20 @@ const api = {
     });
 
     // Start WebSocket connection
-    const ws = new WebSocket(this.getWsUrl());
+    const ws = new ReconnectingWebSocket(this.getWsUrl());
     ws.onmessage = event => {
       let data = JSON.parse(event.data);
 
       events.$emit("_" + data.event, data.payload);
+    };
+
+    ws.onopen = () => {
+      store.commit("setConnectionStatus", true);
+    };
+
+    ws.onclose = () => {
+      this.loadScripts();
+      store.commit("setConnectionStatus", false);
     };
   }
 };

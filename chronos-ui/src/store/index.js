@@ -12,6 +12,9 @@ export default new Vuex.Store({
     hasPromptedSave: false
   },
   mutations: {
+    setConnectionStatus(state, payload) {
+      state.isConnected = payload;
+    },
     setScripts(state, payload) {
       let scripts = payload;
 
