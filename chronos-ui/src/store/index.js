@@ -199,7 +199,7 @@ export default new Vuex.Store({
           })
         ];
 
-      script.triggers.splice(payload.trigger_index);
+      script.triggers.splice(payload.trigger_index, 1);
       script.synced = false;
 
       if (!this.hasPromptedSave) {
