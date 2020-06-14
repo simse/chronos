@@ -17,6 +17,7 @@
             action="execute"
             :showOutput="true"
             :script_uid="script_uid"
+            ref="execute_script"
           />
 
           <ActionOutput
@@ -32,6 +33,7 @@
             action="install_requirements"
             :showOutput="true"
             :script_uid="script_uid"
+            ref="install_requirements"
           />
 
           <ActionOutput
@@ -42,9 +44,18 @@
           />
 
           <QuickAction
-            :icon="disableOrEnable.icon"
-            :text="disableOrEnable.text"
-            :action="disableOrEnable.action"
+            v-if="this.script.enabled"
+            icon="clear"
+            text="Disable"
+            action="disable"
+            :script_uid="script_uid"
+          />
+
+          <QuickAction
+            v-if="!this.script.enabled"
+            icon="check"
+            text="Enable"
+            action="enable"
             :script_uid="script_uid"
           />
 
@@ -75,41 +86,128 @@
       <div class="section">
         <div class="header">
           <h2 class="section-title">Pip requirements</h2>
-
-          <!--div>
-            <a class="button blue">
-              <i class="material-icons">add</i> Add requirement
-            </a>
-          </div-->
         </div>
 
         <div class="requirements">
-          <!--div class="empty">
-            <h2>No dependencies</h2>
-
-            <p>
-              That’s okay, but if your script requires external Python packages,
-              now is the time to declare it
-            </p>
-          </div-->
           <textarea
             placeholder="Please enter your requirements (if any)..."
             v-model="pipRequirements"
           ></textarea>
-        </div>
 
-        <!--a class="raw">Switch to raw mode</a-->
+          <div class="save-bar">
+            <div class="execute" @click="installPipRequirements">
+              <i class="material-icons">
+                download
+              </i>
+
+              <span>Install Pip requirements</span>
+            </div>
+            <div
+              class="save"
+              :class="{ loading: requirementsSaveButton.loading }"
+              @click="saveRequirementsButton"
+            >
+              <i
+                class="material-icons"
+                v-if="
+                  !requirementsSaveButton.loading &&
+                    !requirementsSaveButton.finished
+                "
+              >
+                save
+              </i>
+
+              <svg
+                v-if="requirementsSaveButton.finished"
+                class="checkmark"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  class="checkmark__circle"
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  class="checkmark__check"
+                  fill="none"
+                  d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                />
+              </svg>
+
+              <span>{{ requirementsSaveButton.text }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="section">
         <h2 class="section-title">Python script</h2>
 
-        <prism-editor
-          :code="python_script"
-          :lineNumbers="true"
-          language="py"
-          @change="updateCode"
-        ></prism-editor>
+        <div class="code">
+          <prism-editor
+            :code="python_script"
+            :lineNumbers="true"
+            language="py"
+            @change="updateCode"
+          ></prism-editor>
+
+          <div class="save-bar" :class="{ hidden: !showCodeEditorBar }">
+            <div
+              class="execute"
+              :class="{ loading: scriptEditorBar.executeButton.loading }"
+              @click="executeScriptButton"
+            >
+              <i
+                class="material-icons"
+                v-if="!scriptEditorBar.executeButton.loading"
+              >
+                play_arrow
+              </i>
+
+              <span>{{ scriptEditorBar.executeButton.text }}</span>
+            </div>
+            <div
+              class="save"
+              :class="{ loading: scriptEditorBar.saveButton.loading }"
+              @click="saveScriptButton"
+            >
+              <i
+                class="material-icons"
+                v-if="
+                  !scriptEditorBar.saveButton.loading &&
+                    !scriptEditorBar.saveButton.finished
+                "
+              >
+                save
+              </i>
+
+              <svg
+                v-if="scriptEditorBar.saveButton.finished"
+                class="checkmark"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 52 52"
+              >
+                <circle
+                  class="checkmark__circle"
+                  cx="26"
+                  cy="26"
+                  r="25"
+                  fill="none"
+                />
+                <path
+                  class="checkmark__check"
+                  fill="none"
+                  d="M14.1 27.2l7.1 7.2 16.7-16.8"
+                />
+              </svg>
+
+              <span>{{ scriptEditorBar.saveButton.text }}</span>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="section">
@@ -127,6 +225,7 @@ import ActionOutput from "@/components/ActionOutput";
 import Triggers from "@/components/Triggers";
 import Logs from "@/components/Logs";
 import events from "@/events";
+import api from "@/api";
 
 export default {
   name: "ScriptViewer",
@@ -144,7 +243,22 @@ export default {
   },
   data() {
     return {
-      loading: false
+      loading: false,
+      scriptEditorBar: {
+        executeButton: {
+          text: "Run"
+        },
+        saveButton: {
+          text: "Save",
+          loading: false,
+          finished: false
+        }
+      },
+      requirementsSaveButton: {
+        text: "Save",
+        loading: false,
+        finished: false
+      }
     };
   },
   mounted() {
@@ -170,22 +284,8 @@ export default {
     shouldSave() {
       return !this.script.synced;
     },
-    disableOrEnable() {
-      if (this.script !== {}) {
-        if (!this.script.enabled) {
-          return {
-            text: "Enable",
-            icon: "check",
-            action: "enable"
-          };
-        }
-      }
-
-      return {
-        text: "Disable",
-        icon: "clear",
-        action: "disable"
-      };
+    showCodeEditorBar() {
+      return true;
     },
     python_script: {
       get() {
@@ -217,6 +317,36 @@ export default {
     },
     newTrigger() {
       this.$refs.triggers.newTrigger();
+    },
+    saveScriptButton() {
+      api.saveScript(this.script);
+      this.scriptEditorBar.saveButton.text = "Saved";
+      this.scriptEditorBar.saveButton.loading = false;
+      this.scriptEditorBar.saveButton.finished = true;
+
+      window.setTimeout(() => {
+        this.scriptEditorBar.saveButton.text = "Save";
+        this.scriptEditorBar.saveButton.loading = false;
+        this.scriptEditorBar.saveButton.finished = false;
+      }, 3000);
+    },
+    saveRequirementsButton() {
+      api.saveScript(this.script);
+      this.requirementsSaveButton.text = "Saved";
+      this.requirementsSaveButton.loading = false;
+      this.requirementsSaveButton.finished = true;
+
+      window.setTimeout(() => {
+        this.requirementsSaveButton.text = "Save";
+        this.requirementsSaveButton.loading = false;
+        this.requirementsSaveButton.finished = false;
+      }, 3000);
+    },
+    executeScriptButton() {
+      this.$refs["execute_script"].activate();
+    },
+    installPipRequirements() {
+      this.$refs["install_requirements"].activate();
     }
   }
 };
@@ -296,8 +426,100 @@ h1 {
   }
 }
 
-.prism-editor-wrapper {
-  border-radius: 12px;
+$border-radius: 12px;
+
+.code {
+  border-radius: $border-radius;
+  overflow: hidden;
+}
+
+.save-bar {
+  background: #101010;
+  border-top: 1px solid darken(#101010, 3%);
+  display: flex;
+  overflow: hidden;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 250ms height;
+  height: 50px;
+  overflow: hidden;
+
+  &.hidden {
+    height: 0;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 250ms height;
+  }
+
+  div.save,
+  div.execute {
+    padding: 12px 12px 9px 12px;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 300ms all;
+    border-right: 1px solid darken(#101010, 3%);
+    display: flex;
+    align-items: center;
+
+    &.loading {
+      opacity: 0.8;
+    }
+
+    span {
+      margin-bottom: 1px;
+      margin-left: 5px;
+    }
+
+    &:hover {
+      background: darken(#101010, 3%);
+      cursor: pointer;
+    }
+  }
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 5;
+  stroke-miterlimit: 10;
+  stroke: var(--blue);
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 5;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  margin: 10% 3px 10% 0;
+  box-shadow: inset 0px 0px 0px var(--blue);
+  animation: fill 0.4s ease-in-out 0.4s forwards,
+    scale 0.3s ease-in-out 0.9s both;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes scale {
+  0%,
+  100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px var(--blue);
+  }
 }
 
 .triggers,
@@ -306,6 +528,7 @@ h1 {
   background: #101010;
   border-radius: 12px;
   min-height: 400px;
+  overflow: hidden;
 
   .empty {
     width: 100%;
@@ -348,6 +571,7 @@ h1 {
     display: block;
     background: transparent;
     color: darken(#fff, 10%);
+    line-height: 1.8em;
   }
 }
 </style>

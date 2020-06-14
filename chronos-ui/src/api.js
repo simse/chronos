@@ -1,19 +1,33 @@
 import store from "./store";
 import events from "./events";
 import axios from "axios";
+import slugify from "slugify";
+import ReconnectingWebSocket from "reconnecting-websocket";
 
 const api = {
   events: null,
-  getApiUrl() {
+  getBaseUrl() {
     if (
       process.env.NODE_ENV !== "production" &&
       process.env.NODE_ENV !== "test" &&
       typeof console !== "undefined"
     ) {
-      return "http://localhost:5000/api/";
+      return "http://localhost:5000/";
     } else {
-      return "/api/";
+      return window.location.origin + "/";
     }
+  },
+  getApiUrl() {
+    return this.getBaseUrl() + "api/";
+  },
+  getWsUrl() {
+    return this.getBaseUrl().replace("http", "ws") + "ws/";
+  },
+  guessScriptUid(name) {
+    return slugify(name, {
+      lower: true,
+      strict: true
+    });
   },
   loadScripts() {
     axios.get(this.getApiUrl() + "scripts").then(response => {
@@ -23,31 +37,29 @@ const api = {
     });
   },
   createScript(name, callback = () => {}) {
-    axios
-      .post(this.getApiUrl() + "script/null", {
-        name: name
-      })
-      .then(response => {
-        if (response.status === 200) {
-          store.commit("addScriptLoading", {
-            name: name,
-            uid: response.data.uid
-          });
+    let scriptUid = this.guessScriptUid(name);
 
-          events.$on("_script_created", event => {
-            let payload = event;
+    store.commit("addScriptLoading", {
+      name: name,
+      uid: scriptUid
+    });
 
-            if (payload.uid === response.data.uid) {
-              store.commit("finishLoadingScript", {
-                uid: response.data.uid,
-                script: payload
-              });
+    let createScriptCallback = event => {
+      let payload = event;
+      if (payload.uid === scriptUid) {
+        store.commit("finishLoadingScript", {
+          uid: event.uid,
+          script: payload
+        });
+        events.$off("_script_created", createScriptCallback);
+        callback();
+      }
+    };
+    events.$on("_script_created", createScriptCallback);
 
-              callback();
-            }
-          });
-        }
-      });
+    axios.post(this.getApiUrl() + "script/null", {
+      name: name
+    });
   },
   scriptAction(uid, action, callback = () => {}) {
     store.commit("resetActionOutput", {
@@ -94,19 +106,15 @@ const api = {
       }
     };
 
-    axios
-      .get(this.getApiUrl() + "script/" + uid + "/action/" + action)
-      .then(response => {
-        if (response.status === 200) {
-          events.$on("_action_complete", callback);
-          events.$on("_task_output", taskOutputCallback);
-          events.$on("_task_finished", taskCompleteCallback);
-        }
-      });
+    events.$on("_action_complete", callback);
+    events.$on("_task_output", taskOutputCallback);
+    events.$on("_task_finished", taskCompleteCallback);
+
+    axios.get(this.getApiUrl() + "script/" + uid + "/action/" + action);
   },
   saveScript(script, callback = () => {}) {
     axios.put(this.getApiUrl() + "script/" + script.uid, script).then(() => {
-      console.log("okay");
+      // console.log("okay");
       store.commit("updateScript", {
         uid: script.uid,
         synced: true,
@@ -114,6 +122,10 @@ const api = {
       });
       callback();
     });
+  },
+  saveScriptByUid(uid, callback = () => {}) {
+    let script = store.getters.getScriptByUid(uid);
+    this.saveScript(script, callback);
   },
   saveAllScripts() {
     store.state.scripts.forEach(script => {
@@ -125,8 +137,6 @@ const api = {
     store.commit("resetSavePrompt");
   },
   listenToChronos() {
-    this.events = new EventSource(this.getApiUrl() + "events/any");
-
     events.$on("_script_updated", event => {
       store.commit("updateScript", event);
     });
@@ -150,6 +160,23 @@ const api = {
         loading: false
       });
     });
+
+    // Start WebSocket connection
+    const ws = new ReconnectingWebSocket(this.getWsUrl());
+    ws.onmessage = event => {
+      let data = JSON.parse(event.data);
+
+      events.$emit("_" + data.event, data.payload);
+    };
+
+    ws.onopen = () => {
+      store.commit("setConnectionStatus", true);
+    };
+
+    ws.onclose = () => {
+      this.loadScripts();
+      store.commit("setConnectionStatus", false);
+    };
   }
 };
 

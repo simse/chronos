@@ -1,6 +1,5 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import events from "@/events";
 
 Vue.use(Vuex);
 
@@ -12,6 +11,9 @@ export default new Vuex.Store({
     hasPromptedSave: false
   },
   mutations: {
+    setConnectionStatus(state, payload) {
+      state.isConnected = payload;
+    },
     setScripts(state, payload) {
       let scripts = payload;
 
@@ -56,45 +58,48 @@ export default new Vuex.Store({
       state.scripts = scripts;
     },
     addScriptLoading(state, payload) {
-      state.scripts.push({
-        uid: payload.uid,
-        name: payload.name,
-        loading: true,
-        created: new Date(),
-        actions: {
-          execute: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
+      if (!this.getters.scriptUidExists(payload.uid)) {
+        state.scripts.push({
+          uid: payload.uid,
+          name: payload.name,
+          loading: true,
+          created: new Date(),
+          logs: [],
+          actions: {
+            execute: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            install_requirements: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            disable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            enable: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            },
+            delete: {
+              loading: false,
+              done: false,
+              output: "",
+              currentTaskId: 0
+            }
           },
-          install_requirements: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          disable: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          enable: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          },
-          delete: {
-            loading: false,
-            done: false,
-            output: "",
-            currentTaskId: 0
-          }
-        },
-        synced: true
-      });
+          synced: true
+        });
+      }
     },
     finishLoadingScript(state, payload) {
       state.scripts.some(value => {
@@ -119,11 +124,6 @@ export default new Vuex.Store({
         ];
 
       if ("synced" in payload) {
-        if (!payload.synced && !state.hasPromptedSave) {
-          events.$emit("prompt-save");
-          state.hasPromptedSave = true;
-        }
-
         if (!payload.synced && payload.internal) {
           Object.keys(payload).forEach(key => {
             script[key] = payload[key];
@@ -153,16 +153,7 @@ export default new Vuex.Store({
           })
         ];
 
-      script.triggers.splice(payload.trigger_index);
-      script.synced = false;
-
-      if (!this.hasPromptedSave) {
-        events.$emit("prompt-save");
-        this.hasPromptedSave = true;
-      }
-    },
-    resetSavePrompt(state) {
-      state.hasPromptedSave = false;
+      script.triggers.splice(payload.trigger_index, 1);
     },
     deleteScript(state, uid) {
       let index = state.scripts.findIndex(value => {
@@ -218,6 +209,13 @@ export default new Vuex.Store({
       return state.scripts.find(value => {
         return value.uid === uid ? true : false;
       });
+    },
+    scriptUidExists: state => uid => {
+      let script = state.scripts.find(value => {
+        return value.uid === uid ? true : false;
+      });
+
+      return !(typeof script === "undefined");
     }
   }
 });

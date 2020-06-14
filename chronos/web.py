@@ -2,25 +2,47 @@
 import time
 import json
 import os
+import uuid
+import sys
 import datetime
+import signal
 
 # Third-party dependencies
-from flask import Flask, jsonify, send_from_directory, Response, request
+from flask import (
+    Flask,
+    jsonify,
+    send_from_directory,
+    Response,
+    request,
+    stream_with_context,
+)
 from flask_restful import Api, Resource, reqparse
 from flask_cors import CORS
 from loguru import logger
+from twisted.python import log
+from twisted.internet import reactor
+from twisted.web.server import Site
+from twisted.web.wsgi import WSGIResource
+from autobahn.twisted.websocket import WebSocketServerFactory, \
+    WebSocketServerProtocol
+from autobahn.twisted.resource import WebSocketResource, WSGIRootResource
+
 
 # First-party dependencies
+import chronos
 import chronos.script
+from chronos.script import get_all_scripts
 from chronos.metadata import Session
 from chronos.metadata import Script as ScriptModel
 from chronos.task import dispatch_task
 from chronos.event import event
 from chronos.util import for_uid
+from chronos.settings import get_setting, set_setting, get_all_settings
 
 
 # Create Flask app
 app = Flask(__name__)
+app.secret_key = str(uuid.uuid4())
 
 
 # Allow CORS
@@ -29,6 +51,15 @@ CORS(app)
 
 # Register Flask API
 api = Api(app)
+
+
+@app.route("/api/")
+def chronos_info():
+    """Print general information about this Chronos instance."""
+    return jsonify({
+        "name": "Chronos",
+        "version": chronos.__version__
+    }), 200
 
 
 class Script(Resource):
@@ -102,19 +133,25 @@ class Script(Resource):
         return "OK", 200
 
 
+class Setting(Resource):
+    def get(self, key):
+        return get_setting(key)
+
+    def post(self, key):
+        args = request.get_json(force=True)
+
+        return set_setting(key, args["value"])
+
+
+@app.route("/api/settings")
+def settings():
+    return jsonify(get_all_settings()), 200
+
+
 # Get all scripts
 @app.route("/api/scripts")
 def scripts():
-    scripts = []
-
-    session = Session()
-
-    for s in session.query(ScriptModel).all():
-        scripts.append(chronos.script.Script(s.uid).to_dict())
-
-    session.close()
-
-    return jsonify(scripts), 200
+    return jsonify(get_all_scripts()), 200
 
 
 @app.route("/api/script/<string:uid>/action/<string:action>")
@@ -135,25 +172,6 @@ def install_requirements(uid):
 def execute(uid):
     chronos.script.Script(uid).execute()
     return jsonify({"response": "OK"}), 200
-
-
-def myconverter(o):
-    if isinstance(o, datetime.datetime):
-        return o.__str__()
-
-
-def events(type):
-    try:
-        for e in event.listen(type):
-            logger.debug("Yielded event: {}", e["uid"])
-            yield "data: %s\n\n" % json.dumps(e, default=myconverter)
-    finally:
-        logger.info("Stopping Sever Side Event stream")
-
-
-@app.route("/api/events/<string:type>")
-def stream(type):
-    return Response(events(type), mimetype="text/event-stream")
 
 
 # This part serves the UI from chronos-ui/dist, i.e. it must be built.
@@ -178,3 +196,62 @@ def serve_file_in_dir(path):
 
 # Register script API resource.
 api.add_resource(Script, "/api/script/<string:uid>")
+api.add_resource(Setting, "/api/setting/<string:key>")
+
+
+# Websocket stuff
+class ChronosWebSocketProtocol(WebSocketServerProtocol):
+    connections = list()
+
+    def onConnect(self, request):
+        self.connections.append(self)
+        logger.debug("New WebSocket client")
+
+    def onClose(self, wasClean, code, reason):
+        self.connections.remove(self)
+        logger.debug("WebSocket client disconnected: {}", reason)
+
+
+    @classmethod
+    def broadcast_message(cls, data):
+        payload = json.dumps(data, ensure_ascii = False).encode('utf8')
+        for c in set(cls.connections):
+            reactor.callFromThread(cls.sendMessage, c, payload)
+
+
+# Websocket methods
+def emit_message(key, data):
+    ChronosWebSocketProtocol.broadcast_message({
+        "event": key,
+        "payload": data
+    })
+
+
+def cleanup():
+    reactor.callFromThread(reactor._stopThreadPool)
+    reactor.callFromThread(reactor.stop)
+    os._exit(0)
+
+
+def start_server():
+    # log.startLogging(sys.stdout)
+
+    # create a Twisted Web resource for our WebSocket server
+    wsFactory = WebSocketServerFactory("ws://127.0.0.1:5000")
+    wsFactory.protocol = ChronosWebSocketProtocol
+    wsResource = WebSocketResource(wsFactory)
+
+    # create a Twisted Web WSGI resource for our Flask server
+    wsgiResource = WSGIResource(reactor, reactor.getThreadPool(), app)
+
+    # create a root resource serving everything via WSGI/Flask, but
+    # the path "/ws" served by our WebSocket stuff
+    rootResource = WSGIRootResource(wsgiResource, {b'ws': wsResource})
+
+    # create a Twisted Web Site and run everything
+    site = Site(rootResource)
+
+    reactor.addSystemEventTrigger('before', 'shutdown', cleanup)
+
+    reactor.listenTCP(5000, site)
+    reactor.run()

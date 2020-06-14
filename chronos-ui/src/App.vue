@@ -8,10 +8,17 @@
     </div>
 
     <ConfirmModal />
+
+    <div class="connection-status-overlay" :class="{ hidden: isConnected }">
+      <Spinner line-bg-color="transparent" line-fg-color="var(--blue)" />
+
+      <h1>Connecting to Chronos...</h1>
+    </div>
   </div>
 </template>
 
 <script>
+import Spinner from "vue-simple-spinner";
 import Navigation from "@/components/Navigation";
 import ConfirmModal from "@/components/ConfirmModal";
 import api from "@/api";
@@ -20,10 +27,16 @@ export default {
   name: "App",
   components: {
     Navigation,
-    ConfirmModal
+    ConfirmModal,
+    Spinner
   },
   mounted() {
     api.loadScripts();
+  },
+  computed: {
+    isConnected() {
+      return this.$store.state.isConnected;
+    }
   }
 };
 </script>
@@ -87,5 +100,42 @@ h2.modal-title {
   font-weight: 400;
   text-align: center;
   margin-bottom: 45px;
+}
+
+.connection-status-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(14px);
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 300ms background;
+  transition: cubic-bezier(0.075, 0.82, 0.165, 1) 300ms backdrop-filter;
+
+  &.hidden {
+    background: rgba(0, 0, 0, 0);
+    backdrop-filter: blur(0px);
+    pointer-events: none;
+
+    h1 {
+      opacity: 0;
+    }
+
+    .vue-simple-spinner {
+      display: none;
+    }
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 50px 0 0 0;
+    transition: cubic-bezier(0.075, 0.82, 0.165, 1) 300ms opacity;
+  }
 }
 </style>

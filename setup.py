@@ -1,11 +1,14 @@
 import setuptools
 
+import versioneer
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="chronos-executor",
-    version="0.0.1",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     author="Simon Sorensen",
     author_email="hello@simse.io",
     description="A Python 3.7 script executor",

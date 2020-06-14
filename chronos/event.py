@@ -39,6 +39,10 @@ class Event:
 
         logger.debug("Triggered event: {}", id)
 
+        from chronos.web import emit_message
+        emit_message(id, payload)
+        logger.debug("Forwarded event: {} to websocket", id)
+
     def callback(self, id, callback):
         self._add_event(id)
         self.callbacks[id].append(callback)
@@ -67,12 +71,13 @@ class Event:
                 event_ids = list(self.events.keys())
 
             # Break loop if timeout is reached
-            if listen_time > timeout:
-                logger.debug(
-                    "Listener: {} timed out after {} seconds", listener_id, timeout
-                )
-                self.listeners[id].remove(listener_id)
-                return
+            if timeout is not None:
+                if listen_time > timeout:
+                    logger.debug(
+                        "Listener: {} timed out after {} seconds", listener_id, timeout
+                    )
+                    self.listeners[id].remove(listener_id)
+                    return
 
             # Gather all events to be yielded
             events = []
@@ -103,6 +108,9 @@ class Event:
                         pass
 
                     yield event
+
+            # Heartbeat
+           #  yield None
 
             listen_time += 0.01
             time.sleep(0.01)

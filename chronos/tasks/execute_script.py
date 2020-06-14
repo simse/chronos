@@ -2,6 +2,8 @@ import json
 from datetime import datetime
 from subprocess import PIPE, Popen
 
+import maya
+
 from chronos.script import Script
 from chronos.metadata import Log, Session
 
@@ -65,12 +67,27 @@ def run(arguments, event):
         {"task_id": task_id, "output": "", "script_uid": script.uid, "task": "execute"},
     )
     script = script.to_dict()
-    script["logs"].insert(0, {
-        "date": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
-        "stderr": stderr,
-        "stdout": process_output,
-        "exitcode": exitcode
-    })
+
+    # Decode bytes to string
+    try:
+        stderr = stderr.decode("utf-8")
+    except AttributeError:
+        pass
+
+    try:
+       process_output =process_output.decode("utf-8")
+    except AttributeError:
+        pass
+
+    script["logs"].insert(
+        0,
+        {
+            "date": maya.now().rfc2822(),
+            "stderr": stderr,
+            "stdout": process_output,
+            "exitcode": exitcode,
+        },
+    )
     event.trigger("script_executed", script)
 
     event.trigger("script_updated", script)

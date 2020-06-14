@@ -12,6 +12,7 @@
 
 <script>
 import cronstrue from "cronstrue";
+import api from "@/api";
 
 export default {
   name: "Trigger",
@@ -42,6 +43,10 @@ export default {
         return cronstrue.toString(this.trigger.options.expression);
       }
 
+      if (this.trigger.type === "on_startup") {
+        return "";
+      }
+
       return "";
     }
   },
@@ -51,6 +56,7 @@ export default {
         uid: this.script_uid,
         trigger_index: this.index
       });
+      api.saveScriptByUid(this.script_uid);
     }
   }
 };
