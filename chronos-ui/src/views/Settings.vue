@@ -2,7 +2,7 @@
   <div class="settings">
     <h1 class="page-title">Settings</h1>
 
-    <div class="container">
+    <!--div class="container">
       <div class="sidebar">
         <h3>General</h3>
 
@@ -19,7 +19,7 @@
         </div>
       </div>
     </div>
-  </div>
+  </div-->
 </template>
 
 <script>
