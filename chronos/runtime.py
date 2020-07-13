@@ -59,17 +59,20 @@ def evalaute_script_cron_triggers(tick, interval):
 
                 if trigger["type"] == "cron":
                     # Evaluate cron expression
-                    cron = cronex.CronExpression(trigger["options"]["expression"])
-                    time = tuple(list(datetime.now().timetuple())[:5])
+                    try:
+                        cron = cronex.CronExpression(trigger["options"]["expression"])
 
-                    if cron.check_trigger(time):
-                        # Execute script in seperate thread, such that the loop is not affected
-                        dispatch_task(
-                            "execute_script",
-                            {"script_uid": script.uid},
-                            task_priority="NOW",
-                        )
+                        time = tuple(list(datetime.now().timetuple())[:5])
 
+                        if cron.check_trigger(time):
+                            # Execute script in seperate thread, such that the loop is not affected
+                            dispatch_task(
+                                "execute_script",
+                                {"script_uid": script.uid},
+                                task_priority="NOW",
+                            )
+                    except(ValueError):
+                        logger.error("CRON expression yielded error: {}", trigger["options"]["expression"])
 
 def prune_script_logs():
     dispatch_task("prune_logs", {})

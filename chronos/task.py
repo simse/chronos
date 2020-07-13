@@ -40,17 +40,22 @@ def execute_task(id):
     logger.debug("Starting task with ID: {}", id)
     task.time_started = datetime.datetime.now()
     task.status = "STARTED"
+    session.flush()
     session.commit()
 
     event.trigger("task_started", task_id_dict)
     arguments = {**json.loads(task.task_arguments), **task_id_dict}
 
-    task.output = task_module.run(json.dumps(arguments), event)
+    try:
+        task.output = task_module.run(json.dumps(arguments), event)
+    except Exception as error:
+        logger.error("Task with ID: {} errored with exception: {}", id, error)
 
     event.trigger("task_finished", task_id_dict)
 
     task.time_finished = datetime.datetime.now()
     task.status = "FINISHED"
+    session.flush()
     session.commit()
     logger.debug("Finished task with ID: {}", id)
 
