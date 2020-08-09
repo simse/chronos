@@ -36,6 +36,7 @@ Please do not expose Chronos to the public internet. At the moment there is zero
 - CRON triggers (e.g. every 5th day of the month)
 - `stdout` and `stderr` output capture
 - Live script output capture (so you know it's still working)
+- You can easily trigger a script using the api: http://[ChronosIp]:[ExposedPort]/api/script/[NameOfScript]/execute
 
 ## Feature requests
 Trivial requests will usually be added quickly. Larger requests will take a little longer. I am, after all, still a busy university student.
