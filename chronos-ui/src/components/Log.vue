@@ -12,7 +12,7 @@
           </div>
         </div>
 
-        <p class="log-date">{{ log.date }}</p>
+        <p class="log-date">{{ userLocalDate }}</p>
 
         <div class="log-expand" v-collapse-toggle>
           <i class="material-icons">keyboard_arrow_down</i>
@@ -31,12 +31,22 @@
 </template>
 
 <script>
+import moment from "moment-timezone";
+
 export default {
   name: "Log",
   props: {
     log: {
       required: true,
       type: Object
+    }
+  },
+  computed: {
+    userLocalDate() {
+      let gmt_date = moment(this.log.date);
+      let user_timezone = moment.tz.guess();
+
+      return gmt_date.tz(user_timezone).format("MMMM Do YYYY, HH:mm:ss");
     }
   }
 };
