@@ -5,18 +5,20 @@ LABEL author="Simon Sorensen (hello@simse.io)"
 ENV TZ=GMT
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Add yarn to apt
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-RUN echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+# Install node
+RUN curl -sL https://deb.nodesource.com/setup_16.x -o nodesource_setup.sh && \
+    bash nodesource_setup.sh && \
+    apt-get update && \
+    apt-get install -y nodejs && \
+    rm nodesource_setup.sh && \
+    apt-get clean && \
+    npm install -g yarn
 
 # Install common packages
 RUN apt-get update
 RUN pip install cython
 RUN apt-get install -y freetds-dev
 RUN pip install pymssql
-
-# Install Node and Yarn
-RUN apt-get install -y nodejs yarn
 
 # Copy Chronos to image
 COPY . /app/chronos
@@ -32,8 +34,12 @@ VOLUME /chronos
 ENV CHRONOS_PATH=/chronos
 ENV CHRONOS=yes_sir_docker
 
+# Install poetry
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
+ENV PATH="${PATH}:/root/.poetry/bin"
+
 # Install Python dependencies
 WORKDIR /app/chronos
-RUN pip install -r requirements.txt
+RUN poetry install
 
-ENTRYPOINT python chronos.py
+ENTRYPOINT ["poetry", "run", "python", "app.py"]

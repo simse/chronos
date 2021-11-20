@@ -72,7 +72,7 @@ class Script(Resource):
 
             return script.to_dict(), 200
         except chronos.metadata.ScriptDoesNotExist:
-            return null, 404
+            return None, 404
 
     def post(self, uid):
         """Create new script. This is a slow function."""

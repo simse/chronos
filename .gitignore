@@ -117,3 +117,4 @@ node_modules
 .vscode
 
 dev-start.sh
+.chronos
